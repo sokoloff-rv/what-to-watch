@@ -1,3 +1,10 @@
+# Личный проект «TaskForce»
+
+* Студент: [Роман Соколов](https://up.htmlacademy.ru/php-3/2/user/94214).
+* Наставник: `Дмитрий Мехов`.
+
+---
+
 # Руководство по работе с проектом
 
 Данный проект создан с помощью [Create React App](https://github.com/facebook/create-react-app).
