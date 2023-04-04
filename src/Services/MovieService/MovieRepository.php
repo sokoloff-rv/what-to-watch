@@ -4,22 +4,16 @@ namespace WhatToWatch\Services\MovieService;
 
 class MovieRepository
 {
-    private string $apiKey = 'a471b1ee';
-    private string $baseUrl = 'http://www.omdbapi.com/';
+    private MovieApiClient $apiClient;
 
-    public function __construct(private \GuzzleHttp\Client $client)
+    public function __construct(MovieApiClient $apiClient)
     {
+        $this->apiClient = $apiClient;
     }
 
     public function findMovieById(string $imdbId): ?array
     {
-        $response = $this->client->request('GET', $this->baseUrl,
-            ['query' =>
-                [
-                    'apikey' => $this->apiKey,
-                    'i' => $imdbId,
-                ]
-            ]);
+        $response = $this->apiClient->sendRequest($imdbId);
 
         return json_decode($response->getBody()->getContents(), true);
     }

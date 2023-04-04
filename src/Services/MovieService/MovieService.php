@@ -6,11 +6,13 @@ class MovieService
 {
     private MovieRepository $repository;
 
-    public function __construct(MovieRepository $repository) {
+    public function __construct(MovieRepository $repository) 
+    {
         $this->repository = $repository;
     }
 
-    public function getMovie(string $imdbId) {
+    public function getMovie(string $imdbId): ?array
+    {
         return $this->repository->findMovieById($imdbId);
     }
 }
