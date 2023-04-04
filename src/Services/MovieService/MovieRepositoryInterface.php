@@ -4,5 +4,5 @@ namespace WhatToWatch\Services\MovieService;
 
 interface MovieRepositoryInterface
 {
-    public function findMovieById(string $imdbId): ?array;
+    public function findMovieById(string $imdbId);
 }
