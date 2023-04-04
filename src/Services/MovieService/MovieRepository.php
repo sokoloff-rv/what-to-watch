@@ -2,7 +2,7 @@
 
 namespace WhatToWatch\Services\MovieService;
 
-class MovieRepository
+class MovieRepository implements MovieRepositoryInterface
 {
     private MovieApiClient $apiClient;
 

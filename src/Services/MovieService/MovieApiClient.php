@@ -2,7 +2,7 @@
 
 namespace WhatToWatch\Services\MovieService;
 
-class MovieApiClient
+class MovieApiClient implements MovieApiClientInterface
 {
     private \GuzzleHttp\Client $client;
     private string $apiKey = 'a471b1ee';
