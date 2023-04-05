@@ -4,7 +4,7 @@ namespace WhatToWatch\Services\MovieService;
 
 class MovieApiClient implements MovieApiClientInterface
 {
-    private \GuzzleHttp\Client $client;
+    private \Psr\Http\Client\ClientInterface $client;
     private string $apiKey = 'a471b1ee';
     private string $baseUrl = 'http://www.omdbapi.com/';
 
@@ -13,7 +13,7 @@ class MovieApiClient implements MovieApiClientInterface
      * 
      * @param Client $client HTTP-клиент Guzzle
      */
-    public function __construct(\GuzzleHttp\Client $client)
+    public function __construct(\Psr\Http\Client\ClientInterface $client)
     {
         $this->client = $client;
     }
@@ -24,7 +24,7 @@ class MovieApiClient implements MovieApiClientInterface
      * @param string $imdbId IMDB ID фильма
      * @return Response Возвращает объект ответа Guzzle с информацией о фильме
      */
-    public function sendRequest(string $imdbId): \GuzzleHttp\Psr7\Response
+    public function sendRequest(string $imdbId): \Psr\Http\Message\ResponseInterface
     {
         return $this->client->request('GET', $this->baseUrl, ['query' =>
             [

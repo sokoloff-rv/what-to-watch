@@ -4,14 +4,14 @@ namespace WhatToWatch\Services\MovieService;
 
 class MovieService 
 {
-    private MovieRepository $repository;
+    private MovieRepositoryInterface $repository;
 
     /**
      * Конструктор класса MovieService
      * 
-     * @param MovieRepository $repository Задаёт репозиторий для работы с фильмами
+     * @param MovieRepositoryInterface $repository Задаёт репозиторий для работы с фильмами
      */
-    public function __construct(MovieRepository $repository) 
+    public function __construct(MovieRepositoryInterface $repository) 
     {
         $this->repository = $repository;
     }
