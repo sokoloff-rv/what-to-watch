@@ -2,6 +2,8 @@
 
 namespace App\Http\Responses;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class UnauthResponse extends BaseResponse
 {
     private string $errorMessage;

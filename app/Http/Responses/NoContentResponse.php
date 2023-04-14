@@ -2,6 +2,8 @@
 
 namespace App\Http\Responses;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class NoContentResponse extends BaseResponse
 {
     public function __construct()
