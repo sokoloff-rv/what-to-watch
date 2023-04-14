@@ -9,7 +9,7 @@ class UserController extends Controller
     /**
      * Получение данных о пользователе
      */
-    public function show(string $id)
+    public function show()
     {
         //
     }
@@ -17,7 +17,7 @@ class UserController extends Controller
     /**
      * Обновление данных о пользователе
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         //
     }
