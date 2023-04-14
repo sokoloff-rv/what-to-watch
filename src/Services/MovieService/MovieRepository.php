@@ -8,8 +8,8 @@ class MovieRepository implements MovieRepositoryInterface
 
     /**
      * Конструктор класса MovieRepository
-     * 
-     * @param MovieApiClient $apiClient Клиент для работы с API сервиса, предоставляющего информацию по фильмам
+     *
+     * @param  MovieApiClient  $apiClient Клиент для работы с API сервиса, предоставляющего информацию по фильмам
      */
     public function __construct(MovieApiClient $apiClient)
     {
@@ -19,7 +19,7 @@ class MovieRepository implements MovieRepositoryInterface
     /**
      * Поиск фильма по его IMDB ID
      *
-     * @param string $imdbId IMDB ID фильма
+     * @param  string  $imdbId IMDB ID фильма
      * @return array|null Возвращает массив с информацией о фильме или null, если фильм не найден
      */
     public function findMovieById(string $imdbId): ?array
