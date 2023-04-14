@@ -7,7 +7,7 @@ use WhatToWatch\Services\MovieService\MovieApiClient;
 use WhatToWatch\Services\MovieService\MovieRepository;
 use WhatToWatch\Services\MovieService\MovieService;
 
-$client = new Client;
+$client = new Client();
 $apiClient = new MovieApiClient($client);
 $repository = new MovieRepository($apiClient);
 $service = new MovieService($repository);
