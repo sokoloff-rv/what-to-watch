@@ -11,7 +11,8 @@ class FailResponse extends BaseResponse
 
     public function __construct(
         string $errorMessage = null,
-        int $statusCode = null, Throwable $exception = null
+        int $statusCode = null,
+        Throwable $exception = null
     ) {
         if ($exception) {
             $this->errorMessage = $errorMessage ?? $exception->getMessage();
