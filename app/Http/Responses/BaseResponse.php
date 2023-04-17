@@ -11,7 +11,7 @@ abstract class BaseResponse implements Responsable
 {
     public function __construct(
         protected mixed $data = [],
-        public int $statusCode = Response::HTTP_OK,
+        public int $statusCode
     ) {
     }
 
@@ -31,7 +31,7 @@ abstract class BaseResponse implements Responsable
      *
      * @return array
      */
-    protected function prepareData(): array
+    protected function prepareData(): ?array
     {
         if ($this->data instanceof Arrayable) {
             return $this->data->toArray();

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\BadRequestResponse;
-use App\Http\Responses\NoContentResponse;
+use App\Http\Responses\FailResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -21,7 +21,7 @@ class AuthController extends Controller
             //
             return new SuccessResponse();
         } catch (\Exception $e) {
-            return new BadRequestResponse();
+            return new FailResponse(null, null, $e);
         }
     }
 
@@ -33,6 +33,6 @@ class AuthController extends Controller
     public function logout(): BaseResponse
     {
         //
-        return new NoContentResponse();
+        return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

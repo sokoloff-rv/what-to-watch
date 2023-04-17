@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\BadRequestResponse;
+use App\Http\Responses\FailResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegisterController extends Controller
 {
@@ -19,7 +21,7 @@ class RegisterController extends Controller
             //
             return new SuccessResponse();
         } catch (\Exception $e) {
-            return new BadRequestResponse();
+            return new FailResponse(null, null, $e);
         }
     }
 }

@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\UnauthResponse;
+use App\Http\Responses\FailResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class FavoriteController extends Controller
 {
@@ -17,7 +18,7 @@ class FavoriteController extends Controller
     public function index(): BaseResponse
     {
         if (/* проверка авторизации пользователя */) {
-            return new UnauthResponse();
+            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
         //
         return new SuccessResponse();
@@ -31,7 +32,7 @@ class FavoriteController extends Controller
     public function store(Request $request, string $id): BaseResponse
     {
         if (/* проверка авторизации пользователя */) {
-            return new UnauthResponse();
+            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
         //
         return new SuccessResponse();
@@ -45,7 +46,7 @@ class FavoriteController extends Controller
     public function destroy(string $id): BaseResponse
     {
         if (/* проверка авторизации пользователя */) {
-            return new UnauthResponse();
+            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
         //
         return new SuccessResponse();

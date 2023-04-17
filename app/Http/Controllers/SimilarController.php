@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\NotFoundResponse;
+use App\Http\Responses\FailResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SimilarController extends Controller
 {
@@ -16,7 +18,7 @@ class SimilarController extends Controller
     public function index(string $id): BaseResponse
     {
         if (!$id) {
-            return new NotFoundResponse();
+            return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
         }
         //
         return new SuccessResponse();
