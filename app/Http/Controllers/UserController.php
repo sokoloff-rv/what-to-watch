@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function show(): BaseResponse
     {
-        if (/* проверка авторизации пользователя */) {
+        if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
 
@@ -36,7 +36,7 @@ class UserController extends Controller
      */
     public function update(Request $request): BaseResponse
     {
-        if (/* проверка авторизации пользователя */) {
+        if (false) {
             return new FailResponse();
         }
 

@@ -32,7 +32,7 @@ class CommentController extends Controller
      */
     public function store(Request $request, string $filmId): BaseResponse
     {
-        if (/* проверка авторизации пользователя */) {
+        if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
 
@@ -51,7 +51,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, string $id): BaseResponse
     {
-        if (/* проверка авторизации пользователя */) {
+        if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
 
@@ -74,7 +74,7 @@ class CommentController extends Controller
      */
     public function destroy(string $id): BaseResponse
     {
-        if (/* проверка авторизации пользователя */) {
+        if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
 
