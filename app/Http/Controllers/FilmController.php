@@ -17,8 +17,12 @@ class FilmController extends Controller
      */
     public function index(Request $request, ?int $page, ?string $genre, ?string $status, ?string $order_by, ?string $order_to): BaseResponse
     {
-        //
-        return new SuccessResponse();
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 
     /**
@@ -46,8 +50,13 @@ class FilmController extends Controller
         if (!$id) {
             return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
         }
-        //
-        return new SuccessResponse();
+
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 
     /**

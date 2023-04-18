@@ -19,7 +19,12 @@ class SimilarController extends Controller
         if (!$id) {
             return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
         }
-        //
-        return new SuccessResponse();
+
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 }

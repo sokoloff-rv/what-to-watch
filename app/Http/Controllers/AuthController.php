@@ -32,7 +32,11 @@ class AuthController extends Controller
      */
     public function logout(): BaseResponse
     {
-        //
-        return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 }

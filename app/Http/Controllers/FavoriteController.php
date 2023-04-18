@@ -20,8 +20,13 @@ class FavoriteController extends Controller
         if (/* проверка авторизации пользователя */) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
-        //
-        return new SuccessResponse();
+
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 
     /**
@@ -34,8 +39,13 @@ class FavoriteController extends Controller
         if (/* проверка авторизации пользователя */) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
-        //
-        return new SuccessResponse();
+
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 
     /**
@@ -48,7 +58,12 @@ class FavoriteController extends Controller
         if (/* проверка авторизации пользователя */) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
         }
-        //
-        return new SuccessResponse();
+
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 }

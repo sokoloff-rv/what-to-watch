@@ -17,8 +17,12 @@ class PromoController extends Controller
      */
     public function index(): BaseResponse
     {
-        //
-        return new SuccessResponse();
+        try {
+            //
+            return new SuccessResponse();
+        } catch (\Exception $e) {
+            return new FailResponse(null, null, $e);
+        }
     }
 
     /**
