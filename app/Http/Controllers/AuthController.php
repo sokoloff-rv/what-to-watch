@@ -34,7 +34,7 @@ class AuthController extends Controller
     {
         try {
             //
-            return new SuccessResponse();
+            return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
