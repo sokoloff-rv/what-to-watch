@@ -13,6 +13,8 @@ class SuccessResponse extends BaseResponse
      */
     protected function makeResponseData(): ?array
     {
-        return $this->prepareData();
+        return [
+            'data' => $this->prepareData(),
+        ];
     }
 }

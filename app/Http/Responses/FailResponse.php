@@ -33,7 +33,7 @@ class FailResponse extends BaseResponse
     protected function makeResponseData(): ?array
     {
         return [
-            'error' => $this->errorMessage,
+            'message' => $this->errorMessage,
         ];
     }
 }
