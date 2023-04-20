@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE TYPE film_statuses AS ENUM('pending', 'moderate', 'ready');");
-
         Schema::create('film_status', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['pending', 'moderate', 'ready']);
@@ -26,6 +24,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('film_status');
-        DB::statement('DROP TYPE IF EXISTS film_statuses;');
     }
 };
