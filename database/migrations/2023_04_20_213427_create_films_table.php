@@ -20,15 +20,14 @@ return new class () extends Migration {
             $table->string('video_link')->nullable();
             $table->string('preview_video_link')->nullable();
             $table->text('description');
-            $table->date('release_date');
+            $table->string('director');
+            $table->year('released');
             $table->integer('run_time');
             $table->decimal('rating', 3, 1);
             $table->integer('scores_count');
             $table->string('imdb_id')->unique();
-            $table->unsignedBigInteger('status_id');
+            $table->enum('status', ['pending', 'moderate', 'ready']);
             $table->timestamps();
-
-            $table->foreign('status_id')->references('id')->on('film_status');
         });
     }
 
@@ -37,10 +36,6 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::table('films', function (Blueprint $table) {
-            $table->dropForeign(['status_id']);
-        });
-
         Schema::dropIfExists('films');
     }
 };

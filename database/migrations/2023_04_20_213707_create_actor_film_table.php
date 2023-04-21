@@ -10,7 +10,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('film_actors', function (Blueprint $table) {
+        Schema::create('actor_film', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('film_id');
             $table->unsignedBigInteger('actor_id');
@@ -26,11 +26,11 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::table('film_actors', function (Blueprint $table) {
+        Schema::table('actor_film', function (Blueprint $table) {
             $table->dropForeign(['film_id']);
             $table->dropForeign(['actor_id']);
         });
 
-        Schema::dropIfExists('film_actors');
+        Schema::dropIfExists('actor_film');
     }
 };
