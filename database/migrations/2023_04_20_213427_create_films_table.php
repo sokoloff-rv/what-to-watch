@@ -19,12 +19,12 @@ return new class () extends Migration {
             $table->string('background_color')->nullable();
             $table->string('video_link')->nullable();
             $table->string('preview_video_link')->nullable();
-            $table->text('description');
-            $table->string('director');
-            $table->year('released');
-            $table->integer('run_time');
-            $table->decimal('rating', 3, 1);
-            $table->integer('scores_count');
+            $table->text('description')->nullable();
+            $table->string('director')->nullable();
+            $table->year('released')->nullable();
+            $table->integer('run_time')->nullable();
+            $table->decimal('rating', 3, 1)->nullable();
+            $table->integer('scores_count')->nullable();
             $table->string('imdb_id')->unique();
             $table->enum('status', ['pending', 'moderate', 'ready']);
             $table->timestamps();
