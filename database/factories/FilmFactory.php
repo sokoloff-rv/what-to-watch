@@ -26,7 +26,7 @@ class FilmFactory extends Factory
             'rating' => $this->faker->randomFloat(1, 1, 5),
             'scores_count' => $this->faker->numberBetween(0, 10000),
             'imdb_id' => 'tt' . $this->faker->numberBetween(0000001, 9999999),
-            'status' => $this->faker->randomElement(['available', 'upcoming', 'archived']),
+            'status' => $this->faker->randomElement(['pending', 'moderate', 'ready']),
         ];
     }
 }

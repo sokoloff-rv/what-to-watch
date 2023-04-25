@@ -9,6 +9,7 @@ class Promo extends Model
 {
     use HasFactory;
 
+    protected $table = 'promo';
     protected $fillable = [
         'film_id',
     ];
