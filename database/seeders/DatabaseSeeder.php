@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
             FilmSeeder::class,
             CommentSeeder::class,
             PromoSeeder::class,
+            ActorFilmSeeder::class,
+            FilmGenreSeeder::class,
+            UserFavoriteSeeder::class,
         ]);
     }
 }
