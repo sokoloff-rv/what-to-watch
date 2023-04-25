@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Promo;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
@@ -18,8 +19,8 @@ class PromoController extends Controller
     public function index(): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            $promo = Promo::latest()->first();
+            return new SuccessResponse($promo);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
