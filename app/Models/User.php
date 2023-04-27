@@ -8,10 +8,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
-    const ROLE_USER = 'user';
-    const ROLE_MODERATOR = 'moderator';
+    public const ROLE_USER = 'user';
+    public const ROLE_MODERATOR = 'moderator';
 
     protected $fillable = [
         'name',
