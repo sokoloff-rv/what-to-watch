@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Genre;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
@@ -18,8 +19,8 @@ class GenreController extends Controller
     public function index(): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            $genres = Film::all();
+            return new SuccessResponse($genres);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Film;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
@@ -15,11 +16,12 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function index(Request $request, ?int $page, ?string $genre, ?string $status, ?string $order_by, ?string $order_to): BaseResponse
+    public function index(Request $request, ?int $page = null, ?string $genre = null, ?string $status = null, ?string $order_by = null, ?string $order_to = null): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            $pageQuantity = 8;
+            $films = Film::paginate($pageQuantity);
+            return new SuccessResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
@@ -45,15 +47,10 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function show(string $id): BaseResponse
+    public function show(Film $film): BaseResponse
     {
-        if (!$id) {
-            return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
-        }
-
         try {
-            //
-            return new SuccessResponse();
+            return new SuccessResponse($film);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
