@@ -19,7 +19,8 @@ class FilmController extends Controller
     public function index(Request $request, ?int $page = null, ?string $genre = null, ?string $status = null, ?string $order_by = null, ?string $order_to = null): BaseResponse
     {
         try {
-            $films = Film::all();
+            $pageQuantity = 8;
+            $films = Film::paginate($pageQuantity);
             return new SuccessResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
