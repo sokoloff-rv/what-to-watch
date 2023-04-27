@@ -10,6 +10,9 @@ class User extends Model
 {
     use HasFactory, Notifiable;
 
+    const ROLE_USER = 'user';
+    const ROLE_MODERATOR = 'moderator';
+
     protected $fillable = [
         'name',
         'email',
