@@ -46,4 +46,9 @@ class Film extends Model
     {
         return $this->belongsToMany(User::class, 'user_favorites');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
