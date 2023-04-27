@@ -32,7 +32,7 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(Request $request, string $filmId): BaseResponse
+    public function store(Request $request, Film $film): BaseResponse
     {
         if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
@@ -51,14 +51,10 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request, string $id): BaseResponse
+    public function update(Request $request, Comment $comment): BaseResponse
     {
         if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
-        if (!$id) {
-            return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
         }
 
         try {
@@ -74,14 +70,10 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function destroy(string $id): BaseResponse
+    public function destroy(Comment $comment): BaseResponse
     {
         if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
-        if (!$id) {
-            return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
         }
 
         try {

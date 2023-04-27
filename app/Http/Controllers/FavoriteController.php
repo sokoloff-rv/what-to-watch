@@ -34,7 +34,7 @@ class FavoriteController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(Request $request, string $id): BaseResponse
+    public function store(Request $request, Film $film): BaseResponse
     {
         if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
@@ -53,7 +53,7 @@ class FavoriteController extends Controller
      *
      * @return BaseResponse
      */
-    public function destroy(string $id): BaseResponse
+    public function destroy(Film $film): BaseResponse
     {
         if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
