@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Film;
 use App\Models\Promo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -12,7 +13,7 @@ class PromoFactory extends Factory
     public function definition()
     {
         return [
-            'film_id' => $this->faker->numberBetween(1, 5),
+            'film_id' => Film::factory(),
         ];
     }
 }
