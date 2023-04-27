@@ -16,7 +16,7 @@ class FailResponse extends BaseResponse
     ) {
         if ($exception) {
             $this->errorMessage = $errorMessage ?? $exception->getMessage();
-            $statusCode = $statusCode ?? $exception->getCode();
+            $statusCode = $statusCode ?? ($exception->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
         } else {
             $this->errorMessage = $errorMessage ?? 'Ошибка в теле запроса';
             $statusCode = $statusCode ?? Response::HTTP_BAD_REQUEST;

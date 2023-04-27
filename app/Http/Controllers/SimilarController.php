@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class SimilarController extends Controller
 {
@@ -14,12 +13,8 @@ class SimilarController extends Controller
      *
      * @return BaseResponse
      */
-    public function index(string $id): BaseResponse
+    public function index(Film $film): BaseResponse
     {
-        if (!$id) {
-            return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
-        }
-
         try {
             //
             return new SuccessResponse();

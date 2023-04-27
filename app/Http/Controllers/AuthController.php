@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use App\Http\Responses\BaseResponse;
-use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
+use App\Http\Responses\SuccessResponse;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -15,12 +16,20 @@ class AuthController extends Controller
      *
      * @return BaseResponse
      */
-    public function login(Request $request): BaseResponse
+    public function login(LoginRequest $request): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
-        } catch (\Exception $e) {
+            if (!Auth::attempt($request->validated())) {
+                abort(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+            }
+
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return new SuccessResponse([
+                'token' => $token,
+            ]);
+        } catch (\Exception$e) {
             return new FailResponse(null, null, $e);
         }
     }
@@ -33,9 +42,14 @@ class AuthController extends Controller
     public function logout(): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
-        } catch (\Exception $e) {
+            $user = Auth::user();
+            if ($user) {
+                $user->tokens()->delete();
+                return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
+            } else {
+                return new FailResponse(null, Response::HTTP_UNAUTHORIZED, new \Exception('Пользователь не авторизован!'));
+            }
+        } catch (\Exception$e) {
             return new FailResponse(null, null, $e);
         }
     }

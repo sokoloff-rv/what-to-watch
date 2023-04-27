@@ -61,14 +61,10 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request, string $id): BaseResponse
+    public function update(Request $request, Film $film): BaseResponse
     {
         if (false) {
             return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
-        if (!$id) {
-            return new FailResponse('Объект не найден', Response::HTTP_NOT_FOUND);
         }
 
         try {

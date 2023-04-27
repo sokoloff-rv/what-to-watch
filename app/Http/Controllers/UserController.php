@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
@@ -17,13 +18,11 @@ class UserController extends Controller
      */
     public function show(): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            //
-            return new SuccessResponse();
+            $user = Auth::user();
+            return new SuccessResponse([
+                'user' => $user,
+            ]);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
