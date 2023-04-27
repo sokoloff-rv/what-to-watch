@@ -40,9 +40,9 @@ Route::patch('/user', [UserController::class, 'update']);
 
 /* Фильмы */
 Route::get('/films', [FilmController::class, 'index']);
-Route::get('/films/{id}', [FilmController::class, 'show']);
+Route::get('/films/{film}', [FilmController::class, 'show']);
 Route::post('/films', [FilmController::class, 'store']);
-Route::patch('/films/{id}', [FilmController::class, 'update']);
+Route::patch('/films/{film}', [FilmController::class, 'update']);
 
 /* Жанры */
 Route::get('/genres', [GenreController::class, 'index']);
@@ -50,18 +50,18 @@ Route::patch('/genres/{genre}', [GenreController::class, 'update']);
 
 /* Избранное */
 Route::get('/favorite', [FavoriteController::class, 'index']);
-Route::post('/films/{id}/favorite/', [FavoriteController::class, 'store']);
-Route::delete('/films/{id}/favorite/', [FavoriteController::class, 'destroy']);
+Route::post('/films/{film}/favorite/', [FavoriteController::class, 'store']);
+Route::delete('/films/{film}/favorite/', [FavoriteController::class, 'destroy']);
 
 /* Похожие фильмы */
-Route::get('/films/{id}/similar', [SimilarController::class, 'index']);
+Route::get('/films/{film}/similar', [SimilarController::class, 'index']);
 
 /* Комментарии */
-Route::get('/films/{id}/comments', [CommentController::class, 'index']);
-Route::post('/films/{id}/comments', [CommentController::class, 'store']);
+Route::get('/films/{film}/comments', [CommentController::class, 'index']);
+Route::post('/films/{film}/comments', [CommentController::class, 'store']);
 Route::patch('/comments/{comment}', [CommentController::class, 'update']);
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 
 /* Промо */
 Route::get('/promo', [PromoController::class, 'index']);
-Route::post('/promo/{id}', [PromoController::class, 'store']);
+Route::post('/promo/{film}', [PromoController::class, 'store']);

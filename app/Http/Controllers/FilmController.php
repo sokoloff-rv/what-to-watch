@@ -46,14 +46,8 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function show(string $id): BaseResponse
+    public function show(Film $film): BaseResponse
     {
-        $film = Film::find($id);
-
-        if (!$film) {
-            return new FailResponse('Фильм не найден', Response::HTTP_NOT_FOUND);
-        }
-
         try {
             return new SuccessResponse($film);
         } catch (\Exception $e) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Film;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
@@ -16,10 +17,10 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function index(string $filmId): BaseResponse
+    public function index(Film $film): BaseResponse
     {
         try {
-            $comments = Comment::where('film_id', '=', $filmId)->get();
+            $comments = $film->comments;
             return new SuccessResponse($comments);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
