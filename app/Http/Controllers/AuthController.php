@@ -43,12 +43,8 @@ class AuthController extends Controller
     {
         try {
             $user = Auth::user();
-            if ($user) {
-                $user->tokens()->delete();
-                return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
-            } else {
-                return new FailResponse(null, Response::HTTP_UNAUTHORIZED, new \Exception('Пользователь не авторизован!'));
-            }
+            $user->tokens()->delete();
+            return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception$e) {
             return new FailResponse(null, null, $e);
         }
