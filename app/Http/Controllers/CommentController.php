@@ -54,13 +54,20 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
+        if (Gate::denies('comment-edit', $comment)) {
+            return new FailResponse('У вас нет разрешения на редактирование этого комментария', Response::HTTP_FORBIDDEN);
         }
 
         try {
-            //
-            return new SuccessResponse();
+            $validatedData = $request->validate([
+                'text' => 'required|string|min:50|max:400',
+                'rating' => 'required|integer|min:1|max:10',
+            ]);
+
+            $comment->update($validatedData);
+            $comment->save();
+
+            return new SuccessResponse($comment);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

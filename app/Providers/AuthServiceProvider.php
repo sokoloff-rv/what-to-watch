@@ -32,5 +32,13 @@ class AuthServiceProvider extends ServiceProvider
 
             return $user->id === $comment->user_id && $comment->doesNotHaveChildren();
         });
+
+        Gate::define('comment-edit', function (User $user, Comment $comment) {
+            if ($user->isModerator()) {
+                return true;
+            }
+
+            return $user->id === $comment->user_id;
+        });
     }
 }
