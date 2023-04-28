@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Film;
-use App\Models\Comment;
-use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
-use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
+use App\Http\Responses\SuccessResponse;
+use App\Models\Comment;
+use App\Models\Film;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
@@ -70,15 +71,15 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function destroy(Comment $comment): BaseResponse
+    public function destroy(Request $request, Comment $comment): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
+        if (Gate::denies('comment-delete', $comment)) {
+            return new FailResponse('У вас нет разрешения на удаление этого комментария', Response::HTTP_FORBIDDEN);
         }
 
         try {
-            //
-            return new SuccessResponse();
+            $comment->delete();
+            return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

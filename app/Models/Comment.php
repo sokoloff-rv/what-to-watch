@@ -37,4 +37,9 @@ class Comment extends Model
     {
         return $this->hasMany(Comment::class, 'parent_id');
     }
+
+    public function doesNotHaveChildren()
+    {
+        return $this->children()->count() === 0;
+    }
 }
