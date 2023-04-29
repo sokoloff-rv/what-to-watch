@@ -22,7 +22,7 @@ class CommentController extends Controller
     public function index(Film $film): BaseResponse
     {
         try {
-            $comments = $film->comments;
+            $comments = $film->comments()->get();
             return new SuccessResponse($comments);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);

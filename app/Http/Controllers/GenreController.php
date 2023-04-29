@@ -18,7 +18,7 @@ class GenreController extends Controller
     public function index(): BaseResponse
     {
         try {
-            $genres = Film::all();
+            $genres = Genre::all();
             return new SuccessResponse($genres);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -41,7 +41,6 @@ class GenreController extends Controller
             $genre->save();
 
             return new SuccessResponse($genre);
-            return new SuccessResponse();
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
