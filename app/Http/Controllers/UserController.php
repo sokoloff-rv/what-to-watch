@@ -34,10 +34,6 @@ class UserController extends Controller
      */
     public function update(Request $request): BaseResponse
     {
-        if (false) {
-            return new FailResponse();
-        }
-
         try {
             //
             return new SuccessResponse();

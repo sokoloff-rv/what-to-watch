@@ -17,10 +17,6 @@ class FavoriteController extends Controller
      */
     public function index(): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
             //
             return new SuccessResponse();
@@ -36,10 +32,6 @@ class FavoriteController extends Controller
      */
     public function store(Request $request, Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
             //
             return new SuccessResponse();
@@ -55,10 +47,6 @@ class FavoriteController extends Controller
      */
     public function destroy(Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
             //
             return new SuccessResponse();
