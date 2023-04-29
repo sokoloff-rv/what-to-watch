@@ -32,7 +32,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 /* Авторизация */
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 /* Пользователь */
 Route::middleware('auth:sanctum')->group(function () {
