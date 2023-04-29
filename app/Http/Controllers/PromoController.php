@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Film;
 use App\Models\Promo;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
@@ -33,13 +34,11 @@ class PromoController extends Controller
      */
     public function store(Request $request, Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            //
-            return new SuccessResponse();
+            $promo = new Promo(['film_id' => $film->id]);
+            $promo->save();
+
+            return new SuccessResponse($promo);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
