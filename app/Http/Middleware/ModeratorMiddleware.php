@@ -20,7 +20,7 @@ class ModeratorMiddleware
         /** @var User $user */
         $user = Auth::user();
 
-        if ($user && $user->isModerator()) {
+        if ($user->isModerator()) {
             return $next($request);
         }
 

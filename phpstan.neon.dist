@@ -11,6 +11,7 @@ parameters:
 
     ignoreErrors:
         - '#Method App\\Services\\AvatarService::saveAvatar\(\) should return bool but return statement is missing.#'
+        - '#Relation .* is not found in .* model#'
 
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php
