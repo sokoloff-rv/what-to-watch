@@ -9,6 +9,7 @@ use App\Models\Comment;
 use App\Models\Film;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
@@ -35,13 +36,20 @@ class CommentController extends Controller
      */
     public function store(Request $request, Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            //
-            return new SuccessResponse();
+            $validatedData = $request->validate([
+                'text' => 'required|string|min:50|max:400',
+                'rating' => 'required|integer|min:1|max:10',
+            ]);
+
+            $comment = new Comment();
+            $comment->text = $validatedData['text'];
+            $comment->rating = $validatedData['rating'];
+            $comment->user()->associate(Auth::user());
+            $comment->film()->associate($film);
+            $comment->save();
+
+            return new SuccessResponse($comment);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
