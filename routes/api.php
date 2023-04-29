@@ -43,14 +43,14 @@ Route::middleware('auth:sanctum')->group(function () {
 /* Фильмы */
 Route::get('/films', [FilmController::class, 'index']);
 Route::get('/films/{film}', [FilmController::class, 'show']);
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'moderator'])->group(function () {
     Route::post('/films', [FilmController::class, 'store']);
     Route::patch('/films/{film}', [FilmController::class, 'update']);
 });
 
 /* Жанры */
 Route::get('/genres', [GenreController::class, 'index']);
-Route::middleware('auth:sanctum')->patch('/genres/{genre}', [GenreController::class, 'update']);
+Route::middleware(['auth:sanctum', 'moderator'])->patch('/genres/{genre}', [GenreController::class, 'update']);
 
 /* Избранное */
 Route::middleware('auth:sanctum')->group(function () {
@@ -72,4 +72,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 /* Промо */
 Route::get('/promo', [PromoController::class, 'index']);
-Route::middleware('auth:sanctum')->post('/promo/{film}', [PromoController::class, 'store']);
+Route::middleware(['auth:sanctum', 'moderator'])->post('/promo/{film}', [PromoController::class, 'store']);
