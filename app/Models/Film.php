@@ -9,6 +9,10 @@ class Film extends Model
 {
     use HasFactory;
 
+    public const STATUS_READY = 'ready';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_MODERATE = 'moderate';
+
     protected $fillable = [
         'name',
         'poster_image',

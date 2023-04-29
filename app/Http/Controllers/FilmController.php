@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\BaseResponse;
+use App\Http\Responses\FailResponse;
+use App\Http\Responses\SuccessResponse;
 use App\Models\Film;
 use Illuminate\Http\Request;
-use App\Http\Responses\BaseResponse;
-use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\FailResponse;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class FilmController extends Controller
@@ -20,7 +21,13 @@ class FilmController extends Controller
     {
         try {
             $pageQuantity = 8;
-            $films = Film::paginate($pageQuantity);
+            $status = $request->query('status', Film::STATUS_READY);
+
+            if (Gate::denies('view-films-with-status', $status)) {
+                return new FailResponse("У вас нет разрешения на просмотр фильмов статусе $status", Response::HTTP_FORBIDDEN);
+            }
+
+            $films = Film::where('status', $status)->paginate($pageQuantity);
             return new SuccessResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
