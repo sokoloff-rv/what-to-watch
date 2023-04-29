@@ -41,9 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 /* Фильмы */
+Route::get('/films', [FilmController::class, 'index']);
 Route::get('/films/{film}', [FilmController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/films', [FilmController::class, 'index']);
     Route::post('/films', [FilmController::class, 'store']);
     Route::patch('/films/{film}', [FilmController::class, 'update']);
 });

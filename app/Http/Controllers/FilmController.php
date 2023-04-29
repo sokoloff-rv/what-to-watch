@@ -21,13 +21,28 @@ class FilmController extends Controller
     {
         try {
             $pageQuantity = 8;
+            $genre = $request->query('genre');
             $status = $request->query('status', Film::STATUS_READY);
+            $order_by = $request->query('order_by', Film::ORDER_BY_RELEASED);
+            $order_to = $request->query('order_to', Film::ORDER_TO_DESC);
 
             if (Gate::denies('view-films-with-status', $status)) {
                 return new FailResponse("У вас нет разрешения на просмотр фильмов статусе $status", Response::HTTP_FORBIDDEN);
             }
 
-            $films = Film::where('status', $status)->paginate($pageQuantity);
+            $films = Film::query()
+                ->when($genre, function ($query, $genre) {
+                    return $query->whereHas('genres', function ($query) use ($genre) {
+                        $query->where('name', $genre);
+                    });
+                })
+                ->when($status, function ($query, $status) {
+                    return $query->where('status', $status);
+                })
+                ->when($order_by, function ($query, $order_by) use ($order_to) {
+                    return $query->orderBy($order_by, $order_to);
+                })
+                ->paginate($pageQuantity);
             return new SuccessResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);

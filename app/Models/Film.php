@@ -13,6 +13,12 @@ class Film extends Model
     public const STATUS_PENDING = 'pending';
     public const STATUS_MODERATE = 'moderate';
 
+    public const ORDER_BY_RELEASED = 'released';
+    public const ORDER_BY_RATING = 'rating';
+
+    public const ORDER_TO_ASC = 'asc';
+    public const ORDER_TO_DESC = 'desc';
+
     protected $fillable = [
         'name',
         'poster_image',
