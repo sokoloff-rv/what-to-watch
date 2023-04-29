@@ -33,12 +33,15 @@ class GenreController extends Controller
      */
     public function update(Request $request, Genre $genre): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            //
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
+            $genre->update($validatedData);
+            $genre->save();
+
+            return new SuccessResponse($genre);
             return new SuccessResponse();
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
