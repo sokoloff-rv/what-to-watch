@@ -5,10 +5,13 @@ namespace Tests\Unit;
 use App\Models\User;
 use App\Models\Film;
 use App\Models\Comment;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class FilmTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function testFilmRating(): void
     {
         $usersCount = 3;
