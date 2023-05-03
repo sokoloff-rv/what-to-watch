@@ -2,14 +2,34 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;
+use App\Models\Film;
+use App\Models\Comment;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-
-// У каждого фильма есть рейтинг, который расчитывается как среднее арифметическое. Убедитесь, что свойство rating действительно возвращает правильный рейтинг, который основыывается на оценках этого фильма, оставленных пользователями.
 
 class FilmTest extends TestCase
 {
-    public function test_example(): void
+    public function testFilmRating(): void
     {
-        $this->assertTrue(true);
+        $usersCount = 3;
+        $sumOfRatings = 0;
+
+        $film = Film::factory()->create();
+        $users = User::factory()->count($usersCount)->create();
+
+        foreach ($users as $index => $user) {
+            $rating = rand(1, 5);
+            Comment::factory()->create([
+                'film_id' => $film->id,
+                'user_id' => $user->id,
+                'rating' => $rating,
+            ]);
+            $sumOfRatings += $rating;
+        }
+
+        $averageRating = $sumOfRatings / $usersCount;
+
+        $this->assertEquals($averageRating, $film->calculateRating());
     }
 }

@@ -11,7 +11,7 @@ class CommentTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testRegisterAuthorName()
+    public function testRegisterAuthorName(): void
     {
         $user = User::factory()->create(['name' => 'Иван Иванов']);
         $comment = Comment::factory()->for($user, 'user')->create(['is_external' => false]);
@@ -21,7 +21,7 @@ class CommentTest extends TestCase
         $this->assertEquals('Иван Иванов', $authorName);
     }
 
-    public function testAnonymousAuthorName()
+    public function testAnonymousAuthorName(): void
     {
         $comment = Comment::factory()->create(['is_external' => true]);
 

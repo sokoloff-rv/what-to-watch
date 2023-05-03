@@ -61,4 +61,12 @@ class Film extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function calculateRating()
+    {
+        $sumOfRatings = $this->comments->sum('rating');
+        $commentsCount = $this->comments->count();
+
+        return $sumOfRatings > 0 ? $sumOfRatings / $commentsCount : 0;
+    }
 }
