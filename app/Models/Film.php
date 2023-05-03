@@ -64,8 +64,8 @@ class Film extends Model
 
     public function calculateRating()
     {
-        $sumOfRatings = $this->comments->sum('rating');
-        $commentsCount = $this->comments->count();
+        $sumOfRatings = $this->comments()->sum('rating');
+        $commentsCount = $this->comments()->count();
 
         return $sumOfRatings > 0 ? $sumOfRatings / $commentsCount : 0;
     }
