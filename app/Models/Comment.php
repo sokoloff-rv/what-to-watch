@@ -9,6 +9,8 @@ class Comment extends Model
 {
     use HasFactory;
 
+    public const ANONYMOUS_NAME = 'Анонимный пользователь';
+
     protected $fillable = [
         'user_id',
         'film_id',
@@ -41,5 +43,13 @@ class Comment extends Model
     public function doesNotHaveChildren()
     {
         return $this->children()->count() === 0;
+    }
+
+    public function getAuthorName()
+    {
+        if ($this->is_external) {
+            return $this::ANONYMOUS_NAME;
+        }
+        return $this->user->name;
     }
 }
