@@ -39,7 +39,7 @@ class Film extends Model
 
     protected $casts = [
         'released' => 'integer',
-        'rating' => 'decimal:1',
+        'rating' => 'float',
     ];
 
     public function genres()
