@@ -76,7 +76,6 @@ class CommentController extends Controller
             ]);
 
             $comment->update($validatedData);
-            $comment->save();
 
             return new SuccessResponse($comment);
         } catch (\Exception $e) {

@@ -38,7 +38,6 @@ class GenreController extends Controller
             ]);
 
             $genre->update($validatedData);
-            $genre->save();
 
             return new SuccessResponse($genre);
         } catch (\Exception $e) {
