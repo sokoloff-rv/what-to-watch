@@ -34,8 +34,7 @@ class PromoController extends Controller
     public function store(Request $request, Film $film): BaseResponse
     {
         try {
-            $promo = new Promo(['film_id' => $film->id]);
-            $promo->save();
+            $promo = Promo::create(['film_id' => $film->id]);
 
             return new SuccessResponse($promo);
         } catch (\Exception $e) {
