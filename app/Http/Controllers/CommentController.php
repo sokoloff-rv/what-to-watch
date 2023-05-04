@@ -42,12 +42,11 @@ class CommentController extends Controller
                 'rating' => 'required|integer|min:1|max:10',
             ]);
 
-            $comment = new Comment();
-            $comment->text = $validatedData['text'];
-            $comment->rating = $validatedData['rating'];
-            $comment->user()->associate(Auth::user());
-            $comment->film()->associate($film);
-            $comment->save();
+            $comment = $film->comments()->create([
+                'text' => $validatedData['text'],
+                'rating' => $validatedData['rating'],
+                'user_id' => Auth::user()->id,
+            ]);
 
             return new SuccessResponse($comment);
         } catch (\Exception $e) {
