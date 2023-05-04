@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genre;
-use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
+use App\Http\Requests\GenreRequest;
 
 class GenreController extends Controller
 {
@@ -30,15 +30,12 @@ class GenreController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request, Genre $genre): BaseResponse
+    public function update(GenreRequest $request, Genre $genre): BaseResponse
     {
         try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
+            $genre->update([
+                'name' => $request->input('name'),
             ]);
-
-            $genre->update($validatedData);
-            $genre->save();
 
             return new SuccessResponse($genre);
         } catch (\Exception $e) {
