@@ -19,4 +19,11 @@ class UserFactory extends Factory
             'role' => User::ROLE_USER,
         ];
     }
+
+    public function moderator()
+    {
+        return $this->state([
+            'role' => User::ROLE_MODERATOR,
+        ]);
+    }
 }

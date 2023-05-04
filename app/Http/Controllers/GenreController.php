@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genre;
-use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
-use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\GenreRequest;
 
 class GenreController extends Controller
 {
@@ -19,7 +18,7 @@ class GenreController extends Controller
     public function index(): BaseResponse
     {
         try {
-            $genres = Film::all();
+            $genres = Genre::all();
             return new SuccessResponse($genres);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -31,15 +30,14 @@ class GenreController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request, Genre $genre): BaseResponse
+    public function update(GenreRequest $request, Genre $genre): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            //
-            return new SuccessResponse();
+            $genre->update([
+                'name' => $request->input('name'),
+            ]);
+
+            return new SuccessResponse($genre);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

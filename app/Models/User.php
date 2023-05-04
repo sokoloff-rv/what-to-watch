@@ -39,4 +39,9 @@ class User extends Model implements Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function isModerator(): bool
+    {
+        return $this->role === self::ROLE_MODERATOR;
+    }
 }

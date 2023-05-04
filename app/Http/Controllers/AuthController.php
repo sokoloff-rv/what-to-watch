@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
@@ -23,6 +24,7 @@ class AuthController extends Controller
                 abort(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
             }
 
+            /** @var User $user */
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -42,13 +44,10 @@ class AuthController extends Controller
     public function logout(): BaseResponse
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
-            if ($user) {
-                $user->tokens()->delete();
-                return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
-            } else {
-                return new FailResponse(null, Response::HTTP_UNAUTHORIZED, new \Exception('Пользователь не авторизован!'));
-            }
+            $user->tokens()->delete();
+            return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception$e) {
             return new FailResponse(null, null, $e);
         }

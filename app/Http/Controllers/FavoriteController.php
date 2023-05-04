@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Film;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
@@ -17,10 +17,6 @@ class FavoriteController extends Controller
      */
     public function index(): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
             //
             return new SuccessResponse();
@@ -36,10 +32,6 @@ class FavoriteController extends Controller
      */
     public function store(Request $request, Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
             //
             return new SuccessResponse();
@@ -55,10 +47,6 @@ class FavoriteController extends Controller
      */
     public function destroy(Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
             //
             return new SuccessResponse();

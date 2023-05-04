@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Film extends Model
 {
     use HasFactory;
+
+    public const STATUS_READY = 'ready';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_MODERATE = 'moderate';
+
+    public const ORDER_BY_RELEASED = 'released';
+    public const ORDER_BY_RATING = 'rating';
+
+    public const ORDER_TO_ASC = 'asc';
+    public const ORDER_TO_DESC = 'desc';
 
     protected $fillable = [
         'name',

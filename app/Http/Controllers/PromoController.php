@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Film;
 use App\Models\Promo;
 use Illuminate\Http\Request;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class PromoController extends Controller
 {
@@ -33,13 +33,10 @@ class PromoController extends Controller
      */
     public function store(Request $request, Film $film): BaseResponse
     {
-        if (false) {
-            return new FailResponse('Необходима авторизация', Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            //
-            return new SuccessResponse();
+            $promo = Promo::create(['film_id' => $film->id]);
+
+            return new SuccessResponse($promo);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
