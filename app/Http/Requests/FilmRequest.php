@@ -17,7 +17,9 @@ class FilmRequest extends FormRequest
         return [
             'page' => 'nullable|integer|min:1',
             'genre' => 'nullable|string|exists:genres,name',
-            'status' => 'nullable|string|in:' . implode(',', [
+            'status' => 'nullable|string|in:' . implode(
+                ',',
+                [
                 Film::STATUS_READY,
                 Film::STATUS_PENDING,
                 Film::STATUS_MODERATE]
