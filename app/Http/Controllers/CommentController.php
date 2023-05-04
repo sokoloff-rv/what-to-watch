@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
+use App\Models\User;
 use App\Models\Comment;
 use App\Models\Film;
 use Illuminate\Http\Request;
@@ -42,10 +43,13 @@ class CommentController extends Controller
                 'rating' => 'required|integer|min:1|max:10',
             ]);
 
+            /** @var User|null $user */
+            $user = Auth::user();
+
             $comment = $film->comments()->create([
                 'text' => $validatedData['text'],
                 'rating' => $validatedData['rating'],
-                'user_id' => Auth::user()->id,
+                'user_id' => $user->id,
             ]);
 
             return new SuccessResponse($comment);
