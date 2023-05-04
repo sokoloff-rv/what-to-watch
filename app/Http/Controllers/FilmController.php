@@ -6,6 +6,7 @@ use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Film;
+use App\Http\Requests\FilmRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,10 +18,11 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function index(Request $request, ?int $page = null, ?string $genre = null, ?string $status = null, ?string $order_by = null, ?string $order_to = null): BaseResponse
+    public function index(FilmRequest $request): BaseResponse
     {
         try {
             $pageQuantity = 8;
+            $page = $request->query('page');
             $genre = $request->query('genre');
             $status = $request->query('status', Film::STATUS_READY);
             $order_by = $request->query('order_by', Film::ORDER_BY_RELEASED);
