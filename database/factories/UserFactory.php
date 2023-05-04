@@ -16,7 +16,14 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('password'),
             'avatar' => $this->faker->imageUrl(63, 63, 'people'),
-            'role' => User::ROLE_MODERATOR,
+            'role' => User::ROLE_USER,
         ];
+    }
+
+    public function moderator()
+    {
+        return $this->state([
+            'role' => User::ROLE_MODERATOR,
+        ]);
     }
 }
