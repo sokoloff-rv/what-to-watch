@@ -39,9 +39,7 @@ class FilmController extends Controller
                 ->when($status, function ($query, $status) {
                     return $query->where('status', $status);
                 })
-                ->when($order_by, function ($query, $order_by) use ($order_to) {
-                    return $query->orderBy($order_by, $order_to);
-                })
+                ->orderBy($order_by, $order_to)
                 ->paginate($pageQuantity);
             return new SuccessResponse($films);
         } catch (\Exception $e) {
