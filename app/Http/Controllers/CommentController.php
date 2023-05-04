@@ -8,6 +8,7 @@ use App\Http\Responses\SuccessResponse;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Film;
+use App\Http\Requests\CommentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -35,20 +36,15 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(Request $request, Film $film): BaseResponse
+    public function store(CommentRequest $request, Film $film): BaseResponse
     {
         try {
-            $validatedData = $request->validate([
-                'text' => 'required|string|min:50|max:400',
-                'rating' => 'required|integer|min:1|max:10',
-            ]);
-
             /** @var User|null $user */
             $user = Auth::user();
 
             $comment = $film->comments()->create([
-                'text' => $validatedData['text'],
-                'rating' => $validatedData['rating'],
+                'text' => $request->input('text'),
+                'rating' => $request->input('rating'),
                 'user_id' => $user->id,
             ]);
 
@@ -63,19 +59,17 @@ class CommentController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request, Comment $comment): BaseResponse
+    public function update(CommentRequest $request, Comment $comment): BaseResponse
     {
         if (Gate::denies('comment-edit', $comment)) {
             return new FailResponse('У вас нет разрешения на редактирование этого комментария', Response::HTTP_FORBIDDEN);
         }
 
         try {
-            $validatedData = $request->validate([
-                'text' => 'required|string|min:50|max:400',
-                'rating' => 'required|integer|min:1|max:10',
+            $comment->update([
+                'text' => $request->input('text'),
+                'rating' => $request->input('rating'),
             ]);
-
-            $comment->update($validatedData);
 
             return new SuccessResponse($comment);
         } catch (\Exception $e) {
