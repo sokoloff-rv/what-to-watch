@@ -64,10 +64,8 @@ class Film extends Model
 
     public function calculateRating()
     {
-        $sumOfRatings = $this->comments()->sum('rating');
-        $commentsCount = $this->comments()->count();
-        $averageRating = $sumOfRatings > 0 ? $sumOfRatings / $commentsCount : 0;
-        $averageRating = round($averageRating, 1);
+        $averageRating = $this->comments()->avg('rating');
+        $averageRating = $averageRating ? round($averageRating, 1) : 0;
 
         $this->saveRating($averageRating);
 

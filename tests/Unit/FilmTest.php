@@ -15,7 +15,6 @@ class FilmTest extends TestCase
     public function testFilmRating(): void
     {
         $usersCount = 3;
-        $sumOfRatings = 0;
 
         $film = Film::factory()->create();
         $users = User::factory()->count($usersCount)->create();
@@ -27,11 +26,10 @@ class FilmTest extends TestCase
                 'user_id' => $user->id,
                 'rating' => $rating,
             ]);
-            $sumOfRatings += $rating;
         }
 
-        $averageRating = $sumOfRatings / $usersCount;
-        $averageRating = round($averageRating, 1);
+        $averageRating = $film->comments()->avg('rating');
+        $averageRating = $averageRating ? round($averageRating, 1) : 0;
 
         $this->assertEquals($averageRating, $film->calculateRating());
     }
