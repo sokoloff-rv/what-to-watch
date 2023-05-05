@@ -68,8 +68,6 @@ class Film extends Model
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
 
         $this->saveRating($averageRating);
-
-        return $averageRating;
     }
 
     public function saveRating(float $rating)

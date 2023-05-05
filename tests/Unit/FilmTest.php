@@ -25,10 +25,11 @@ class FilmTest extends TestCase
                 'user_id' => $user->id,
             ]);
         }
+        $film->calculateRating();
 
         $averageRating = $film->comments()->avg('rating');
         $averageRating = $averageRating ? round($averageRating, 1) : 0;
 
-        $this->assertEquals($averageRating, $film->calculateRating());
+        $this->assertEquals($averageRating, $film->rating);
     }
 }
