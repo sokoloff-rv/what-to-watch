@@ -31,6 +31,7 @@ class FilmTest extends TestCase
         }
 
         $averageRating = $sumOfRatings / $usersCount;
+        $averageRating = round($averageRating, 1);
 
         $this->assertEquals($averageRating, $film->calculateRating());
     }
