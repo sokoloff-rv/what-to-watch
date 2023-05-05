@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read User $user
+ */
 class Comment extends Model
 {
     use HasFactory;
+
+    public const ANONYMOUS_NAME = 'Анонимный пользователь';
 
     protected $fillable = [
         'user_id',
@@ -16,6 +21,10 @@ class Comment extends Model
         'text',
         'rating',
         'is_external',
+    ];
+
+    protected $appends = [
+        'author_name',
     ];
 
     public function user()
@@ -41,5 +50,13 @@ class Comment extends Model
     public function doesNotHaveChildren()
     {
         return $this->children()->count() === 0;
+    }
+
+    protected function getAuthorNameAttribute()
+    {
+        if ($this->is_external) {
+            return $this::ANONYMOUS_NAME;
+        }
+        return $this->user->name;
     }
 }

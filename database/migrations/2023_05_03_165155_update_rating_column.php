@@ -10,8 +10,8 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->boolean('is_external')->default(0)->change();
+        Schema::table('films', function (Blueprint $table) {
+            $table->float('rating')->nullable()->change();
         });
     }
 
@@ -20,8 +20,8 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->boolean('is_external')->change();
+        Schema::table('films', function (Blueprint $table) {
+            $table->decimal('rating', 8, 1)->nullable()->change();
         });
     }
 };

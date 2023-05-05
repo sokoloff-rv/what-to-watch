@@ -39,7 +39,7 @@ class Film extends Model
 
     protected $casts = [
         'released' => 'integer',
-        'rating' => 'decimal:1',
+        'rating' => 'float',
     ];
 
     public function genres()
@@ -60,5 +60,19 @@ class Film extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function calculateRating()
+    {
+        $averageRating = $this->comments()->avg('rating');
+        $averageRating = $averageRating ? round($averageRating, 1) : 0;
+
+        $this->saveRating($averageRating);
+    }
+
+    public function saveRating(float $rating)
+    {
+        $this->rating = $rating;
+        $this->save();
     }
 }
