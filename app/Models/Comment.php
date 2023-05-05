@@ -52,7 +52,7 @@ class Comment extends Model
         return $this->children()->count() === 0;
     }
 
-    public function getAuthorNameAttribute()
+    protected function getAuthorNameAttribute()
     {
         if ($this->is_external) {
             return $this::ANONYMOUS_NAME;
