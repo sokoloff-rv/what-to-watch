@@ -23,6 +23,10 @@ class Comment extends Model
         'is_external',
     ];
 
+    protected $appends = [
+        'author_name',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -48,7 +52,7 @@ class Comment extends Model
         return $this->children()->count() === 0;
     }
 
-    public function getAuthorName()
+    public function getAuthorNameAttribute()
     {
         if ($this->is_external) {
             return $this::ANONYMOUS_NAME;

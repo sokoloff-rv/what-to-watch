@@ -16,7 +16,7 @@ class CommentTest extends TestCase
         $user = User::factory()->create(['name' => 'Иван Иванов']);
         $comment = Comment::factory()->for($user, 'user')->create(['is_external' => false]);
 
-        $authorName = $comment->getAuthorName();
+        $authorName = $comment->author_name;
 
         $this->assertEquals('Иван Иванов', $authorName);
     }
@@ -25,7 +25,7 @@ class CommentTest extends TestCase
     {
         $comment = Comment::factory()->create(['is_external' => true]);
 
-        $authorName = $comment->getAuthorName();
+        $authorName = $comment->author_name;
 
         $this->assertEquals(Comment::ANONYMOUS_NAME, $authorName);
     }
