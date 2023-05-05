@@ -20,11 +20,9 @@ class FilmTest extends TestCase
         $users = User::factory()->count($usersCount)->create();
 
         foreach ($users as $index => $user) {
-            $rating = rand(1, 5);
             Comment::factory()->create([
                 'film_id' => $film->id,
                 'user_id' => $user->id,
-                'rating' => $rating,
             ]);
         }
 

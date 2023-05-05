@@ -18,7 +18,7 @@ class CommentFactory extends Factory
             'film_id' => Film::factory(),
             'parent_id' => null,
             'text' => $this->faker->paragraph(),
-            'rating' => $this->faker->numberBetween(1, 5),
+            'rating' => $this->faker->numberBetween(1, 10),
             'is_external' => false,
         ];
     }
