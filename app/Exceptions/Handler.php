@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -64,6 +65,15 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'message' => 'Запрашиваемая страница не существует.',
             ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($exception instanceof ValidationException && $request->expectsJson()) {
+            $errors = $exception->errors();
+            $response = [
+                'message' => 'Переданные данные не корректны.',
+                'errors' => $errors,
+            ];
+            return response()->json($response, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return parent::render($request, $exception);
