@@ -18,7 +18,7 @@ class CommentControllerTest extends TestCase
         return [
             'data' => [
                 'id',
-                'parent_id',
+                'comment_id',
                 'film_id',
                 'text',
                 'rating',
@@ -47,7 +47,7 @@ class CommentControllerTest extends TestCase
             'data' => [
                 '*' => [
                     'id',
-                    'parent_id',
+                    'comment_id',
                     'film_id',
                     'text',
                     'rating',
@@ -117,7 +117,7 @@ class CommentControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure($this->getTypicalCommentStructure());
-        $response->assertJsonPath('data.parent_id', null);
+        $response->assertJsonPath('data.comment_id', null);
     }
 
     public function testStoreValidationError()
@@ -151,14 +151,14 @@ class CommentControllerTest extends TestCase
         $data = [
             'text' => 'Это текст тестового комментария, с помощью которого осуществляется тестирование функционала комментариев.',
             'rating' => 8,
-            'parent_id' => $parentComment->id,
+            'comment_id' => $parentComment->id,
         ];
 
         $response = $this->actingAs($user)->postJson("/api/films/{$film->id}/comments", $data);
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure($this->getTypicalCommentStructure());
-        $response->assertJsonPath('data.parent_id', $parentComment->id);
+        $response->assertJsonPath('data.comment_id', $parentComment->id);
     }
 
     public function testUpdateUnauthorized()
@@ -311,7 +311,7 @@ class CommentControllerTest extends TestCase
 
         $childrenComments = Comment::factory()->count($childrenCount)->create([
             'film_id' => $comment->film_id,
-            'parent_id' => $comment->id,
+            'comment_id' => $comment->id,
         ]);
 
         $response = $this->actingAs($user)->deleteJson("/api/comments/{$comment->id}");

@@ -17,7 +17,7 @@ class Comment extends Model
     protected $fillable = [
         'user_id',
         'film_id',
-        'parent_id',
+        'comment_id',
         'text',
         'rating',
         'is_external',
@@ -39,12 +39,12 @@ class Comment extends Model
 
     public function parent()
     {
-        return $this->belongsTo(Comment::class, 'parent_id');
+        return $this->belongsTo(Comment::class, 'comment_id');
     }
 
     public function children()
     {
-        return $this->hasMany(Comment::class, 'parent_id');
+        return $this->hasMany(Comment::class, 'comment_id');
     }
 
     public function doesNotHaveChildren()

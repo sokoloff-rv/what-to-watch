@@ -14,7 +14,7 @@ return new class () extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('film_id');
-            $table->unsignedBigInteger('parent_id')->nullable()->constrained('comments');
+            $table->unsignedBigInteger('comment_id')->nullable()->constrained('comments');
             $table->text('text');
             $table->integer('rating');
             $table->boolean('is_external');
@@ -33,7 +33,7 @@ return new class () extends Migration {
         Schema::table('comments', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropForeign(['film_id']);
-            $table->dropForeign(['parent_id']);
+            $table->dropForeign(['comment_id']);
         });
 
         Schema::dropIfExists('comments');
