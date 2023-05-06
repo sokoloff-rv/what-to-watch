@@ -12,7 +12,7 @@ class Comment extends Model
 {
     use HasFactory;
 
-    public const ANONYMOUS_NAME = 'Анонимный пользователь';
+    public const ANONYMOUS_NAME = 'Гость';
 
     protected $fillable = [
         'user_id',
