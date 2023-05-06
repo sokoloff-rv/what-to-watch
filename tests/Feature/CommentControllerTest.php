@@ -137,4 +137,87 @@ class CommentControllerTest extends TestCase
         $response->assertJsonPath('data.parent_id', $parentComment->id);
     }
 
+    public function testUpdateUnauthorized()
+    {
+        $comment = Comment::factory()->create();
+
+        $data = [
+            'text' => 'Обновленный текст тестового комментария достаточной длины для прохождения валидации.',
+            'rating' => 9,
+        ];
+
+        $response = $this->patchJson("/api/comments/{$comment->id}", $data);
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testUpdateForbidden()
+    {
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
+
+        $data = [
+            'text' => 'Обновленный текст тестового комментария достаточной длины для прохождения валидации.',
+            'rating' => 9,
+        ];
+
+        $response = $this->actingAs($user)->patchJson("/api/comments/{$comment->id}", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testUpdateSuccess()
+    {
+        $comment = Comment::factory()->create();
+
+        $data = [
+            'text' => 'Обновленный текст тестового комментария достаточной длины для прохождения валидации.',
+            'rating' => 9,
+        ];
+
+        $response = $this->actingAs($comment->user)->patchJson("/api/comments/{$comment->id}", $data);
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'film_id',
+                'parent_id',
+                'text',
+                'rating',
+                'user_id',
+                'author_name',
+            ],
+        ]);
+        $response->assertJsonPath('data.text', $data['text']);
+        $response->assertJsonPath('data.rating', $data['rating']);
+    }
+
+    public function testUpdateValidationError()
+    {
+        $comment = Comment::factory()->create();
+
+        $data = [
+            'text' => 'Короткий неправильный комментарий.',
+            'rating' => 11,
+        ];
+
+        $response = $this->actingAs($comment->user)->patchJson("/api/comments/{$comment->id}", $data);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJson([
+            'message' => 'Переданные данные не корректны.',
+        ]);
+        $response->assertJsonValidationErrors([
+            'text',
+            'rating',
+        ]);
+    }
+
 }
