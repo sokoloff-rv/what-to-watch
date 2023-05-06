@@ -43,6 +43,7 @@ class CommentController extends Controller
             $user = Auth::user();
 
             $comment = $film->comments()->create([
+                'parent_id' => $request->get('parent_id', null),
                 'text' => $request->input('text'),
                 'rating' => $request->input('rating'),
                 'user_id' => $user->id,
