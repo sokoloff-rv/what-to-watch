@@ -54,4 +54,15 @@ class Handler extends ExceptionHandler
         ? response()->json(['message' => 'Запрос требует аутентификации.'], Response::HTTP_UNAUTHORIZED)
         : redirect()->guest($exception->redirectTo() ?? route('login'));
     }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof NotFoundHttpException && $request->expectsJson()) {
+            return response()->json([
+                'message' => 'Запрашиваемая страница не существует.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return parent::render($request, $exception);
+    }
 }

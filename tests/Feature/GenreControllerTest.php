@@ -57,7 +57,7 @@ class GenreControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Неавторизованное действие.',
+            'message' => 'Запрос требует аутентификации.',
         ]);
     }
 
@@ -94,10 +94,10 @@ class GenreControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $response->assertJson([
-            'message' => 'Поле Название обязательно.',
+            'message' => 'Переданные данные не корректны.',
             'errors' => [
                 'name' => [
-                    'Поле Название обязательно.',
+                    'Поле Название обязательно для заполнения.',
                 ],
             ],
         ]);
