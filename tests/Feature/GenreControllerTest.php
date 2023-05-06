@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Models\Genre;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\TestCase;
 
 class GenreControllerTest extends TestCase
 {
@@ -22,9 +23,83 @@ class GenreControllerTest extends TestCase
             'data' => [
                 '*' => [
                     'id',
-                    'name'
-                ]
-            ]
+                    'name',
+                ],
+            ],
+        ]);
+    }
+
+    public function testUpdateUnauthorized()
+    {
+        $genre = Genre::factory()->create();
+        $newName = 'Новый жанр';
+
+        $response = $this->patchJson("/api/genres/{$genre->id}", [
+            'name' => $newName,
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testUpdateForbidden()
+    {
+        $genre = Genre::factory()->create();
+        $user = User::factory()->create();
+        $newName = 'Новый жанр';
+
+        $response = $this->actingAs($user)
+            ->patchJson("/api/genres/{$genre->id}", [
+                'name' => $newName,
+            ]);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $response->assertJson([
+            'message' => 'Неавторизованное действие.',
+        ]);
+    }
+
+    public function testUpdateSuccess()
+    {
+        $genre = Genre::factory()->create();
+        $user = User::factory()->moderator()->create();
+        $newName = 'Новый жанр';
+
+        $response = $this->actingAs($user)
+            ->patchJson("/api/genres/{$genre->id}", [
+                'name' => $newName,
+            ]);
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJson([
+            'data' => [
+                'id' => $genre->id,
+                'name' => $newName,
+            ],
+        ]);
+    }
+
+    public function testUpdateValidationError()
+    {
+        $genre = Genre::factory()->create();
+        $user = User::factory()->moderator()->create();
+        $newName = '';
+
+        $response = $this->actingAs($user)
+            ->patchJson("/api/genres/{$genre->id}", [
+                'name' => $newName,
+            ]);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJson([
+            'message' => 'Поле Название обязательно.',
+            'errors' => [
+                'name' => [
+                    'Поле Название обязательно.',
+                ],
+            ],
         ]);
     }
 }
