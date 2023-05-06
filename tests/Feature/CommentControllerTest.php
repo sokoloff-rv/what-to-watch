@@ -13,6 +13,21 @@ class CommentControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function getTypicalCommentStructure(): array
+    {
+        return [
+            'data' => [
+                'id',
+                'parent_id',
+                'film_id',
+                'text',
+                'rating',
+                'user_id',
+                'author_name',
+            ],
+        ];
+    }
+
     public function testIndex(): void
     {
         $user = User::factory()->create();
@@ -29,14 +44,13 @@ class CommentControllerTest extends TestCase
             'data' => [
                 '*' => [
                     'id',
-                    'film_id',
                     'parent_id',
+                    'film_id',
                     'text',
                     'rating',
-                    'is_external',
-                    'created_at',
-                    'updated_at',
+                    'user_id',
                     'author_name',
+                    'is_external',
                 ],
             ],
         ]);
@@ -72,17 +86,7 @@ class CommentControllerTest extends TestCase
         $response = $this->actingAs($user)->postJson("/api/films/{$film->id}/comments", $data);
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonStructure([
-            'data' => [
-                'id',
-                'parent_id',
-                'film_id',
-                'text',
-                'rating',
-                'user_id',
-                'author_name',
-            ],
-        ]);
+        $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.parent_id', null);
     }
 
@@ -123,17 +127,7 @@ class CommentControllerTest extends TestCase
         $response = $this->actingAs($user)->postJson("/api/films/{$film->id}/comments", $data);
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonStructure([
-            'data' => [
-                'id',
-                'parent_id',
-                'film_id',
-                'text',
-                'rating',
-                'user_id',
-                'author_name',
-            ],
-        ]);
+        $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.parent_id', $parentComment->id);
     }
 
@@ -184,17 +178,7 @@ class CommentControllerTest extends TestCase
         $response = $this->actingAs($comment->user)->patchJson("/api/comments/{$comment->id}", $data);
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonStructure([
-            'data' => [
-                'id',
-                'film_id',
-                'parent_id',
-                'text',
-                'rating',
-                'user_id',
-                'author_name',
-            ],
-        ]);
+        $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.text', $data['text']);
         $response->assertJsonPath('data.rating', $data['rating']);
     }
@@ -217,6 +201,43 @@ class CommentControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'text',
             'rating',
+        ]);
+    }
+
+    public function testDestroyUnauthorized()
+    {
+        $comment = Comment::factory()->create();
+
+        $response = $this->deleteJson("/api/comments/{$comment->id}");
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testDestroyForbidden()
+    {
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
+
+        $response = $this->actingAs($user)->deleteJson("/api/comments/{$comment->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testDestroySuccess()
+    {
+        $comment = Comment::factory()->create();
+
+        $response = $this->actingAs($comment->user)->deleteJson("/api/comments/{$comment->id}");
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $this->assertDatabaseMissing('comments', [
+            'id' => $comment->id,
         ]);
     }
 
