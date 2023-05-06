@@ -90,7 +90,11 @@ class CommentController extends Controller
         }
 
         try {
+            if ($comment->children()->count() > 0) {
+                $comment->children()->delete();
+            }
             $comment->delete();
+
             return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);

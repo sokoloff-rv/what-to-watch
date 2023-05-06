@@ -24,6 +24,7 @@ class CommentControllerTest extends TestCase
                 'rating',
                 'user_id',
                 'author_name',
+                'created_at',
             ],
         ];
     }
@@ -32,7 +33,9 @@ class CommentControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $film = Film::factory()->create();
-        Comment::factory()->count(10)->create([
+        $commentCount = 10;
+
+        Comment::factory()->count($commentCount)->create([
             'film_id' => $film->id,
             'user_id' => $user->id,
         ]);
@@ -51,9 +54,36 @@ class CommentControllerTest extends TestCase
                     'user_id',
                     'author_name',
                     'is_external',
+                    'created_at',
                 ],
             ],
         ]);
+
+        $testComments = $response->json('data');
+        $dbComments = Comment::where('film_id', $film->id)
+            ->orderByDesc('created_at')
+            ->get()
+            ->toArray();
+
+        $this->assertEquals($dbComments, $testComments);
+    }
+
+    public function testExternalCommentAuthorName()
+    {
+        $film = Film::factory()->create();
+
+        Comment::factory()->create([
+            'film_id' => $film->id,
+            'is_external' => true,
+        ]);
+
+        $response = $this->getJson("/api/films/{$film->id}/comments");
+        $comments = $response->json('data');
+
+        $response->assertStatus(Response::HTTP_OK);
+        foreach ($comments as $comment) {
+            $this->assertEquals(Comment::ANONYMOUS_NAME, $comment['author_name']);
+        }
     }
 
     public function testStoreUnauthorized()
@@ -183,6 +213,24 @@ class CommentControllerTest extends TestCase
         $response->assertJsonPath('data.rating', $data['rating']);
     }
 
+    public function testUpdateByModeratorSuccess()
+    {
+        $user = User::factory()->moderator()->create();
+        $comment = Comment::factory()->create();
+
+        $data = [
+            'text' => 'Обновленный текст тестового комментария достаточной длины для прохождения валидации.',
+            'rating' => 9,
+        ];
+
+        $response = $this->actingAs($user)->patchJson("/api/comments/{$comment->id}", $data);
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure($this->getTypicalCommentStructure());
+        $response->assertJsonPath('data.text', $data['text']);
+        $response->assertJsonPath('data.rating', $data['rating']);
+    }
+
     public function testUpdateValidationError()
     {
         $comment = Comment::factory()->create();
@@ -241,4 +289,42 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
+    public function testDestroyByModeratorSuccess()
+    {
+        $user = User::factory()->moderator()->create();
+        $comment = Comment::factory()->create();
+
+        $response = $this->actingAs($user)->deleteJson("/api/comments/{$comment->id}");
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $this->assertDatabaseMissing('comments', [
+            'id' => $comment->id,
+        ]);
+    }
+
+    public function testDestroyWithChildrenSuccess()
+    {
+        $childrenCount = 3;
+
+        $user = User::factory()->moderator()->create();
+        $comment = Comment::factory()->create();
+
+        $childrenComments = Comment::factory()->count($childrenCount)->create([
+            'film_id' => $comment->film_id,
+            'parent_id' => $comment->id,
+        ]);
+
+        $response = $this->actingAs($user)->deleteJson("/api/comments/{$comment->id}");
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $this->assertDatabaseMissing('comments', [
+            'id' => $comment->id,
+        ]);
+
+        foreach ($childrenComments as $childComment) {
+            $this->assertDatabaseMissing('comments', [
+                'id' => $childComment->id,
+            ]);
+        }
+    }
 }

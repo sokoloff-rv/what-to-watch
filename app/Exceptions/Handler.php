@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -61,7 +62,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof NotFoundHttpException && $request->expectsJson()) {
+        if (($exception instanceof NotFoundHttpException || $exception instanceof ModelNotFoundException) && $request->expectsJson()) {
             return response()->json([
                 'message' => 'Запрашиваемая страница не существует.',
             ], Response::HTTP_NOT_FOUND);
