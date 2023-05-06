@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -51,7 +52,9 @@ class Handler extends ExceptionHandler
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         return $request->expectsJson()
-        ? response()->json(['message' => 'Запрос требует аутентификации.'], Response::HTTP_UNAUTHORIZED)
+        ? response()->json([
+            'message' => 'Запрос требует аутентификации.',
+        ], Response::HTTP_UNAUTHORIZED)
         : redirect()->guest($exception->redirectTo() ?? route('login'));
     }
 
