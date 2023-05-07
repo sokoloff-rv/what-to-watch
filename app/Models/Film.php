@@ -117,11 +117,11 @@ class Film extends Model
 
     public function getStarringAttribute(): array
     {
-        return $this->actors()->get()->pluck('name')->toArray();
+        return $this->actors()->pluck('name')->toArray();
     }
 
-    public function getGenreAttribute(): string
+    public function getGenreAttribute(): array
     {
-        return $this->genres()->pluck('name')->implode(', ');
+        return $this->genres()->pluck('name')->toArray();
     }
 }
