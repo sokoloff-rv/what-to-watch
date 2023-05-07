@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FilmRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Film;
-use App\Http\Requests\FilmRequest;
+use App\Services\MovieService\MovieService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
 class FilmController extends Controller
@@ -54,11 +56,27 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(Request $request): BaseResponse
+    public function store(Request $request, MovieService $movieService)
     {
         try {
-            //
-            return new SuccessResponse();
+            $validatedData = $request->validate([
+                'imdb_id' => [
+                    'required',
+                    'string',
+                    Rule::unique(Film::class),
+                ],
+            ]);
+
+            $imdbId = $validatedData['imdb_id'];
+
+            $movieData = $movieService->getMovie($imdbId);
+            if (!$movieData) {
+                return new FailResponse("Такой фильм не найден.", Response::HTTP_NOT_FOUND);
+            }
+
+            $film = Film::createFromData($movieData);
+
+            return new SuccessResponse($film, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

@@ -43,8 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
 /* Фильмы */
 Route::get('/films', [FilmController::class, 'index']);
 Route::get('/films/{film}', [FilmController::class, 'show']);
+Route::post('/films', [FilmController::class, 'store']);
 Route::middleware(['auth:sanctum', 'moderator'])->group(function () {
-    Route::post('/films', [FilmController::class, 'store']);
     Route::patch('/films/{film}', [FilmController::class, 'update']);
 });
 

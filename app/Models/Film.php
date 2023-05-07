@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Film extends Model
 {
@@ -42,6 +42,15 @@ class Film extends Model
         'rating' => 'float',
     ];
 
+    protected $appends = [
+        'starring',
+        'genre',
+    ];
+
+    protected $hidden = [
+        'actors',
+    ];
+
     public function genres()
     {
         return $this->belongsToMany(Genre::class, 'film_genre', 'film_id', 'genre_id');
@@ -74,5 +83,45 @@ class Film extends Model
     {
         $this->rating = $rating;
         $this->save();
+    }
+
+    public static function createFromData(array $data): Film
+    {
+        $film = new self();
+        $film->name = $data['Title'];
+        $film->poster_image = $data['Poster'];
+        $film->description = $data['Plot'];
+        $film->director = $data['Director'];
+        $film->released = \DateTime::createFromFormat('d M Y', $data['Released'])->format('Y');
+        $film->run_time = intval($data['Runtime']);
+        $film->rating = floatval($data['imdbRating']);
+        $film->scores_count = intval(str_replace(',', '', $data['imdbVotes']));
+        $film->imdb_id = $data['imdbID'];
+        $film->status = self::STATUS_PENDING;
+        $film->save();
+
+        $actors = array_map('trim', explode(',', $data['Actors']));
+        foreach ($actors as $actorName) {
+            $actor = Actor::firstOrCreate(['name' => $actorName]);
+            $film->actors()->attach($actor);
+        }
+
+        $genres = array_map('trim', explode(',', $data['Genre']));
+        foreach ($genres as $genreName) {
+            $genre = Genre::firstOrCreate(['name' => $genreName]);
+            $film->genres()->attach($genre);
+        }
+
+        return $film;
+    }
+
+    public function getStarringAttribute(): array
+    {
+        return $this->actors->pluck('name')->toArray();
+    }
+
+    public function getGenreAttribute(): string
+    {
+        return $this->genres()->pluck('name')->implode(', ');
     }
 }
