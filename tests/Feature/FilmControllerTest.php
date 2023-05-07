@@ -102,7 +102,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films?order_by='. Film::ORDER_BY_RELEASED .'&order_to=desc');
+        $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RELEASED . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true)['data']['data'];
@@ -116,7 +116,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films?order_by='. Film::ORDER_BY_RATING .'&order_to=desc');
+        $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RATING . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true)['data']['data'];
