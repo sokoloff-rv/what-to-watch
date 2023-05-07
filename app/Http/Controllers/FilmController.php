@@ -7,10 +7,10 @@ use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Film;
+use App\Http\Requests\StoreFilmRequest;
 use App\Services\MovieService\MovieService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
 class FilmController extends Controller
@@ -56,18 +56,10 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(Request $request, MovieService $movieService)
+    public function store(StoreFilmRequest $request, MovieService $movieService)
     {
         try {
-            $validatedData = $request->validate([
-                'imdb_id' => [
-                    'required',
-                    'string',
-                    Rule::unique(Film::class),
-                ],
-            ]);
-
-            $imdbId = $validatedData['imdb_id'];
+            $imdbId = $request->input('imdb_id');
 
             $movieData = $movieService->getMovie($imdbId);
             if (!$movieData) {
