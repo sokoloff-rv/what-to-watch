@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FilmRequest;
+use App\Http\Requests\StoreFilmRequest;
+use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\Film;
-use App\Http\Requests\StoreFilmRequest;
+use App\Models\Actor;
+use App\Models\Genre;
 use App\Services\MovieService\MovieService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -93,11 +95,32 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request, Film $film): BaseResponse
+    public function update(UpdateFilmRequest $request, Film $film): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            $film->update($request->validated());
+
+            if ($request->has('starring')) {
+                $actorsNames = $request->input('starring');
+                $actorIdentifiers = [];
+                foreach ($actorsNames as $actorName) {
+                    $actor = Actor::firstOrCreate(['name' => $actorName]);
+                    $actorIdentifiers[] = $actor->id;
+                }
+                $film->actors()->sync($actorIdentifiers);
+            }
+
+            if ($request->has('genre')) {
+                $genresNames = $request->input('genre');
+                $genreIdentifiers = [];
+                foreach ($genresNames as $genreName) {
+                    $genre = Genre::firstOrCreate(['name' => $genreName]);
+                    $genreIdentifiers[] = $genre->id;
+                }
+                $film->genres()->sync($genreIdentifiers);
+            }
+
+            return new SuccessResponse($film);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
