@@ -92,7 +92,7 @@ class Film extends Model
         $film->poster_image = $data['Poster'];
         $film->description = $data['Plot'];
         $film->director = $data['Director'];
-        $film->released = \DateTime::createFromFormat('d M Y', $data['Released'])->format('Y');
+        $film->released = (int) \DateTime::createFromFormat('d M Y', $data['Released'])->format('Y');
         $film->run_time = intval($data['Runtime']);
         $film->rating = floatval($data['imdbRating']);
         $film->scores_count = intval(str_replace(',', '', $data['imdbVotes']));
@@ -117,7 +117,7 @@ class Film extends Model
 
     public function getStarringAttribute(): array
     {
-        return $this->actors->pluck('name')->toArray();
+        return $this->actors()->get()->pluck('name')->toArray();
     }
 
     public function getGenreAttribute(): string

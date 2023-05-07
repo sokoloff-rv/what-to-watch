@@ -13,7 +13,7 @@ class MovieApiClient implements MovieApiClientInterface
     /**
      * Конструктор класса MovieApiClient
      *
-     * @param  Client  $client HTTP-клиент Guzzle
+     * @param  \GuzzleHttp\Client  $client HTTP-клиент Guzzle
      */
     public function __construct(\GuzzleHttp\Client $client)
     {
@@ -24,9 +24,9 @@ class MovieApiClient implements MovieApiClientInterface
      * Отправка запроса к сервису OMDB для получения информации о фильме по его IMDB ID
      *
      * @param  string  $imdbId IMDB ID фильма
-     * @return Response Возвращает объект ответа Guzzle с информацией о фильме
+     * @return \Psr\Http\Message\ResponseInterface Возвращает объект ответа Guzzle с информацией о фильме
      */
-    public function sendRequest(string $imdbId): \GuzzleHttp\Psr7\Response
+    public function sendRequest(string $imdbId): \Psr\Http\Message\ResponseInterface
     {
         return $this->client->request('GET', $this->baseUrl, ['query' => [
             'apikey' => $this->apiKey,
