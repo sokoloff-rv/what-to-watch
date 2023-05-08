@@ -8,8 +8,8 @@ use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Models\Film;
 use App\Models\Actor;
+use App\Models\Film;
 use App\Models\Genre;
 use App\Services\MovieService\MovieService;
 use Illuminate\Support\Facades\Gate;
@@ -47,6 +47,7 @@ class FilmController extends Controller
                 })
                 ->orderBy($order_by, $order_to)
                 ->paginate($pageQuantity);
+
             return new SuccessResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);

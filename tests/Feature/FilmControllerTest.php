@@ -21,7 +21,7 @@ class FilmControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true);
-        $response->assertJsonCount(8, 'data.data');
+        $response->assertJsonCount(8, 'data');
 
         $expectedStructure = [
             'id',
@@ -44,7 +44,7 @@ class FilmControllerTest extends TestCase
             'genre',
         ];
 
-        foreach ($responseData['data']['data'] as $film) {
+        foreach ($responseData['data'] as $film) {
             $response->assertJsonStructure($expectedStructure, $film);
         }
     }
@@ -59,7 +59,7 @@ class FilmControllerTest extends TestCase
         $response = $this->get('/api/films?genre=' . $genre->name);
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(5, 'data.data');
+        $response->assertJsonCount(5, 'data');
     }
 
     public function testIndexFilteredByStatusForUser()
@@ -91,11 +91,11 @@ class FilmControllerTest extends TestCase
 
         $response = $this->actingAs($moderator)->get('/api/films?status=' . Film::STATUS_PENDING);
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(3, 'data.data');
+        $response->assertJsonCount(3, 'data');
 
         $response = $this->actingAs($moderator)->get('/api/films?status=' . Film::STATUS_MODERATE);
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(3, 'data.data');
+        $response->assertJsonCount(3, 'data');
     }
 
     public function testIndexFilmsOrderedByReleased()
@@ -105,7 +105,7 @@ class FilmControllerTest extends TestCase
         $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RELEASED . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
-        $responseData = json_decode($response->getContent(), true)['data']['data'];
+        $responseData = json_decode($response->getContent(), true)['data'];
 
         for ($i = 1; $i < count($responseData); $i++) {
             $this->assertTrue($responseData[$i - 1][Film::ORDER_BY_RELEASED] >= $responseData[$i][Film::ORDER_BY_RELEASED]);
@@ -119,7 +119,7 @@ class FilmControllerTest extends TestCase
         $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RATING . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
-        $responseData = json_decode($response->getContent(), true)['data']['data'];
+        $responseData = json_decode($response->getContent(), true)['data'];
 
         for ($i = 1; $i < count($responseData); $i++) {
             $this->assertTrue($responseData[$i - 1][Film::ORDER_BY_RATING] >= $responseData[$i][Film::ORDER_BY_RATING]);
