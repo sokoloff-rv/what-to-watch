@@ -44,7 +44,7 @@ class GenreControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateForbidden()
+    public function testUpdateAuthorized()
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->create();
@@ -61,7 +61,7 @@ class GenreControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateSuccess()
+    public function testUpdateModerator()
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->moderator()->create();

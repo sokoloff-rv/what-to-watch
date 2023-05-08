@@ -13,17 +13,9 @@ class FilmControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIndexAllFilms()
+    private function getTypicalFilmStructure(): array
     {
-        Film::factory()->count(10)->create(['status' => Film::STATUS_READY]);
-
-        $response = $this->get('/api/films');
-
-        $response->assertStatus(Response::HTTP_OK);
-        $responseData = json_decode($response->getContent(), true);
-        $response->assertJsonCount(8, 'data');
-
-        $expectedStructure = [
+        return [
             'id',
             'name',
             'poster_image',
@@ -43,10 +35,21 @@ class FilmControllerTest extends TestCase
             'starring',
             'genre',
         ];
+    }
+
+    public function testIndexAllFilms()
+    {
+        Film::factory()->count(10)->create(['status' => Film::STATUS_READY]);
+
+        $response = $this->get('/api/films');
+
+        $response->assertStatus(Response::HTTP_OK);
+        $responseData = json_decode($response->getContent(), true);
+        $response->assertJsonCount(8, 'data');
 
         $response->assertJsonStructure([
             'data' => [
-                '*' => $expectedStructure,
+                '*' => $this->getTypicalFilmStructure(),
             ],
             'current_page',
             'first_page_url',
@@ -132,6 +135,102 @@ class FilmControllerTest extends TestCase
         for ($i = 1; $i < count($responseData); $i++) {
             $this->assertTrue($responseData[$i - 1][Film::ORDER_BY_RATING] >= $responseData[$i][Film::ORDER_BY_RATING]);
         }
+    }
+
+    public function testStoreUnauthorized()
+    {
+        $data = [
+            'imdb_id' => 'tt0111161',
+        ];
+
+        $response = $this->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testStoreAuthorized()
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_USER,
+        ]);
+
+        $data = [
+            'imdb_id' => 'tt0111161',
+        ];
+
+        $response = $this->actingAs($user)->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testStoreModerator()
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_MODERATOR,
+        ]);
+
+        $data = [
+            'imdb_id' => 'tt0111161',
+        ];
+
+        $response = $this->actingAs($user)->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertJsonStructure([
+            'data' => $this->getTypicalFilmStructure(),
+        ]);
+    }
+
+    public function testStoreFilmAlreadyExists()
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_MODERATOR,
+        ]);
+
+        $film = Film::factory()->create([
+            'imdb_id' => 'tt0111161',
+        ]);
+
+        $data = [
+            'imdb_id' => 'tt0111161',
+        ];
+
+        $response = $this->actingAs($user)->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJson([
+            'message' => 'Переданные данные не корректны.',
+        ]);
+        $response->assertJsonValidationErrors([
+            'imdb_id',
+        ]);
+    }
+
+    public function testUpdateValidationError()
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_MODERATOR,
+        ]);
+
+        $data = [
+            'imdb_id' => 'Невалидный imdb_id',
+        ];
+
+        $response = $this->actingAs($user)->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJson([
+            'message' => 'Переданные данные не корректны.',
+        ]);
+        $response->assertJsonValidationErrors([
+            'imdb_id',
+        ]);
     }
 
 }

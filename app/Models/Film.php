@@ -90,6 +90,13 @@ class Film extends Model
         $film = new self();
         $film->name = $data['Title'];
         $film->poster_image = $data['Poster'];
+
+        $film->preview_image = NULL;
+        $film->background_image = NULL;
+        $film->background_color = NULL;
+        $film->video_link = NULL;
+        $film->preview_video_link = NULL;
+
         $film->description = $data['Plot'];
         $film->director = $data['Director'];
         $film->released = (int) \DateTime::createFromFormat('d M Y', $data['Released'])->format('Y');
