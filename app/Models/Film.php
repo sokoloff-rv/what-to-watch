@@ -91,11 +91,11 @@ class Film extends Model
         $film->name = $data['Title'];
         $film->poster_image = $data['Poster'];
 
-        $film->preview_image = NULL;
-        $film->background_image = NULL;
-        $film->background_color = NULL;
-        $film->video_link = NULL;
-        $film->preview_video_link = NULL;
+        $film->preview_image = null;
+        $film->background_image = null;
+        $film->background_color = null;
+        $film->video_link = null;
+        $film->preview_video_link = null;
 
         $film->description = $data['Plot'];
         $film->director = $data['Director'];
