@@ -9,7 +9,7 @@ class SuccessResponse extends BaseResponse
      *
      * @return array|null
      */
-    protected function makeResponseData():  ? array
+    protected function makeResponseData(): ?array
     {
         $data = $this->prepareData();
 
