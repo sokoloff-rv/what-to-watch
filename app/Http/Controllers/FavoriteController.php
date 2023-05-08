@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Film;
 use App\Http\Responses\BaseResponse;
-use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
-use Illuminate\Http\Request;
+use App\Http\Responses\SuccessResponse;
+use App\Models\Film;
+use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
@@ -18,8 +18,10 @@ class FavoriteController extends Controller
     public function index(): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            /** @var \App\Models\User|null $user */
+            $user = Auth::user();
+            $favoriteFilms = $user->favoriteFilms()->get();
+            return new SuccessResponse($favoriteFilms);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
@@ -30,10 +32,12 @@ class FavoriteController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(Request $request, Film $film): BaseResponse
+    public function store(Film $film): BaseResponse
     {
         try {
-            //
+            /** @var \App\Models\User|null $user */
+            $user = Auth::user();
+            $user->favoriteFilms()->attach($film);
             return new SuccessResponse();
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -48,7 +52,9 @@ class FavoriteController extends Controller
     public function destroy(Film $film): BaseResponse
     {
         try {
-            //
+            /** @var \App\Models\User|null $user */
+            $user = Auth::user();
+            $user->favoriteFilms()->detach($film);
             return new SuccessResponse();
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);

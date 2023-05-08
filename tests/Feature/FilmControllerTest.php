@@ -233,4 +233,45 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
+    public function testShowFilm()
+    {
+        $film = Film::factory()->create(['status' => Film::STATUS_READY]);
+
+        $response = $this->get("/api/films/{$film->id}");
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure([
+            'data' => $this->getTypicalFilmStructure(),
+        ]);
+    }
+
+    public function testShowFavoriteForAuthorized()
+    {
+        $user = User::factory()->create();
+        $film = Film::factory()->create(['status' => Film::STATUS_READY]);
+
+        $user->favoriteFilms()->attach($film);
+
+        $response = $this->actingAs($user)->get("/api/films/{$film->id}");
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure([
+            'data' => array_merge($this->getTypicalFilmStructure(), ['is_favorite']),
+        ]);
+        $response->assertJsonPath('data.is_favorite', true);
+    }
+
+    public function testShowFavoriteForGuest()
+    {
+        $film = Film::factory()->create(['status' => Film::STATUS_READY]);
+
+        $response = $this->get("/api/films/{$film->id}");
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure([
+            'data' => $this->getTypicalFilmStructure(),
+        ]);
+        $response->assertJsonMissing(['data' => ['is_favorite']]);
+    }
+
 }

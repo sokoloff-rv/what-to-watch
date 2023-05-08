@@ -45,6 +45,7 @@ class Film extends Model
     protected $appends = [
         'starring',
         'genre',
+        'is_favorite',
     ];
 
     protected $hidden = [
@@ -130,5 +131,15 @@ class Film extends Model
     public function getGenreAttribute(): array
     {
         return $this->genres()->pluck('name')->toArray();
+    }
+
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    public function setIsFavoriteAttribute(bool $value): void
+    {
+        $this->attributes['is_favorite'] = $value;
     }
 }
