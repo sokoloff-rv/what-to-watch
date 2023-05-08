@@ -212,7 +212,7 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateValidationError()
+    public function testStoreValidationError()
     {
         $user = User::factory()->create([
             'role' => User::ROLE_MODERATOR,
@@ -272,6 +272,121 @@ class FilmControllerTest extends TestCase
             'data' => $this->getTypicalFilmStructure(),
         ]);
         $response->assertJsonMissing(['data' => ['is_favorite']]);
+    }
+
+    public function testUpdateUnauthorized()
+    {
+        $film = Film::factory()->create(['status' => Film::STATUS_PENDING]);
+
+        $newName = 'Новое название фильма';
+        $newImdbId = 'tt1234567';
+        $newStatus = Film::STATUS_READY;
+
+        $response = $this->patchJson("/api/films/{$film->id}", [
+            'name' => $newName,
+            'imdb_id' => $newImdbId,
+            'status' => $newStatus,
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testUpdateAuthorized()
+    {
+        $user = User::factory()->create();
+        $film = Film::factory()->create(['status' => Film::STATUS_PENDING]);
+
+        $newName = 'Новое название фильма';
+        $newImdbId = 'tt1234567';
+        $newStatus = Film::STATUS_READY;
+
+        $response = $this->actingAs($user)
+            ->patchJson("/api/films/{$film->id}", [
+                'name' => $newName,
+                'imdb_id' => $newImdbId,
+                'status' => $newStatus,
+            ]);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $response->assertJson([
+            'message' => 'Запрос требует аутентификации.',
+        ]);
+    }
+
+    public function testUpdateModerator()
+    {
+        $user = User::factory()->moderator()->create();
+        $film = Film::factory()->create(['status' => Film::STATUS_PENDING]);
+
+        $newName = 'Новое название фильма';
+        $newImdbId = 'tt1234567';
+        $newStatus = Film::STATUS_READY;
+
+        $response = $this->actingAs($user)
+            ->patchJson("/api/films/{$film->id}", [
+                'name' => $newName,
+                'imdb_id' => $newImdbId,
+                'status' => $newStatus,
+            ]);
+
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJson([
+            'data' => [
+                'id' => $film->id,
+                'name' => $newName,
+                'imdb_id' => $newImdbId,
+                'status' => $newStatus,
+            ],
+        ]);
+    }
+
+    public function testUpdateValidationError()
+    {
+        $film = Film::factory()->create();
+        $user = User::factory()->moderator()->create();
+
+        $invalidData = [
+            'name' => '',
+            'poster_image' => str_repeat('a', 256),
+            'preview_image' => str_repeat('a', 256),
+            'background_image' => str_repeat('a', 256),
+            'background_color' => str_repeat('a', 10),
+            'video_link' => str_repeat('a', 256),
+            'preview_video_link' => str_repeat('a', 256),
+            'description' => str_repeat('a', 1001),
+            'director' => str_repeat('a', 256),
+            'starring' => 'Не массив',
+            'genre' => 'Не массив',
+            'run_time' => 'Не число',
+            'released' => 'Не число',
+            'imdb_id' => 'Невалидный imdb_id',
+            'status' => 'Несуществующий статус',
+        ];
+
+        $response = $this->actingAs($user)
+            ->patchJson("/api/films/{$film->id}", $invalidData);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrors([
+            'name',
+            'poster_image',
+            'preview_image',
+            'background_image',
+            'background_color',
+            'video_link',
+            'preview_video_link',
+            'description',
+            'director',
+            'starring',
+            'genre',
+            'run_time',
+            'released',
+            'imdb_id',
+            'status',
+        ]);
     }
 
 }
