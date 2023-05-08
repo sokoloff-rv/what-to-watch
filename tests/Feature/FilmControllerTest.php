@@ -44,9 +44,17 @@ class FilmControllerTest extends TestCase
             'genre',
         ];
 
-        foreach ($responseData['data'] as $film) {
-            $response->assertJsonStructure($expectedStructure, $film);
-        }
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => $expectedStructure,
+            ],
+            'current_page',
+            'first_page_url',
+            'next_page_url',
+            'prev_page_url',
+            'per_page',
+            'total',
+        ]);
     }
 
     public function testIndexFilteredByGenre()
