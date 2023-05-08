@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\Film;
 use App\Models\Genre;
 use App\Models\User;
+use App\Services\MovieService\MovieService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
@@ -175,9 +177,34 @@ class FilmControllerTest extends TestCase
             'role' => User::ROLE_MODERATOR,
         ]);
 
+        $newMovie = [
+            "Title" => "The Shawshank Redemption",
+            "Poster" => "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg",
+            "Plot" => "Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.",
+            "Director" => "Frank Darabont",
+            "Released" => "14 Oct 1994",
+            "Runtime" => "142 min",
+            "imdbRating" => "9.3",
+            "imdbVotes" => "2,731,095",
+            "imdbID" => "tt0111161",
+            "Actors" => "Tim Robbins, Morgan Freeman, Bob Gunton",
+            "Genre" => "Drama",
+        ];
+
         $data = [
             'imdb_id' => 'tt0111161',
         ];
+
+        var_dump($newMovie);
+
+        $mockMovieService = Mockery::mock(MovieService::class);
+
+        $mockMovieService->shouldReceive('getMovie')
+            ->with('tt0111161')
+            ->once()
+            ->andReturn($newMovie);
+
+        $this->app->instance(MovieService::class, $mockMovieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
@@ -185,6 +212,8 @@ class FilmControllerTest extends TestCase
         $response->assertJsonStructure([
             'data' => $this->getTypicalFilmStructure(),
         ]);
+
+        Mockery::close();
     }
 
     public function testStoreFilmAlreadyExists()
