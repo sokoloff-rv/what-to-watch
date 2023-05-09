@@ -2,7 +2,7 @@
 
 namespace App\Services\MovieService;
 
-use \GuzzleHttp\Client;
+use GuzzleHttp\Client;
 
 class MovieOmdbRepository implements MovieRepositoryInterface
 {
