@@ -8,10 +8,10 @@ use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
+use App\Jobs\CreateFilmJob;
 use App\Models\Actor;
 use App\Models\Film;
 use App\Models\Genre;
-use App\Services\MovieService\MovieService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,19 +60,14 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(StoreFilmRequest $request, MovieService $movieService)
+    public function store(StoreFilmRequest $request)
     {
         try {
             $imdbId = $request->input('imdb_id');
 
-            $movieData = $movieService->getMovie($imdbId);
-            if (!$movieData) {
-                return new FailResponse("Такой фильм не найден.", Response::HTTP_NOT_FOUND);
-            }
+            CreateFilmJob::dispatch($imdbId);
 
-            $film = Film::createFromData($movieData);
-
-            return new SuccessResponse($film, Response::HTTP_CREATED);
+            return new SuccessResponse(null, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
