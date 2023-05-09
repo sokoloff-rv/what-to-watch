@@ -195,8 +195,6 @@ class FilmControllerTest extends TestCase
             'imdb_id' => 'tt0111161',
         ];
 
-        var_dump($newMovie);
-
         $mockMovieService = Mockery::mock(MovieService::class);
 
         $mockMovieService->shouldReceive('getMovie')
