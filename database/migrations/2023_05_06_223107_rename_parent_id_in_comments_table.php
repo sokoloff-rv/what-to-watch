@@ -21,7 +21,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->renameColumn('parent_id', 'comment_id');
+            $table->renameColumn('comment_id', 'parent_id');
         });
     }
 };
