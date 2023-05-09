@@ -4,7 +4,7 @@ namespace App\Services\MovieService;
 
 class MovieService
 {
-    private MovieRepository $repository;
+    private MovieRepositoryInterface $repository;
 
     /**
      * Конструктор класса MovieService
