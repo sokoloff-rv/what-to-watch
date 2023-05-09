@@ -11,10 +11,24 @@ class GenreRequest extends FormRequest
         return true;
     }
 
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Название',
+        ];
+    }
+
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:1|max:255',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Поле Название обязательно для заполнения.',
         ];
     }
 }

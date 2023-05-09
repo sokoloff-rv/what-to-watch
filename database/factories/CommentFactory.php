@@ -16,7 +16,7 @@ class CommentFactory extends Factory
         return [
             'user_id' => User::factory(),
             'film_id' => Film::factory(),
-            'parent_id' => null,
+            'comment_id' => null,
             'text' => $this->faker->paragraph(),
             'rating' => $this->faker->numberBetween(1, 10),
             'is_external' => false,

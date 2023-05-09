@@ -2,8 +2,13 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,5 +49,34 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return $request->expectsJson()
+        ? response()->json([
+            'message' => 'Запрос требует аутентификации.',
+        ], Response::HTTP_UNAUTHORIZED)
+        : redirect()->guest($exception->redirectTo() ?? route('login'));
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if (($exception instanceof NotFoundHttpException || $exception instanceof ModelNotFoundException) && $request->expectsJson()) {
+            return response()->json([
+                'message' => 'Запрашиваемая страница не существует.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($exception instanceof ValidationException && $request->expectsJson()) {
+            $errors = $exception->errors();
+            $response = [
+                'message' => 'Переданные данные не корректны.',
+                'errors' => $errors,
+            ];
+            return response()->json($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return parent::render($request, $exception);
     }
 }

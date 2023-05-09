@@ -43,6 +43,7 @@ class CommentController extends Controller
             $user = Auth::user();
 
             $comment = $film->comments()->create([
+                'comment_id' => $request->get('comment_id', null),
                 'text' => $request->input('text'),
                 'rating' => $request->input('rating'),
                 'user_id' => $user->id,
@@ -62,7 +63,7 @@ class CommentController extends Controller
     public function update(CommentRequest $request, Comment $comment): BaseResponse
     {
         if (Gate::denies('comment-edit', $comment)) {
-            return new FailResponse('У вас нет разрешения на редактирование этого комментария', Response::HTTP_FORBIDDEN);
+            return new FailResponse('Запрос требует аутентификации.', Response::HTTP_FORBIDDEN);
         }
 
         try {
@@ -85,11 +86,15 @@ class CommentController extends Controller
     public function destroy(Request $request, Comment $comment): BaseResponse
     {
         if (Gate::denies('comment-delete', $comment)) {
-            return new FailResponse('У вас нет разрешения на удаление этого комментария', Response::HTTP_FORBIDDEN);
+            return new FailResponse('Запрос требует аутентификации.', Response::HTTP_FORBIDDEN);
         }
 
         try {
+            if ($comment->children()->count() > 0) {
+                $comment->children()->delete();
+            }
             $comment->delete();
+
             return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);

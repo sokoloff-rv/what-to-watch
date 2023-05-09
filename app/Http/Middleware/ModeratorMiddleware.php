@@ -24,6 +24,6 @@ class ModeratorMiddleware
             return $next($request);
         }
 
-        return response()->json(['message' => 'Это действие могут выполнять только модераторы'], Response::HTTP_FORBIDDEN);
+        return response()->json(['message' => 'Запрос требует аутентификации.'], Response::HTTP_FORBIDDEN);
     }
 }
