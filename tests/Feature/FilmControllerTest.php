@@ -177,28 +177,20 @@ class FilmControllerTest extends TestCase
             'role' => User::ROLE_MODERATOR,
         ]);
 
-        $newMovie = [
-            "Title" => "The Shawshank Redemption",
-            "Poster" => "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg",
-            "Plot" => "Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.",
-            "Director" => "Frank Darabont",
-            "Released" => "14 Oct 1994",
-            "Runtime" => "142 min",
-            "imdbRating" => "9.3",
-            "imdbVotes" => "2,731,095",
-            "imdbID" => "tt0111161",
-            "Actors" => "Tim Robbins, Morgan Freeman, Bob Gunton",
-            "Genre" => "Drama",
-        ];
+        $imdbId = 'tt0111161';
 
         $data = [
-            'imdb_id' => 'tt0111161',
+            'imdb_id' => $imdbId,
         ];
+
+        $newMovie = Film::factory()->make([
+            'imdb_id' => $imdbId,
+        ])->toArray();
 
         $mockMovieService = Mockery::mock(MovieService::class);
 
         $mockMovieService->shouldReceive('getMovie')
-            ->with('tt0111161')
+            ->with($imdbId)
             ->once()
             ->andReturn($newMovie);
 
