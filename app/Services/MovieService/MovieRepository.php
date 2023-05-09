@@ -4,14 +4,14 @@ namespace App\Services\MovieService;
 
 class MovieRepository implements MovieRepositoryInterface
 {
-    private MovieApiClient $apiClient;
+    private MovieApiClientInterface $apiClient;
 
     /**
      * Конструктор класса MovieRepository
      *
-     * @param  MovieApiClient  $apiClient Клиент для работы с API сервиса, предоставляющего информацию по фильмам
+     * @param  MovieApiClientInterface  $apiClient Клиент для работы с API сервиса, предоставляющего информацию по фильмам
      */
-    public function __construct(MovieApiClient $apiClient)
+    public function __construct(MovieApiClientInterface $apiClient)
     {
         $this->apiClient = $apiClient;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Services\MovieService;
 
-class MovieApiClient implements MovieApiClientInterface
+class MovieOmdbApiClient implements MovieApiClientInterface
 {
     private \GuzzleHttp\Client $client;
 
@@ -11,7 +11,7 @@ class MovieApiClient implements MovieApiClientInterface
     private string $baseUrl = 'http://www.omdbapi.com/';
 
     /**
-     * Конструктор класса MovieApiClient
+     * Конструктор класса MovieOmdbApiClient
      *
      * @param  \GuzzleHttp\Client  $client HTTP-клиент Guzzle
      */
