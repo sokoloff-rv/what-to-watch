@@ -18,7 +18,7 @@ class CreateFilmJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected $imdbId;
+    public $imdbId;
 
     public function __construct(string $imdbId)
     {

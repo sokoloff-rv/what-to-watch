@@ -6,7 +6,9 @@ use App\Models\Film;
 use App\Models\Genre;
 use App\Models\User;
 use App\Services\MovieService\MovieService;
+use App\Services\MovieService\MovieRepositoryInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -183,24 +185,30 @@ class FilmControllerTest extends TestCase
             'imdb_id' => $imdbId,
         ];
 
+        Queue::fake();
+
         $newMovie = Film::factory()->make([
             'imdb_id' => $imdbId,
         ])->toArray();
 
-        $mockMovieService = Mockery::mock(MovieService::class);
-
-        $mockMovieService->shouldReceive('getMovie')
+        $mockMovieRepository = Mockery::mock(MovieRepositoryInterface::class);
+        $mockMovieRepository->shouldReceive('findMovieById')
             ->with($imdbId)
             ->once()
             ->andReturn($newMovie);
 
-        $this->app->instance(MovieService::class, $mockMovieService);
+        $movieService = new MovieService($mockMovieRepository);
+        $this->app->instance(MovieService::class, $movieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
+        Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId) {
+            return $job->imdbId === $imdbId;
+        });
+
         $response->assertStatus(Response::HTTP_CREATED);
-        $response->assertJsonStructure([
-            'data' => $this->getTypicalFilmStructure(),
+        $this->assertDatabaseHas('films', [
+            'imdb_id' => $imdbId,
         ]);
 
         Mockery::close();
