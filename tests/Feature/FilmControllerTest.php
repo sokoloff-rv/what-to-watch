@@ -212,13 +212,19 @@ class FilmControllerTest extends TestCase
             'role' => User::ROLE_MODERATOR,
         ]);
 
+        $imdbId = 'tt0111161';
+
         $film = Film::factory()->create([
-            'imdb_id' => 'tt0111161',
+            'imdb_id' => $imdbId,
         ]);
 
         $data = [
-            'imdb_id' => 'tt0111161',
+            'imdb_id' => $imdbId,
         ];
+
+        $mockMovieService = Mockery::mock(MovieService::class);
+
+        $this->app->instance(MovieService::class, $mockMovieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
@@ -229,6 +235,8 @@ class FilmControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'imdb_id',
         ]);
+
+        Mockery::close();
     }
 
     public function testStoreValidationError()
@@ -241,6 +249,9 @@ class FilmControllerTest extends TestCase
             'imdb_id' => 'Невалидный imdb_id',
         ];
 
+        $mockMovieService = Mockery::mock(MovieService::class);
+        $this->app->instance(MovieService::class, $mockMovieService);
+
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -250,6 +261,8 @@ class FilmControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'imdb_id',
         ]);
+
+        Mockery::close();
     }
 
     public function testShowFilm()
