@@ -20,13 +20,6 @@ class GenreController extends Controller
         try {
             $genres = Genre::all();
 
-            $genres = $genres->map(function ($genre) {
-                return [
-                    'id' => $genre->id,
-                    'name' => $genre->name,
-                ];
-            });
-
             return new SuccessResponse($genres);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
