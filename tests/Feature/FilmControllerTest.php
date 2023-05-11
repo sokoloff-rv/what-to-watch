@@ -6,7 +6,6 @@ use App\Jobs\CreateFilmJob;
 use App\Models\Film;
 use App\Models\Genre;
 use App\Models\User;
-use App\Services\MovieService\MovieRepositoryInterface;
 use App\Services\MovieService\MovieService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -186,40 +185,51 @@ class FilmControllerTest extends TestCase
             'imdb_id' => $imdbId,
         ];
 
-        Queue::fake();
-
         $newMovie = Film::factory()->make([
             'imdb_id' => $imdbId,
         ])->toArray();
 
-        $mockMovieRepository = Mockery::mock(MovieRepositoryInterface::class);
-        $mockMovieRepository->shouldReceive('findMovieById')
-            ->with($imdbId)
-            ->once()
-            ->andReturn($newMovie);
-        $movieService = new MovieService($mockMovieRepository);
+        Queue::fake();
 
+        $movieService = Mockery::mock(MovieService::class);
+        $movieService->shouldReceive('getMovie')
+            ->with($imdbId)
+            ->andReturn($newMovie);
         $this->app->instance(MovieService::class, $movieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
-        Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId) {
-            return $job->data['imdb_id'] === $imdbId;
-        });
-
-        Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId, $movieService) {
-            $this->assertEquals($imdbId, $job->data['imdb_id']);
-            $job->handle($movieService);
-
-            return true;
-        });
-
         $response->assertStatus(Response::HTTP_CREATED);
-        $this->assertDatabaseHas('films', [
-            'imdb_id' => $imdbId,
+        $response->assertJson([
+            'data' => [
+                'imdb_id' => $imdbId,
+                'status' => Film::STATUS_PENDING,
+            ],
         ]);
 
         Mockery::close();
+    }
+
+    public function testStoreQueue()
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_MODERATOR,
+        ]);
+
+        $imdbId = 'tt0111161';
+
+        $data = [
+            'imdb_id' => $imdbId,
+        ];
+
+        Queue::fake();
+
+        $response = $this->actingAs($user)->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+        Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId) {
+            return $job->data['imdb_id'] === $imdbId;
+        });
     }
 
     public function testStoreFilmAlreadyExists()
