@@ -17,7 +17,7 @@ class MovieOmdbRepository implements MovieRepositoryInterface
         $this->apiKey = config('services.omdb.api_key');
     }
 
-    public function findMovieById(string $imdbId):  ? FilmData
+    public function findMovieById(string $imdbId): ?FilmData
     {
         $response = $this->client->request('GET', $this->baseUrl, [
             'query' => [

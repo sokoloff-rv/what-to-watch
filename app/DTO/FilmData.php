@@ -21,7 +21,7 @@ class FilmData
     public ?float $rating;
     public ?int $scores_count;
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'name' => $this->name,
