@@ -2,6 +2,7 @@
 
 namespace App\Services\MovieService;
 
+use App\DTO\FilmData;
 use GuzzleHttp\Client;
 
 class MovieOmdbRepository implements MovieRepositoryInterface
@@ -16,7 +17,7 @@ class MovieOmdbRepository implements MovieRepositoryInterface
         $this->apiKey = config('services.omdb.api_key');
     }
 
-    public function findMovieById(string $imdbId): ?array
+    public function findMovieById(string $imdbId):  ? FilmData
     {
         $response = $this->client->request('GET', $this->baseUrl, [
             'query' => [
@@ -27,26 +28,20 @@ class MovieOmdbRepository implements MovieRepositoryInterface
 
         $movieData = json_decode($response->getBody()->getContents(), true);
 
-        $formattedMovieData = [
-            'name' => $movieData['Title'],
-            'poster_image' => $movieData['Poster'],
-            'preview_image' => null,
-            'background_image' => null,
-            'background_color' => null,
-            'video_link' => null,
-            'preview_video_link' => null,
-            'description' => $movieData['Plot'],
-            'director' => $movieData['Director'],
-            'released' => (int) $movieData['Year'],
-            'run_time' => (int) $movieData['Runtime'],
-            'rating' => (float) $movieData['imdbRating'],
-            'scores_count' => (int) str_replace(',', '', $movieData['imdbVotes']),
-            'imdb_id' => $movieData['imdbID'],
-            'starring' => array_map('trim', explode(',', $movieData['Actors'])),
-            'genre' => array_map('trim', explode(',', $movieData['Genre'])),
-        ];
+        $filmData = new FilmData();
+        $filmData->name = $movieData['Title'];
+        $filmData->poster_image = $movieData['Poster'];
+        $filmData->description = $movieData['Plot'];
+        $filmData->director = $movieData['Director'];
+        $filmData->released = (int) $movieData['Year'];
+        $filmData->run_time = (int) $movieData['Runtime'];
+        $filmData->rating = (float) $movieData['imdbRating'];
+        $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes']);
+        $filmData->imdb_id = $movieData['imdbID'];
+        $filmData->starring = array_map('trim', explode(',', $movieData['Actors']));
+        $filmData->genre = array_map('trim', explode(',', $movieData['Genre']));
 
-        return $formattedMovieData;
+        return $filmData;
     }
 
 }
