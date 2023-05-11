@@ -72,7 +72,7 @@ class FilmController extends Controller
 
             CreateFilmJob::dispatch($data);
 
-            return new SuccessResponse(null, Response::HTTP_CREATED);
+            return new SuccessResponse($data, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

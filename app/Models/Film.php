@@ -91,7 +91,7 @@ class Film extends Model
         $film = new self();
 
         $film->fill($data);
-        $film->status = self::STATUS_PENDING;
+        $film->status = self::STATUS_MODERATE;
 
         $film->save();
 
