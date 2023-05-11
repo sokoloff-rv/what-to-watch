@@ -8,7 +8,7 @@ class MovieAcademyRepository implements MovieRepositoryInterface
 {
     private string $baseUrl = 'http://guide.phpdemo.ru/api/films/';
 
-    public function findMovieById(string $imdbId):  ? array
+    public function findMovieById(string $imdbId): ?array
     {
         $response = Http::get($this->baseUrl . $imdbId);
 
