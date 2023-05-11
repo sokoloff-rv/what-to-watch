@@ -2,23 +2,17 @@
 
 namespace App\Services\MovieService;
 
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 class MovieAcademyRepository implements MovieRepositoryInterface
 {
-    private Client $client;
     private string $baseUrl = 'http://guide.phpdemo.ru/api/films/';
 
-    public function __construct(Client $client)
+    public function findMovieById(string $imdbId):  ? array
     {
-        $this->client = $client;
-    }
+        $response = Http::get($this->baseUrl . $imdbId);
 
-    public function findMovieById(string $imdbId): ?array
-    {
-        $response = $this->client->request('GET', $this->baseUrl.$imdbId);
-
-        $movieData = json_decode($response->getBody()->getContents(), true);
+        $movieData = $response->json();
 
         $formattedMovieData = [
             'name' => $movieData['name'],
@@ -39,5 +33,4 @@ class MovieAcademyRepository implements MovieRepositoryInterface
 
         return $formattedMovieData;
     }
-
 }
