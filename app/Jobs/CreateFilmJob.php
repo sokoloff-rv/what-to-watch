@@ -28,15 +28,16 @@ class CreateFilmJob implements ShouldQueue
     public function handle(MovieService $movieService)
     {
         $imdbId = $this->data['imdb_id'];
-        Log::info('CreateFilmJob начала выполняться для фильма с imdbId ' . $imdbId);
+        $status = $this->data['status'];
+        Log::info("Задача CreateFilmJob начала выполняться для фильма с IMDB id {$imdbId}.");
 
         $movieData = $movieService->getMovie($imdbId);
 
         if ($movieData) {
-            $movieData['status'] = $this->data['status'];
+            $movieData['status'] = $status;
             Film::createFromData($movieData);
         }
 
-        Log::info('CreateFilmJob успешно выполнена для фильма с imdbId ' . $imdbId);
+        Log::info("Задача CreateFilmJob завершила выполнение для фильма с IMDB id {$imdbId}.");
     }
 }
