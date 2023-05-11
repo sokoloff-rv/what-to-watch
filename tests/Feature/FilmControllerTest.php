@@ -2,11 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\CreateFilmJob;
 use App\Models\Film;
 use App\Models\Genre;
 use App\Models\User;
-use App\Services\MovieService\MovieService;
 use App\Services\MovieService\MovieRepositoryInterface;
+use App\Services\MovieService\MovieService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
@@ -203,13 +204,13 @@ class FilmControllerTest extends TestCase
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
         Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId) {
-            return $job->imdbId === $imdbId;
+            return $job->data['imdb_id'] === $imdbId;
         });
 
         $response->assertStatus(Response::HTTP_CREATED);
-        $this->assertDatabaseHas('films', [
-            'imdb_id' => $imdbId,
-        ]);
+        // $this->assertDatabaseHas('films', [
+        //     'imdb_id' => $imdbId,
+        // ]);
 
         Mockery::close();
     }

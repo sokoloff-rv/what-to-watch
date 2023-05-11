@@ -65,7 +65,12 @@ class FilmController extends Controller
         try {
             $imdbId = $request->input('imdb_id');
 
-            CreateFilmJob::dispatch($imdbId);
+            $data = [
+                'imdb_id' => $imdbId,
+                'status' => Film::STATUS_PENDING,
+            ];
+
+            CreateFilmJob::dispatch($data);
 
             return new SuccessResponse(null, Response::HTTP_CREATED);
         } catch (\Exception $e) {
