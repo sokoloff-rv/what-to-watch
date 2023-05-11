@@ -197,8 +197,8 @@ class FilmControllerTest extends TestCase
             ->with($imdbId)
             ->once()
             ->andReturn($newMovie);
-
         $movieService = new MovieService($mockMovieRepository);
+
         $this->app->instance(MovieService::class, $movieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
@@ -207,10 +207,17 @@ class FilmControllerTest extends TestCase
             return $job->data['imdb_id'] === $imdbId;
         });
 
+        Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId, $movieService) {
+            $this->assertEquals($imdbId, $job->data['imdb_id']);
+            $job->handle($movieService);
+
+            return true;
+        });
+
         $response->assertStatus(Response::HTTP_CREATED);
-        // $this->assertDatabaseHas('films', [
-        //     'imdb_id' => $imdbId,
-        // ]);
+        $this->assertDatabaseHas('films', [
+            'imdb_id' => $imdbId,
+        ]);
 
         Mockery::close();
     }
