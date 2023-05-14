@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Film;
+use App\Services\FilmService;
 use App\Services\MovieService\MovieService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,7 +25,7 @@ class CreateFilmJob implements ShouldQueue
         $this->data = $data;
     }
 
-    public function handle(MovieService $movieService)
+    public function handle(MovieService $movieService, FilmService $filmService)
     {
         $imdbId = $this->data['imdb_id'];
         $status = $this->data['status'];
@@ -35,7 +35,7 @@ class CreateFilmJob implements ShouldQueue
 
         if ($movieData) {
             $movieData['status'] = $status;
-            Film::createFromData($movieData);
+            $filmService->createFromData($movieData);
         }
 
         Log::info("Задача CreateFilmJob завершила выполнение для фильма с IMDB id {$imdbId}.");

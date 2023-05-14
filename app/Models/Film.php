@@ -86,28 +86,6 @@ class Film extends Model
         $this->save();
     }
 
-    public static function createFromData(array $data): Film
-    {
-        $film = new self();
-
-        $film->fill($data);
-        $film->status = self::STATUS_MODERATE;
-
-        $film->save();
-
-        foreach ($data['starring'] as $actorName) {
-            $actor = Actor::firstOrCreate(['name' => $actorName]);
-            $film->actors()->attach($actor);
-        }
-
-        foreach ($data['genre'] as $genreName) {
-            $genre = Genre::firstOrCreate(['name' => $genreName]);
-            $film->genres()->attach($genre);
-        }
-
-        return $film;
-    }
-
     public function getStarringAttribute(): array
     {
         return $this->actors()->pluck('name')->toArray();

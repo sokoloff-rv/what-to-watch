@@ -4,6 +4,9 @@ namespace Tests\Feature;
 
 use App\Jobs\CreateFilmJob;
 use App\Models\Film;
+use App\Services\ActorService;
+use App\Services\FilmService;
+use App\Services\GenreService;
 use App\Services\MovieService\MovieRepositoryInterface;
 use App\Services\MovieService\MovieService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,8 +37,12 @@ class FilmJobTest extends TestCase
             ->andReturn($newMovie);
         $movieService = new MovieService($mockMovieRepository);
 
+        $actorService = new ActorService();
+        $genreService = new GenreService();
+        $filmService = new FilmService($actorService, $genreService);
+
         $job = new CreateFilmJob($data);
-        $job->handle($movieService);
+        $job->handle($movieService, $filmService);
 
         $this->assertDatabaseHas('films', [
             'imdb_id' => $imdbId,
@@ -43,4 +50,5 @@ class FilmJobTest extends TestCase
 
         Mockery::close();
     }
+
 }

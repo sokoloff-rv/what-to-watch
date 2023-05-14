@@ -9,9 +9,10 @@ use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Jobs\CreateFilmJob;
-use App\Models\Actor;
 use App\Models\Film;
-use App\Models\Genre;
+use App\Services\FilmService;
+use App\Services\ActorService;
+use App\Services\GenreService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,7 +61,7 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(StoreFilmRequest $request)
+    public function store(StoreFilmRequest $request, FilmService $filmService)
     {
         try {
             $imdbId = $request->input('imdb_id');
@@ -111,23 +112,11 @@ class FilmController extends Controller
             $film->update($request->validated());
 
             if ($request->has('starring')) {
-                $actorsNames = $request->input('starring');
-                $actorIdentifiers = [];
-                foreach ($actorsNames as $actorName) {
-                    $actor = Actor::firstOrCreate(['name' => $actorName]);
-                    $actorIdentifiers[] = $actor->id;
-                }
-                $film->actors()->sync($actorIdentifiers);
+                app(ActorService::class)->syncActors($film, $request->input('starring'));
             }
 
             if ($request->has('genre')) {
-                $genresNames = $request->input('genre');
-                $genreIdentifiers = [];
-                foreach ($genresNames as $genreName) {
-                    $genre = Genre::firstOrCreate(['name' => $genreName]);
-                    $genreIdentifiers[] = $genre->id;
-                }
-                $film->genres()->sync($genreIdentifiers);
+                app(GenreService::class)->syncGenres($film, $request->input('genre'));
             }
 
             return new SuccessResponse($film);
