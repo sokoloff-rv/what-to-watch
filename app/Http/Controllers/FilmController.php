@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
+use App\Http\Responses\SuccessPaginationResponse;
 use App\Jobs\CreateFilmJob;
 use App\Models\Film;
 use App\Services\FilmService;
@@ -50,7 +51,7 @@ class FilmController extends Controller
                 ->orderBy($order_by, $order_to)
                 ->paginate($pageQuantity);
 
-            return new SuccessResponse($films);
+            return new SuccessPaginationResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
