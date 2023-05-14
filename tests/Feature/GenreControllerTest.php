@@ -79,6 +79,11 @@ class GenreControllerTest extends TestCase
                 'name' => $newName,
             ],
         ]);
+
+        $this->assertDatabaseHas('genres', [
+            'id' => $genre->id,
+            'name' => $newName,
+        ]);
     }
 
     public function testUpdateValidationError()

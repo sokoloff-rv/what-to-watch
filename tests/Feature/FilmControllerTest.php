@@ -399,6 +399,13 @@ class FilmControllerTest extends TestCase
                 'status' => $newStatus,
             ],
         ]);
+
+        $this->assertDatabaseHas('films', [
+            'id' => $film->id,
+            'name' => $newName,
+            'imdb_id' => $newImdbId,
+            'status' => $newStatus,
+        ]);
     }
 
     public function testUpdateValidationError()

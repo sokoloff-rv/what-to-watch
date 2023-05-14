@@ -118,6 +118,13 @@ class CommentControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.comment_id', null);
+
+        $this->assertDatabaseHas('comments', [
+            'user_id' => $user->id,
+            'film_id' => $film->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+        ]);
     }
 
     public function testStoreValidationError()
@@ -159,6 +166,14 @@ class CommentControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.comment_id', $parentComment->id);
+
+        $this->assertDatabaseHas('comments', [
+            'user_id' => $user->id,
+            'film_id' => $film->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+            'comment_id' => $data['comment_id'],
+        ]);
     }
 
     public function testUpdateUnauthorized()
@@ -211,6 +226,12 @@ class CommentControllerTest extends TestCase
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.text', $data['text']);
         $response->assertJsonPath('data.rating', $data['rating']);
+
+        $this->assertDatabaseHas('comments', [
+            'id' => $comment->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+        ]);
     }
 
     public function testUpdateByModeratorSuccess()
@@ -229,6 +250,12 @@ class CommentControllerTest extends TestCase
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.text', $data['text']);
         $response->assertJsonPath('data.rating', $data['rating']);
+
+        $this->assertDatabaseHas('comments', [
+            'id' => $comment->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+        ]);
     }
 
     public function testUpdateValidationError()
