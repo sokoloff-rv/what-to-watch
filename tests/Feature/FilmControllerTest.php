@@ -45,7 +45,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(10)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films');
+        $response = $this->getJson('/api/films');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true);
@@ -71,7 +71,7 @@ class FilmControllerTest extends TestCase
             $film->genres()->attach($genre);
         });
 
-        $response = $this->get('/api/films?genre=' . $genre->name);
+        $response = $this->getJson('/api/films?genre=' . $genre->name);
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(5, 'data');
@@ -84,13 +84,13 @@ class FilmControllerTest extends TestCase
         Film::factory()->count(3)->create(['status' => Film::STATUS_PENDING]);
         Film::factory()->count(3)->create(['status' => Film::STATUS_MODERATE]);
 
-        $response = $this->actingAs($user)->get('/api/films?status=' . Film::STATUS_PENDING);
+        $response = $this->actingAs($user)->getJson('/api/films?status=' . Film::STATUS_PENDING);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
             'message' => 'У вас нет разрешения на просмотр фильмов статусе ' . Film::STATUS_PENDING,
         ]);
 
-        $response = $this->actingAs($user)->get('/api/films?status=' . Film::STATUS_MODERATE);
+        $response = $this->actingAs($user)->getJson('/api/films?status=' . Film::STATUS_MODERATE);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
             'message' => 'У вас нет разрешения на просмотр фильмов статусе ' . Film::STATUS_MODERATE,
@@ -104,11 +104,11 @@ class FilmControllerTest extends TestCase
         Film::factory()->count(3)->create(['status' => Film::STATUS_PENDING]);
         Film::factory()->count(3)->create(['status' => Film::STATUS_MODERATE]);
 
-        $response = $this->actingAs($moderator)->get('/api/films?status=' . Film::STATUS_PENDING);
+        $response = $this->actingAs($moderator)->getJson('/api/films?status=' . Film::STATUS_PENDING);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(3, 'data');
 
-        $response = $this->actingAs($moderator)->get('/api/films?status=' . Film::STATUS_MODERATE);
+        $response = $this->actingAs($moderator)->getJson('/api/films?status=' . Film::STATUS_MODERATE);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(3, 'data');
     }
@@ -117,7 +117,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RELEASED . '&order_to=desc');
+        $response = $this->getJson('/api/films?order_by=' . Film::ORDER_BY_RELEASED . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true)['data'];
@@ -131,7 +131,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RATING . '&order_to=desc');
+        $response = $this->getJson('/api/films?order_by=' . Film::ORDER_BY_RATING . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true)['data'];

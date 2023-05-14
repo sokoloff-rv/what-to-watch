@@ -16,7 +16,7 @@ class GenreControllerTest extends TestCase
     {
         Genre::factory()->count(3)->create();
 
-        $response = $this->get('/api/genres');
+        $response = $this->getJson('/api/genres');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
