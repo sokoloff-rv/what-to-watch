@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Film extends Model
 {
@@ -98,7 +99,13 @@ class Film extends Model
 
     public function getIsFavoriteAttribute(): bool
     {
-        return $this->attributes['is_favorite'] ?? false;
+        $user = Auth::user();
+
+        if ($user) {
+            return $this->favoritedByUsers()->where('user_id', $user->id)->exists();
+        }
+
+        return false;
     }
 
     public function setIsFavoriteAttribute(bool $value): void

@@ -88,14 +88,6 @@ class FilmController extends Controller
     public function show(Film $film): BaseResponse
     {
         try {
-            /** @var \App\Models\User|null $user */
-            $user = Auth::user();
-
-            if ($user) {
-                $isFavorite = $user->favoriteFilms()->where('film_id', $film->id)->exists();
-                $film->is_favorite = $isFavorite;
-            }
-
             return new SuccessResponse($film);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
