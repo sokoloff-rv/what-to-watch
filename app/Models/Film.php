@@ -99,6 +99,7 @@ class Film extends Model
 
     public function getIsFavoriteAttribute(): bool
     {
+        /** @var User|null $user */
         $user = Auth::user();
 
         if ($user) {

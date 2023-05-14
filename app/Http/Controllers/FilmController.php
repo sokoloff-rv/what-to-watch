@@ -14,7 +14,6 @@ use App\Models\Film;
 use App\Services\FilmService;
 use App\Services\ActorService;
 use App\Services\GenreService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
