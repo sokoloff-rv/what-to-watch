@@ -20,7 +20,7 @@ class StoreFilmRequest extends FormRequest
                 'required',
                 'string',
                 Rule::unique(Film::class),
-                'regex:/^tt\d{7}$/i',
+                'regex:/^tt\d{7,}$/i',
             ],
         ];
     }
