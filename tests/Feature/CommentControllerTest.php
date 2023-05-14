@@ -79,9 +79,8 @@ class CommentControllerTest extends TestCase
         $comments = $response->json('data');
 
         $response->assertStatus(Response::HTTP_OK);
-        foreach ($comments as $comment) {
-            $this->assertEquals(Comment::ANONYMOUS_NAME, $comment['author_name']);
-        }
+        $this->assertCount(1, $comments);
+        $this->assertEquals(Comment::ANONYMOUS_NAME, $comments[0]['author_name']);
     }
 
     public function testStoreUnauthorized()
