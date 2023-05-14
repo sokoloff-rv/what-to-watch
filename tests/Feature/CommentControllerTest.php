@@ -31,13 +31,11 @@ class CommentControllerTest extends TestCase
 
     public function testIndex(): void
     {
-        $user = User::factory()->create();
         $film = Film::factory()->create();
         $commentCount = 10;
 
         Comment::factory()->count($commentCount)->create([
             'film_id' => $film->id,
-            'user_id' => $user->id,
         ]);
 
         $response = $this->getJson("/api/films/{$film->id}/comments");
