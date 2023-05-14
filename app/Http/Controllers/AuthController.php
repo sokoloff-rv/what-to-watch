@@ -47,6 +47,7 @@ class AuthController extends Controller
             /** @var User $user */
             $user = Auth::user();
             $user->tokens()->delete();
+
             return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
