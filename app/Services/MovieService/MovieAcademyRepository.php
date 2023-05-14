@@ -2,14 +2,14 @@
 
 namespace App\Services\MovieService;
 
-use Illuminate\Support\Facades\Http;
 use App\DTO\FilmData;
+use Illuminate\Support\Facades\Http;
 
 class MovieAcademyRepository implements MovieRepositoryInterface
 {
     private string $baseUrl = 'http://guide.phpdemo.ru/api/films/';
 
-    public function findMovieById(string $imdbId): ?FilmData
+    public function findMovieById(string $imdbId): ?array
     {
         $response = Http::get($this->baseUrl . $imdbId);
 
@@ -20,6 +20,7 @@ class MovieAcademyRepository implements MovieRepositoryInterface
         $filmData->poster_image = $movieData['poster'];
         $filmData->preview_image = $movieData['icon'];
         $filmData->background_image = $movieData['background'];
+        $filmData->background_color = null;
         $filmData->video_link = $movieData['video'];
         $filmData->preview_video_link = $movieData['preview'];
         $filmData->description = $movieData['desc'];
@@ -29,7 +30,10 @@ class MovieAcademyRepository implements MovieRepositoryInterface
         $filmData->imdb_id = $movieData['imdb_id'];
         $filmData->starring = $movieData['actors'];
         $filmData->genre = $movieData['genres'];
+        $filmData->rating = null;
+        $filmData->scores_count = null;
 
-        return $filmData;
+        return $filmData->toArray();
     }
+
 }
