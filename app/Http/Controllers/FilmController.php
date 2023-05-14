@@ -34,7 +34,7 @@ class FilmController extends Controller
             $order_to = $request->query('order_to', Film::ORDER_TO_DESC);
 
             if (Gate::denies('view-films-with-status', $status)) {
-                return new FailResponse("У вас нет разрешения на просмотр фильмов статусе $status", Response::HTTP_FORBIDDEN);
+                return new FailResponse("Недостаточно прав для просмотра фильмов в статусе $status", Response::HTTP_FORBIDDEN);
             }
 
             $films = Film::query()

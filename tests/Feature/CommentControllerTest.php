@@ -207,7 +207,7 @@ class CommentControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
@@ -300,7 +300,7 @@ class CommentControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 

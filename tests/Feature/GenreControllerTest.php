@@ -57,7 +57,7 @@ class GenreControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 

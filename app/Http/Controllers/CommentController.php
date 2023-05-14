@@ -63,7 +63,7 @@ class CommentController extends Controller
     public function update(CommentRequest $request, Comment $comment): BaseResponse
     {
         if (Gate::denies('comment-edit', $comment)) {
-            return new FailResponse('Запрос требует аутентификации.', Response::HTTP_FORBIDDEN);
+            return new FailResponse('Недостаточно прав.', Response::HTTP_FORBIDDEN);
         }
 
         try {
@@ -86,7 +86,7 @@ class CommentController extends Controller
     public function destroy(Request $request, Comment $comment): BaseResponse
     {
         if (Gate::denies('comment-delete', $comment)) {
-            return new FailResponse('Запрос требует аутентификации.', Response::HTTP_FORBIDDEN);
+            return new FailResponse('Недостаточно прав.', Response::HTTP_FORBIDDEN);
         }
 
         try {

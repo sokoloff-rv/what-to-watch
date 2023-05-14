@@ -24,6 +24,6 @@ class ModeratorMiddleware
             return $next($request);
         }
 
-        return response()->json(['message' => 'Запрос требует аутентификации.'], Response::HTTP_FORBIDDEN);
+        return response()->json(['message' => 'Недостаточно прав.'], Response::HTTP_FORBIDDEN);
     }
 }

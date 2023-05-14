@@ -87,13 +87,13 @@ class FilmControllerTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/films?status=' . Film::STATUS_PENDING);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'У вас нет разрешения на просмотр фильмов статусе ' . Film::STATUS_PENDING,
+            'message' => 'Недостаточно прав для просмотра фильмов в статусе ' . Film::STATUS_PENDING,
         ]);
 
         $response = $this->actingAs($user)->getJson('/api/films?status=' . Film::STATUS_MODERATE);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'У вас нет разрешения на просмотр фильмов статусе ' . Film::STATUS_MODERATE,
+            'message' => 'Недостаточно прав для просмотра фильмов в статусе ' . Film::STATUS_MODERATE,
         ]);
     }
 
@@ -169,7 +169,7 @@ class FilmControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
@@ -370,7 +370,7 @@ class FilmControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
