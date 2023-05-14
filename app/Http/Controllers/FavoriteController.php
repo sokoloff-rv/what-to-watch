@@ -21,6 +21,7 @@ class FavoriteController extends Controller
             /** @var \App\Models\User|null $user */
             $user = Auth::user();
             $favoriteFilms = $user->favoriteFilms()->get();
+
             return new SuccessResponse($favoriteFilms);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -38,6 +39,7 @@ class FavoriteController extends Controller
             /** @var \App\Models\User|null $user */
             $user = Auth::user();
             $user->favoriteFilms()->attach($film);
+
             return new SuccessResponse();
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -55,6 +57,7 @@ class FavoriteController extends Controller
             /** @var \App\Models\User|null $user */
             $user = Auth::user();
             $user->favoriteFilms()->detach($film);
+
             return new SuccessResponse();
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
