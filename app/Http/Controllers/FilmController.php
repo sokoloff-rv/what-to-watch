@@ -11,7 +11,6 @@ use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\SuccessPaginationResponse;
 use App\Jobs\CreateFilmJob;
 use App\Models\Film;
-use App\Services\FilmService;
 use App\Services\ActorService;
 use App\Services\GenreService;
 use Illuminate\Support\Facades\Gate;
@@ -61,7 +60,7 @@ class FilmController extends Controller
      *
      * @return BaseResponse
      */
-    public function store(StoreFilmRequest $request, FilmService $filmService)
+    public function store(StoreFilmRequest $request)
     {
         try {
             $imdbId = $request->input('imdb_id');
