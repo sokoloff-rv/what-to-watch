@@ -210,8 +210,6 @@ class FilmControllerTest extends TestCase
             'imdb_id' => $imdbId,
             'status' => Film::STATUS_PENDING,
         ]);
-
-        Mockery::close();
     }
 
     public function testStoreQueue()
@@ -265,8 +263,6 @@ class FilmControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'imdb_id',
         ]);
-
-        Mockery::close();
     }
 
     public function testStoreValidationError()
@@ -291,8 +287,6 @@ class FilmControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'imdb_id',
         ]);
-
-        Mockery::close();
     }
 
     public function testShowFilm()

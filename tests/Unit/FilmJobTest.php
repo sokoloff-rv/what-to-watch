@@ -49,8 +49,6 @@ class FilmJobTest extends TestCase
             'imdb_id' => $imdbId,
             'status' => Film::STATUS_MODERATE,
         ]);
-
-        Mockery::close();
     }
 
 }

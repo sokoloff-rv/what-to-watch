@@ -31,7 +31,5 @@ class MovieServiceTest extends TestCase
         $result = $movieService->getMovie($imdbId);
 
         $this->assertEquals($newMovie, $result);
-
-        Mockery::close();
     }
 }
