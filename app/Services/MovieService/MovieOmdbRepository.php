@@ -2,6 +2,7 @@
 
 namespace App\Services\MovieService;
 
+use App\DTO\FilmData;
 use GuzzleHttp\Client;
 
 class MovieOmdbRepository implements MovieRepositoryInterface
@@ -27,26 +28,22 @@ class MovieOmdbRepository implements MovieRepositoryInterface
 
         $movieData = json_decode($response->getBody()->getContents(), true);
 
-        $formattedMovieData = [
-            'name' => $movieData['Title'],
-            'poster_image' => $movieData['Poster'],
-            'preview_image' => null,
-            'background_image' => null,
-            'background_color' => null,
-            'video_link' => null,
-            'preview_video_link' => null,
-            'description' => $movieData['Plot'],
-            'director' => $movieData['Director'],
-            'released' => (int) $movieData['Year'],
-            'run_time' => (int) $movieData['Runtime'],
-            'rating' => (float) $movieData['imdbRating'],
-            'scores_count' => (int) str_replace(',', '', $movieData['imdbVotes']),
-            'imdb_id' => $movieData['imdbID'],
-            'starring' => array_map('trim', explode(',', $movieData['Actors'])),
-            'genre' => array_map('trim', explode(',', $movieData['Genre'])),
-        ];
+        $filmData = new FilmData(
+            $movieData['Title'],
+            $movieData['Plot'],
+            $movieData['Director'],
+            (int) $movieData['Year'],
+            (int) $movieData['Runtime'],
+            $movieData['imdbID'],
+            array_map('trim', explode(',', $movieData['Actors'])),
+            array_map('trim', explode(',', $movieData['Genre']))
+        );
 
-        return $formattedMovieData;
+        $filmData->poster_image = $movieData['Poster'];
+        $filmData->rating = (float) $movieData['imdbRating'];
+        $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes']);
+
+        return $filmData->toArray();
     }
 
 }

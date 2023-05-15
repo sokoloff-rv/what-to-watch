@@ -4,7 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Actor[] $actors
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Genre[] $genres
+ */
 class Film extends Model
 {
     use HasFactory;
@@ -37,6 +42,11 @@ class Film extends Model
         'status',
     ];
 
+    protected $with = [
+        'actors',
+        'genres',
+    ];
+
     protected $casts = [
         'released' => 'integer',
         'rating' => 'float',
@@ -50,6 +60,7 @@ class Film extends Model
 
     protected $hidden = [
         'actors',
+        'genres',
     ];
 
     public function genres()
@@ -86,45 +97,25 @@ class Film extends Model
         $this->save();
     }
 
-    public static function createFromData(array $data): Film
-    {
-        $film = new self();
-
-        $film->fill($data);
-        $film->status = self::STATUS_PENDING;
-
-        $film->save();
-
-        foreach ($data['starring'] as $actorName) {
-            $actor = Actor::firstOrCreate(['name' => $actorName]);
-            $film->actors()->attach($actor);
-        }
-
-        foreach ($data['genre'] as $genreName) {
-            $genre = Genre::firstOrCreate(['name' => $genreName]);
-            $film->genres()->attach($genre);
-        }
-
-        return $film;
-    }
-
     public function getStarringAttribute(): array
     {
-        return $this->actors()->pluck('name')->toArray();
+        return $this->actors->pluck('name')->toArray();
     }
 
     public function getGenreAttribute(): array
     {
-        return $this->genres()->pluck('name')->toArray();
+        return $this->genres->pluck('name')->toArray();
     }
 
     public function getIsFavoriteAttribute(): bool
     {
-        return $this->attributes['is_favorite'] ?? false;
-    }
+        /** @var User|null $user */
+        $user = Auth::user();
 
-    public function setIsFavoriteAttribute(bool $value): void
-    {
-        $this->attributes['is_favorite'] = $value;
+        if ($user) {
+            return $this->favoritedByUsers()->where('user_id', $user->id)->exists();
+        }
+
+        return false;
     }
 }

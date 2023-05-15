@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Film;
+use App\Services\FilmService;
 use App\Services\MovieService\MovieService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,23 +18,24 @@ class CreateFilmJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected $imdbId;
+    public $data;
 
-    public function __construct(string $imdbId)
+    public function __construct(array $data)
     {
-        $this->imdbId = $imdbId;
+        $this->data = $data;
     }
 
-    public function handle(MovieService $movieService)
+    public function handle(MovieService $movieService, FilmService $filmService)
     {
-        Log::info('CreateFilmJob начала выполняться для фильма с imdbId ' . $this->imdbId);
+        $imdbId = $this->data['imdb_id'];
+        Log::info("Задача CreateFilmJob начала выполняться для фильма с IMDB id {$imdbId}.");
 
-        $movieData = $movieService->getMovie($this->imdbId);
+        $movieData = $movieService->getMovie($imdbId);
 
         if ($movieData) {
-            Film::createFromData($movieData);
+            $filmService->updateFromData($movieData);
         }
 
-        Log::info('CreateFilmJob успешно выполнена для фильма с imdbId ' . $this->imdbId);
+        Log::info("Задача CreateFilmJob завершила выполнение для фильма с IMDB id {$imdbId}.");
     }
 }

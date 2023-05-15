@@ -31,13 +31,11 @@ class CommentControllerTest extends TestCase
 
     public function testIndex(): void
     {
-        $user = User::factory()->create();
         $film = Film::factory()->create();
         $commentCount = 10;
 
         Comment::factory()->count($commentCount)->create([
             'film_id' => $film->id,
-            'user_id' => $user->id,
         ]);
 
         $response = $this->getJson("/api/films/{$film->id}/comments");
@@ -81,9 +79,8 @@ class CommentControllerTest extends TestCase
         $comments = $response->json('data');
 
         $response->assertStatus(Response::HTTP_OK);
-        foreach ($comments as $comment) {
-            $this->assertEquals(Comment::ANONYMOUS_NAME, $comment['author_name']);
-        }
+        $this->assertCount(1, $comments);
+        $this->assertEquals(Comment::ANONYMOUS_NAME, $comments[0]['author_name']);
     }
 
     public function testStoreUnauthorized()
@@ -118,6 +115,13 @@ class CommentControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.comment_id', null);
+
+        $this->assertDatabaseHas('comments', [
+            'user_id' => $user->id,
+            'film_id' => $film->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+        ]);
     }
 
     public function testStoreValidationError()
@@ -159,6 +163,14 @@ class CommentControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.comment_id', $parentComment->id);
+
+        $this->assertDatabaseHas('comments', [
+            'user_id' => $user->id,
+            'film_id' => $film->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+            'comment_id' => $data['comment_id'],
+        ]);
     }
 
     public function testUpdateUnauthorized()
@@ -192,7 +204,7 @@ class CommentControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
@@ -211,6 +223,12 @@ class CommentControllerTest extends TestCase
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.text', $data['text']);
         $response->assertJsonPath('data.rating', $data['rating']);
+
+        $this->assertDatabaseHas('comments', [
+            'id' => $comment->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+        ]);
     }
 
     public function testUpdateByModeratorSuccess()
@@ -229,6 +247,12 @@ class CommentControllerTest extends TestCase
         $response->assertJsonStructure($this->getTypicalCommentStructure());
         $response->assertJsonPath('data.text', $data['text']);
         $response->assertJsonPath('data.rating', $data['rating']);
+
+        $this->assertDatabaseHas('comments', [
+            'id' => $comment->id,
+            'text' => $data['text'],
+            'rating' => $data['rating'],
+        ]);
     }
 
     public function testUpdateValidationError()
@@ -273,7 +297,7 @@ class CommentControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 

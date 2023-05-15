@@ -8,11 +8,11 @@ use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
+use App\Http\Responses\SuccessPaginationResponse;
 use App\Jobs\CreateFilmJob;
-use App\Models\Actor;
 use App\Models\Film;
-use App\Models\Genre;
-use Illuminate\Support\Facades\Auth;
+use App\Services\ActorService;
+use App\Services\GenreService;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,7 +34,7 @@ class FilmController extends Controller
             $order_to = $request->query('order_to', Film::ORDER_TO_DESC);
 
             if (Gate::denies('view-films-with-status', $status)) {
-                return new FailResponse("У вас нет разрешения на просмотр фильмов статусе $status", Response::HTTP_FORBIDDEN);
+                return new FailResponse("Недостаточно прав для просмотра фильмов в статусе $status", Response::HTTP_FORBIDDEN);
             }
 
             $films = Film::query()
@@ -49,7 +49,7 @@ class FilmController extends Controller
                 ->orderBy($order_by, $order_to)
                 ->paginate($pageQuantity);
 
-            return new SuccessResponse($films);
+            return new SuccessPaginationResponse($films);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
@@ -65,9 +65,15 @@ class FilmController extends Controller
         try {
             $imdbId = $request->input('imdb_id');
 
-            CreateFilmJob::dispatch($imdbId);
+            $data = [
+                'imdb_id' => $imdbId,
+                'status' => Film::STATUS_PENDING,
+            ];
 
-            return new SuccessResponse(null, Response::HTTP_CREATED);
+            Film::create($data);
+            CreateFilmJob::dispatch($data);
+
+            return new SuccessResponse($data, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
@@ -81,14 +87,6 @@ class FilmController extends Controller
     public function show(Film $film): BaseResponse
     {
         try {
-            /** @var \App\Models\User|null $user */
-            $user = Auth::user();
-
-            if ($user) {
-                $isFavorite = $user->favoriteFilms()->where('film_id', $film->id)->exists();
-                $film->is_favorite = $isFavorite;
-            }
-
             return new SuccessResponse($film);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -106,23 +104,11 @@ class FilmController extends Controller
             $film->update($request->validated());
 
             if ($request->has('starring')) {
-                $actorsNames = $request->input('starring');
-                $actorIdentifiers = [];
-                foreach ($actorsNames as $actorName) {
-                    $actor = Actor::firstOrCreate(['name' => $actorName]);
-                    $actorIdentifiers[] = $actor->id;
-                }
-                $film->actors()->sync($actorIdentifiers);
+                app(ActorService::class)->syncActors($film, $request->input('starring'));
             }
 
             if ($request->has('genre')) {
-                $genresNames = $request->input('genre');
-                $genreIdentifiers = [];
-                foreach ($genresNames as $genreName) {
-                    $genre = Genre::firstOrCreate(['name' => $genreName]);
-                    $genreIdentifiers[] = $genre->id;
-                }
-                $film->genres()->sync($genreIdentifiers);
+                app(GenreService::class)->syncGenres($film, $request->input('genre'));
             }
 
             return new SuccessResponse($film);

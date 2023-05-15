@@ -16,7 +16,7 @@ class GenreControllerTest extends TestCase
     {
         Genre::factory()->count(3)->create();
 
-        $response = $this->get('/api/genres');
+        $response = $this->getJson('/api/genres');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
@@ -57,7 +57,7 @@ class GenreControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
@@ -78,6 +78,11 @@ class GenreControllerTest extends TestCase
                 'id' => $genre->id,
                 'name' => $newName,
             ],
+        ]);
+
+        $this->assertDatabaseHas('genres', [
+            'id' => $genre->id,
+            'name' => $newName,
         ]);
     }
 

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\CreateFilmJob;
 use App\Models\Film;
 use App\Models\Genre;
 use App\Models\User;
 use App\Services\MovieService\MovieService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -43,7 +45,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(10)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films');
+        $response = $this->getJson('/api/films');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true);
@@ -69,7 +71,7 @@ class FilmControllerTest extends TestCase
             $film->genres()->attach($genre);
         });
 
-        $response = $this->get('/api/films?genre=' . $genre->name);
+        $response = $this->getJson('/api/films?genre=' . $genre->name);
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(5, 'data');
@@ -82,16 +84,16 @@ class FilmControllerTest extends TestCase
         Film::factory()->count(3)->create(['status' => Film::STATUS_PENDING]);
         Film::factory()->count(3)->create(['status' => Film::STATUS_MODERATE]);
 
-        $response = $this->actingAs($user)->get('/api/films?status=' . Film::STATUS_PENDING);
+        $response = $this->actingAs($user)->getJson('/api/films?status=' . Film::STATUS_PENDING);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'У вас нет разрешения на просмотр фильмов статусе ' . Film::STATUS_PENDING,
+            'message' => 'Недостаточно прав для просмотра фильмов в статусе ' . Film::STATUS_PENDING,
         ]);
 
-        $response = $this->actingAs($user)->get('/api/films?status=' . Film::STATUS_MODERATE);
+        $response = $this->actingAs($user)->getJson('/api/films?status=' . Film::STATUS_MODERATE);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'У вас нет разрешения на просмотр фильмов статусе ' . Film::STATUS_MODERATE,
+            'message' => 'Недостаточно прав для просмотра фильмов в статусе ' . Film::STATUS_MODERATE,
         ]);
     }
 
@@ -102,11 +104,11 @@ class FilmControllerTest extends TestCase
         Film::factory()->count(3)->create(['status' => Film::STATUS_PENDING]);
         Film::factory()->count(3)->create(['status' => Film::STATUS_MODERATE]);
 
-        $response = $this->actingAs($moderator)->get('/api/films?status=' . Film::STATUS_PENDING);
+        $response = $this->actingAs($moderator)->getJson('/api/films?status=' . Film::STATUS_PENDING);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(3, 'data');
 
-        $response = $this->actingAs($moderator)->get('/api/films?status=' . Film::STATUS_MODERATE);
+        $response = $this->actingAs($moderator)->getJson('/api/films?status=' . Film::STATUS_MODERATE);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(3, 'data');
     }
@@ -115,7 +117,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RELEASED . '&order_to=desc');
+        $response = $this->getJson('/api/films?order_by=' . Film::ORDER_BY_RELEASED . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true)['data'];
@@ -129,7 +131,7 @@ class FilmControllerTest extends TestCase
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
-        $response = $this->get('/api/films?order_by=' . Film::ORDER_BY_RATING . '&order_to=desc');
+        $response = $this->getJson('/api/films?order_by=' . Film::ORDER_BY_RATING . '&order_to=desc');
 
         $response->assertStatus(Response::HTTP_OK);
         $responseData = json_decode($response->getContent(), true)['data'];
@@ -167,7 +169,7 @@ class FilmControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
@@ -187,23 +189,49 @@ class FilmControllerTest extends TestCase
             'imdb_id' => $imdbId,
         ])->toArray();
 
-        $mockMovieService = Mockery::mock(MovieService::class);
+        Queue::fake();
 
-        $mockMovieService->shouldReceive('getMovie')
+        $movieService = Mockery::mock(MovieService::class);
+        $movieService->shouldReceive('getMovie')
             ->with($imdbId)
-            ->once()
             ->andReturn($newMovie);
-
-        $this->app->instance(MovieService::class, $mockMovieService);
+        $this->app->instance(MovieService::class, $movieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
         $response->assertStatus(Response::HTTP_CREATED);
-        $response->assertJsonStructure([
-            'data' => $this->getTypicalFilmStructure(),
+        $response->assertJson([
+            'data' => [
+                'imdb_id' => $imdbId,
+                'status' => Film::STATUS_PENDING,
+            ],
+        ]);
+        $this->assertDatabaseHas('films', [
+            'imdb_id' => $imdbId,
+            'status' => Film::STATUS_PENDING,
+        ]);
+    }
+
+    public function testStoreQueue()
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_MODERATOR,
         ]);
 
-        Mockery::close();
+        $imdbId = 'tt0111161';
+
+        $data = [
+            'imdb_id' => $imdbId,
+        ];
+
+        Queue::fake();
+
+        $response = $this->actingAs($user)->postJson("/api/films", $data);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+        Queue::assertPushed(function (CreateFilmJob $job) use ($imdbId) {
+            return $job->data['imdb_id'] === $imdbId;
+        });
     }
 
     public function testStoreFilmAlreadyExists()
@@ -212,12 +240,14 @@ class FilmControllerTest extends TestCase
             'role' => User::ROLE_MODERATOR,
         ]);
 
+        $imdbId = 'tt0111161';
+
         $film = Film::factory()->create([
-            'imdb_id' => 'tt0111161',
+            'imdb_id' => $imdbId,
         ]);
 
         $data = [
-            'imdb_id' => 'tt0111161',
+            'imdb_id' => $imdbId,
         ];
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
@@ -331,7 +361,7 @@ class FilmControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $response->assertJson([
-            'message' => 'Запрос требует аутентификации.',
+            'message' => 'Недостаточно прав.',
         ]);
     }
 
@@ -359,6 +389,13 @@ class FilmControllerTest extends TestCase
                 'imdb_id' => $newImdbId,
                 'status' => $newStatus,
             ],
+        ]);
+
+        $this->assertDatabaseHas('films', [
+            'id' => $film->id,
+            'name' => $newName,
+            'imdb_id' => $newImdbId,
+            'status' => $newStatus,
         ]);
     }
 

@@ -27,7 +27,7 @@ class UpdateFilmRequest extends FormRequest
             'genre' => 'nullable|array',
             'run_time' => 'nullable|integer',
             'released' => 'nullable|integer',
-            'imdb_id' => 'required|string|unique:films,imdb_id,' . $this->film->id . '|regex:/^tt\d{7}$/',
+            'imdb_id' => 'required|string|unique:films,imdb_id,' . $this->film->id . '|regex:/^tt\d{7,}$/',
             'status' => 'required|in:pending,moderate,ready',
         ];
     }
