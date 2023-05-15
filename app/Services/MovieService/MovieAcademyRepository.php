@@ -15,23 +15,22 @@ class MovieAcademyRepository implements MovieRepositoryInterface
 
         $movieData = $response->json();
 
-        $filmData = new FilmData();
-        $filmData->name = $movieData['name'];
+        $filmData = new FilmData(
+            $movieData['name'],
+            $movieData['desc'],
+            $movieData['director'],
+            (int) $movieData['released'],
+            (int) $movieData['run_time'],
+            $movieData['imdb_id'],
+            $movieData['actors'],
+            $movieData['genres']
+        );
+
         $filmData->poster_image = $movieData['poster'];
         $filmData->preview_image = $movieData['icon'];
         $filmData->background_image = $movieData['background'];
-        $filmData->background_color = null;
         $filmData->video_link = $movieData['video'];
         $filmData->preview_video_link = $movieData['preview'];
-        $filmData->description = $movieData['desc'];
-        $filmData->director = $movieData['director'];
-        $filmData->released = (int) $movieData['released'];
-        $filmData->run_time = (int) $movieData['run_time'];
-        $filmData->imdb_id = $movieData['imdb_id'];
-        $filmData->starring = $movieData['actors'];
-        $filmData->genre = $movieData['genres'];
-        $filmData->rating = null;
-        $filmData->scores_count = null;
 
         return $filmData->toArray();
     }

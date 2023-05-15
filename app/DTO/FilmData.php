@@ -5,12 +5,12 @@ namespace App\DTO;
 class FilmData
 {
     public string $name;
-    public ?string $poster_image;
-    public ?string $preview_image;
-    public ?string $background_image;
-    public ?string $background_color;
-    public ?string $video_link;
-    public ?string $preview_video_link;
+    public ?string $poster_image = null;
+    public ?string $preview_image = null;
+    public ?string $background_image = null;
+    public ?string $background_color = null;
+    public ?string $video_link = null;
+    public ?string $preview_video_link = null;
     public string $description;
     public string $director;
     public int $released;
@@ -18,8 +18,28 @@ class FilmData
     public string $imdb_id;
     public array $starring;
     public array $genre;
-    public ?float $rating;
-    public ?int $scores_count;
+    public ?float $rating = null;
+    public ?int $scores_count = null;
+
+    public function __construct(
+        string $name,
+        string $description,
+        string $director,
+        int $released,
+        int $run_time,
+        string $imdb_id,
+        array $starring,
+        array $genre
+    ) {
+        $this->name = $name;
+        $this->description = $description;
+        $this->director = $director;
+        $this->released = $released;
+        $this->run_time = $run_time;
+        $this->imdb_id = $imdb_id;
+        $this->starring = $starring;
+        $this->genre = $genre;
+    }
 
     public function toArray(): array
     {

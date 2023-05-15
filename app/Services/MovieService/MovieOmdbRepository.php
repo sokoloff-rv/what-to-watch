@@ -28,21 +28,18 @@ class MovieOmdbRepository implements MovieRepositoryInterface
 
         $movieData = json_decode($response->getBody()->getContents(), true);
 
-        $filmData = new FilmData();
-        $filmData->name = $movieData['Title'];
+        $filmData = new FilmData(
+            $movieData['Title'],
+            $movieData['Plot'],
+            $movieData['Director'],
+            (int) $movieData['Year'],
+            (int) $movieData['Runtime'],
+            $movieData['imdbID'],
+            array_map('trim', explode(',', $movieData['Actors'])),
+            array_map('trim', explode(',', $movieData['Genre']))
+        );
+
         $filmData->poster_image = $movieData['Poster'];
-        $filmData->preview_image = null;
-        $filmData->background_image = null;
-        $filmData->background_color = null;
-        $filmData->video_link = null;
-        $filmData->preview_video_link = null;
-        $filmData->description = $movieData['Plot'];
-        $filmData->director = $movieData['Director'];
-        $filmData->released = (int) $movieData['Year'];
-        $filmData->run_time = (int) $movieData['Runtime'];
-        $filmData->imdb_id = $movieData['imdbID'];
-        $filmData->starring = array_map('trim', explode(',', $movieData['Actors']));
-        $filmData->genre = array_map('trim', explode(',', $movieData['Genre']));
         $filmData->rating = (float) $movieData['imdbRating'];
         $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes']);
 
