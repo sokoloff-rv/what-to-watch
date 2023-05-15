@@ -6,11 +6,10 @@ use App\Models\Film;
 
 class FilmService
 {
-    protected $actorService;
-    protected $genreService;
-
-    public function __construct(ActorService $actorService, GenreService $genreService)
-    {
+    public function __construct(
+        private ActorService $actorService,
+        private GenreService $genreService
+    ) {
         $this->actorService = $actorService;
         $this->genreService = $genreService;
     }
