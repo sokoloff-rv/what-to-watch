@@ -250,10 +250,6 @@ class FilmControllerTest extends TestCase
             'imdb_id' => $imdbId,
         ];
 
-        $mockMovieService = Mockery::mock(MovieService::class);
-
-        $this->app->instance(MovieService::class, $mockMovieService);
-
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -274,9 +270,6 @@ class FilmControllerTest extends TestCase
         $data = [
             'imdb_id' => 'Невалидный imdb_id',
         ];
-
-        $mockMovieService = Mockery::mock(MovieService::class);
-        $this->app->instance(MovieService::class, $mockMovieService);
 
         $response = $this->actingAs($user)->postJson("/api/films", $data);
 
