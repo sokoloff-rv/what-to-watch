@@ -38,6 +38,11 @@ class Film extends Model
         'status',
     ];
 
+    protected $with = [
+        'actors',
+        'genres',
+    ];
+
     protected $casts = [
         'released' => 'integer',
         'rating' => 'float',
@@ -51,6 +56,7 @@ class Film extends Model
 
     protected $hidden = [
         'actors',
+        'genres',
     ];
 
     public function genres()
@@ -89,12 +95,12 @@ class Film extends Model
 
     public function getStarringAttribute(): array
     {
-        return $this->actors()->pluck('name')->toArray();
+        return $this->actors->pluck('name')->toArray();
     }
 
     public function getGenreAttribute(): array
     {
-        return $this->genres()->pluck('name')->toArray();
+        return $this->genres->pluck('name')->toArray();
     }
 
     public function getIsFavoriteAttribute(): bool
