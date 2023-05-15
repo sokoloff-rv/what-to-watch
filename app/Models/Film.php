@@ -118,9 +118,4 @@ class Film extends Model
 
         return false;
     }
-
-    public function setIsFavoriteAttribute(bool $value): void
-    {
-        $this->attributes['is_favorite'] = $value;
-    }
 }
