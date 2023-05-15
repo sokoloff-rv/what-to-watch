@@ -17,11 +17,27 @@ class FilmService
 
     public function createFromData(array $data): Film
     {
-        $film = new Film();
+        $film = Film::firstOrCreate(
+            ['imdb_id' => $data['imdb_id']],
+            ['status' => Film::STATUS_MODERATE]
+        );
+        $this->saveFilm($film, $data);
+        return $film;
+    }
 
+    public function updateFromData(array $data): Film
+    {
+        $film = Film::firstWhere('imdb_id', $data['imdb_id']);
+        if ($film) {
+            $this->saveFilm($film, $data);
+        }
+        return $film;
+    }
+
+    private function saveFilm(Film $film, array $data): void
+    {
         $film->fill($data);
         $film->status = Film::STATUS_MODERATE;
-
         $film->save();
 
         if (isset($data['starring'])) {
@@ -31,7 +47,5 @@ class FilmService
         if (isset($data['genre'])) {
             $this->genreService->syncGenres($film, $data['genre']);
         }
-
-        return $film;
     }
 }

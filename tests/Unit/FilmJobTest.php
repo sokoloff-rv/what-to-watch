@@ -41,6 +41,7 @@ class FilmJobTest extends TestCase
         $genreService = new GenreService();
         $filmService = new FilmService($actorService, $genreService);
 
+        Film::create($data);
         $job = new CreateFilmJob($data);
         $job->handle($movieService, $filmService);
 

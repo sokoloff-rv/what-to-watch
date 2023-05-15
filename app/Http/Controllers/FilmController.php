@@ -71,6 +71,7 @@ class FilmController extends Controller
                 'status' => Film::STATUS_PENDING,
             ];
 
+            Film::create($data);
             CreateFilmJob::dispatch($data);
 
             return new SuccessResponse($data, Response::HTTP_CREATED);
