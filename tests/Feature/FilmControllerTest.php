@@ -206,6 +206,10 @@ class FilmControllerTest extends TestCase
                 'status' => Film::STATUS_PENDING,
             ],
         ]);
+        $this->assertDatabaseHas('films', [
+            'imdb_id' => $imdbId,
+            'status' => Film::STATUS_PENDING,
+        ]);
 
         Mockery::close();
     }
