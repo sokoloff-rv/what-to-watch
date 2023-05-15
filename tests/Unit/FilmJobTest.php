@@ -47,6 +47,7 @@ class FilmJobTest extends TestCase
 
         $this->assertDatabaseHas('films', [
             'imdb_id' => $imdbId,
+            'status' => Film::STATUS_MODERATE,
         ]);
 
         Mockery::close();
