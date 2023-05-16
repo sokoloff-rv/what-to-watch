@@ -34,6 +34,8 @@ class CreateFilmJob implements ShouldQueue
 
         if ($movieData) {
             $filmService->updateFromData($movieData);
+        } else {
+            $filmService->deleteFilm($imdbId);
         }
 
         Log::info("Задача CreateFilmJob завершила выполнение для фильма с IMDB id {$imdbId}.");

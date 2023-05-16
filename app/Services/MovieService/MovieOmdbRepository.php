@@ -26,22 +26,26 @@ class MovieOmdbRepository implements MovieRepositoryInterface
             ],
         ]);
 
+        if (!$response->successful()) {
+            return null;
+        }
+
         $movieData = json_decode($response->getBody()->getContents(), true);
 
         $filmData = new FilmData(
-            $movieData['Title'],
-            $movieData['Plot'],
-            $movieData['Director'],
-            (int) $movieData['Year'],
-            (int) $movieData['Runtime'],
-            $movieData['imdbID'],
-            array_map('trim', explode(',', $movieData['Actors'])),
-            array_map('trim', explode(',', $movieData['Genre']))
+            $movieData['Title'] ?? null,
+            $movieData['Plot'] ?? null,
+            $movieData['Director'] ?? null,
+            (int) ($movieData['Year'] ?? 0),
+            (int) ($movieData['Runtime'] ?? 0),
+            $movieData['imdbID'] ?? null,
+            array_map('trim', explode(',', $movieData['Actors'] ?? '')),
+            array_map('trim', explode(',', $movieData['Genre'] ?? ''))
         );
 
-        $filmData->poster_image = $movieData['Poster'];
-        $filmData->rating = (float) $movieData['imdbRating'];
-        $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes']);
+        $filmData->poster_image = $movieData['Poster'] ?? null;
+        $filmData->rating = (float) ($movieData['imdbRating'] ?? 0);
+        $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes'] ?? '0');
 
         return $filmData->toArray();
     }

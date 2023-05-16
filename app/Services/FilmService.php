@@ -24,13 +24,15 @@ class FilmService
         return $film;
     }
 
-    public function updateFromData(array $data): Film
+    public function updateFromData(array $data): ?Film
     {
         $film = Film::firstWhere('imdb_id', $data['imdb_id']);
         if ($film) {
             $this->saveFilm($film, $data);
+            return $film;
+        } else {
+            return null;
         }
-        return $film;
     }
 
     private function saveFilm(Film $film, array $data): void
@@ -45,6 +47,14 @@ class FilmService
 
         if (isset($data['genre'])) {
             $this->genreService->syncGenres($film, $data['genre']);
+        }
+    }
+
+    public function deleteFilm(string $imdbId): void
+    {
+        $film = Film::firstWhere('imdb_id', $imdbId);
+        if ($film) {
+            $film->delete();
         }
     }
 }
