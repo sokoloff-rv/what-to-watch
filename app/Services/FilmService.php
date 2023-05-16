@@ -20,7 +20,7 @@ class FilmService
             ['imdb_id' => $data['imdb_id']],
             ['status' => $nextStatus]
         );
-        $this->saveFilm($film, $data);
+        $this->saveFilm($film, $data, $nextStatus);
         return $film;
     }
 
@@ -37,7 +37,7 @@ class FilmService
 
     private function saveFilm(Film $film, array $data, string $nextStatus): void
     {
-        $film->fill($data, $nextStatus);
+        $film->fill($data);
         $film->status = $nextStatus;
         $film->save();
 
