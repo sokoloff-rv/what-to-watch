@@ -26,7 +26,7 @@ class MovieOmdbRepository implements MovieRepositoryInterface
             ],
         ]);
 
-        if (!$response->successful()) {
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
             return null;
         }
 
