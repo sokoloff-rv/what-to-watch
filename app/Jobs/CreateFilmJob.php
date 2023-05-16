@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Film;
 use App\Services\FilmService;
 use App\Services\MovieService\MovieService;
 use Illuminate\Bus\Queueable;
@@ -33,7 +34,7 @@ class CreateFilmJob implements ShouldQueue
         $movieData = $movieService->getMovie($imdbId);
 
         if ($movieData) {
-            $filmService->updateFromData($movieData);
+            $filmService->updateFromData($movieData, Film::STATUS_MODERATE);
         } else {
             $filmService->deleteFilm($imdbId);
         }

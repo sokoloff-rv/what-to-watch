@@ -14,31 +14,31 @@ class FilmService
         $this->genreService = $genreService;
     }
 
-    public function createFromData(array $data): Film
+    public function createFromData(array $data, string $nextStatus): Film
     {
         $film = Film::firstOrCreate(
             ['imdb_id' => $data['imdb_id']],
-            ['status' => Film::STATUS_MODERATE]
+            ['status' => $nextStatus]
         );
         $this->saveFilm($film, $data);
         return $film;
     }
 
-    public function updateFromData(array $data): ?Film
+    public function updateFromData(array $data, string $nextStatus): ?Film
     {
         $film = Film::firstWhere('imdb_id', $data['imdb_id']);
         if ($film) {
-            $this->saveFilm($film, $data);
+            $this->saveFilm($film, $data, $nextStatus);
             return $film;
         } else {
             return null;
         }
     }
 
-    private function saveFilm(Film $film, array $data): void
+    private function saveFilm(Film $film, array $data, string $nextStatus): void
     {
-        $film->fill($data);
-        $film->status = Film::STATUS_MODERATE;
+        $film->fill($data, $nextStatus);
+        $film->status = $nextStatus;
         $film->save();
 
         if (isset($data['starring'])) {
