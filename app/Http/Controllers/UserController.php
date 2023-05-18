@@ -32,11 +32,27 @@ class UserController extends Controller
      *
      * @return BaseResponse
      */
-    public function update(Request $request): BaseResponse
+    public function update(UpdateUserRequest $request): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            $user = Auth::user();
+            $data = $request->all();
+
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            }
+
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $path = $file->store('avatars', 'public');
+                $data['avatar'] = $path;
+            }
+
+            $user->update($data);
+
+            return new SuccessResponse([
+                'user' => $user,
+            ]);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }
