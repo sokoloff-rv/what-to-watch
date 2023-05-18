@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
+use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -35,6 +37,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request): BaseResponse
     {
         try {
+            /** @var User|null $user */
             $user = Auth::user();
             $data = $request->all();
 
