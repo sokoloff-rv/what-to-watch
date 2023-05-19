@@ -44,8 +44,8 @@ class UserController extends Controller
                 'name' => $request->input('name'),
             ];
 
-            if (isset($data['password'])) {
-                $data['password'] = Hash::make($data['password']);
+            if ($request->has('password')) {
+                $data['password'] = Hash::make($request->input('password'));
             }
 
             if ($request->hasFile('avatar')) {
