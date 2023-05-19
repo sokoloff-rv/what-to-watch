@@ -39,7 +39,10 @@ class UserController extends Controller
         try {
             /** @var User|null $user */
             $user = Auth::user();
-            $data = $request->all();
+            $data = [
+                'email' => $request->input('email'),
+                'name' => $request->input('name'),
+            ];
 
             if (isset($data['password'])) {
                 $data['password'] = Hash::make($data['password']);
