@@ -45,7 +45,7 @@ class UserControllerTest extends TestCase
         $newName = 'Новое имя';
         $newEmail = 'newemail@mail.ru';
 
-        $response = $this->actingAs($user)->patch('/api/user', [
+        $response = $this->actingAs($user)->patchJson('/api/user', [
             'name' => $newName,
             'email' => $newEmail,
         ]);
@@ -66,7 +66,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
         $newPassword = 'newPassword123';
 
-        $response = $this->actingAs($user)->patch('/api/user', [
+        $response = $this->actingAs($user)->patchJson('/api/user', [
             'name' => $user->name,
             'email' => $user->email,
             'password' => $newPassword,
@@ -85,7 +85,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
         $avatar = UploadedFile::fake()->image('avatar.jpg');
 
-        $response = $this->actingAs($user)->patch('/api/user', [
+        $response = $this->actingAs($user)->patchJson('/api/user', [
             'name' => $user->name,
             'email' => $user->email,
             'avatar' => $avatar,
