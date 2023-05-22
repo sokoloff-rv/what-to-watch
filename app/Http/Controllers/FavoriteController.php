@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
+use App\Models\User;
 use App\Models\Film;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
