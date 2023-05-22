@@ -50,7 +50,7 @@ class UserController extends Controller
 
             if ($request->hasFile('avatar')) {
                 $file = $request->file('avatar');
-                $path = $file->store('avatars', 'local');
+                $path = $file->store('public/avatars', 'local');
                 $data['avatar'] = $path;
             }
 

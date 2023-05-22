@@ -80,15 +80,10 @@ class UserControllerTest extends TestCase
 
     public function testUpdateAvatarChanges()
     {
+        Storage::fake('local');
+
         $user = User::factory()->create();
-        $avatarPath = storage_path('/app/testfiles/avatar.jpg');
-        $avatar = new UploadedFile(
-            $avatarPath,
-            'avatar1.jpg',
-            'image/jpeg',
-            null,
-            true
-        );
+        $avatar = UploadedFile::fake()->image('avatar.jpg');
 
         $response = $this->actingAs($user)->patch('/api/user', [
             'name' => $user->name,
@@ -101,9 +96,7 @@ class UserControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
 
         $this->assertEquals('avatars/' . $avatar->hashName(), $user->avatar);
-        $this->assertTrue(Storage::disk('local')->exists($user->avatar));
-
-        Storage::disk('local')->delete($user->avatar);
+        Storage::disk('local')->assertExists('avatars/' . $avatar->hashName());
     }
 
     public function testUpdateValidationError()
