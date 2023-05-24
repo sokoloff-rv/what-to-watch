@@ -18,8 +18,12 @@ class UpdateCommentsForAllFilmJob implements ShouldQueue
 
     public function handle()
     {
-        Film::all()->each(function ($film) {
-            UpdateCommentsForFilmJob::dispatch($film);
+        $delayTime = 0;
+        $intervalInSeconds = 3;
+
+        Film::all()->each(function ($film) use (&$delayTime, $intervalInSeconds) {
+            UpdateCommentsForFilmJob::dispatch($film)->delay(now()->addSeconds($delayTime));
+            $delayTime += $intervalInSeconds;
         });
     }
 }
