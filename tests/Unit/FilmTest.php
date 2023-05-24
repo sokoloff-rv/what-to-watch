@@ -12,6 +12,9 @@ class FilmTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Тестирование метода calculateRating() класса Film.
+     */
     public function testFilmRating(): void
     {
         $usersCount = 3;

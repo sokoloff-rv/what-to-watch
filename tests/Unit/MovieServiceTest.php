@@ -13,7 +13,10 @@ class MovieServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testMovieServiceData()
+    /**
+     * Тестирование метода getMovie() класса MovieService.
+     */
+    public function testMovieServiceData(): void
     {
         $imdbId = 'tt0111161';
 

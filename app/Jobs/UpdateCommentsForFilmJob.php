@@ -19,11 +19,19 @@ class UpdateCommentsForFilmJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * Конструктор класса UpdateCommentsForFilmJob.
+     */
     public function __construct(protected Film $film)
     {
     }
 
-    public function handle()
+    /**
+     * Обработка задачи по обновлению комментариев для фильма.
+     *
+     * @return void
+     */
+    public function handle(): void
     {
         $lastCommentDate = $this->film->comments()->where('is_external', true)->max('created_at');
 

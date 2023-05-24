@@ -14,7 +14,10 @@ class RegisterControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testSuccessfulRegistration()
+    /**
+     * Тестирование успешной регистрации пользователя.
+     */
+    public function testSuccessfulRegistration(): void
     {
         Storage::fake('local');
 
@@ -37,7 +40,10 @@ class RegisterControllerTest extends TestCase
         Storage::disk('local')->assertExists('avatars/' . $data['avatar']->hashName());
     }
 
-    public function testRegistrationValidationError()
+    /**
+     * Тестирование валидации при регистрации.
+     */
+    public function testRegistrationValidationError(): void
     {
         $data = [
             'name' => '',

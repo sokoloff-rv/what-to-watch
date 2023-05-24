@@ -11,7 +11,7 @@ use App\Http\Requests\GenreRequest;
 class GenreController extends Controller
 {
     /**
-     * Получение списка жанров
+     * Получение списка жанров.
      *
      * @return BaseResponse
      */
@@ -27,7 +27,7 @@ class GenreController extends Controller
     }
 
     /**
-     * Редактирование жанра
+     * Редактирование жанра.
      *
      * @return BaseResponse
      */

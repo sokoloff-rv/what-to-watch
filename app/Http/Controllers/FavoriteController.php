@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FavoriteController extends Controller
 {
     /**
-     * Получение списка избранных фильмов
+     * Получение списка избранных фильмов.
      *
      * @return BaseResponse
      */
@@ -31,7 +31,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Добавление фильма в избранное
+     * Добавление фильма в избранное.
      *
      * @return BaseResponse
      */
@@ -54,7 +54,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Удаление фильма из избранного
+     * Удаление фильма из избранного.
      *
      * @return BaseResponse
      */

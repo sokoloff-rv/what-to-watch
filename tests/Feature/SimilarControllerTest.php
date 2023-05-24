@@ -12,7 +12,10 @@ class SimilarControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIndexSuccess()
+    /**
+     * Тестирование успешного получения похожих фильмов.
+     */
+    public function testIndexSuccess(): void
     {
         $genre = Genre::factory()->create();
 
@@ -51,7 +54,10 @@ class SimilarControllerTest extends TestCase
         ]);
     }
 
-    public function testIndexSelectedCorrectly()
+    /**
+     * Тестирование выборки похожих фильмов.
+     */
+    public function testIndexSelectedCorrectly(): void
     {
         $genre1 = Genre::factory()->create();
         $genre2 = Genre::factory()->create();
@@ -83,7 +89,10 @@ class SimilarControllerTest extends TestCase
         $this->assertNotContains($differentFilm->id, $similarFilmsIds);
     }
 
-    public function testIndexOrderCorrectly()
+    /**
+     * Тестирование порядка в выборке похожих фильмов.
+     */
+    public function testIndexOrderCorrectly(): void
     {
         $genre1 = Genre::factory()->create();
         $genre2 = Genre::factory()->create();

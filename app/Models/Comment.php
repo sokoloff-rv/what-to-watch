@@ -14,6 +14,11 @@ class Comment extends Model
 
     public const ANONYMOUS_NAME = 'Гость';
 
+    /**
+     * Атрибуты, которые можно массово присваивать.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'user_id',
         'film_id',
@@ -23,35 +28,70 @@ class Comment extends Model
         'is_external',
     ];
 
+    /**
+     * Дополнительные вычисляемые атрибуты.
+     *
+     * @var array
+     */
     protected $appends = [
         'author_name',
     ];
 
+    /**
+     * Отношение "один ко многим" к модели User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Отношение "один ко многим" к модели Film.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function film()
     {
         return $this->belongsTo(Film::class);
     }
 
+    /**
+     * Отношение "многие к одному" к модели Comment (родительский комментарий).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function parent()
     {
         return $this->belongsTo(Comment::class, 'comment_id');
     }
 
+    /**
+     * Отношение "один ко многим" к модели Comment (дочерние комментарии).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function children()
     {
         return $this->hasMany(Comment::class, 'comment_id');
     }
 
+    /**
+     * Проверяет, имеет ли комментарий дочерние комментарии.
+     *
+     * @return bool
+     */
     public function doesNotHaveChildren()
     {
         return $this->children()->count() === 0;
     }
 
+    /**
+     * Получает имя автора комментария.
+     *
+     * @return string
+     */
     protected function getAuthorNameAttribute()
     {
         if ($this->is_external) {

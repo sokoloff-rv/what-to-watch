@@ -5,7 +5,7 @@ namespace App\Http\Responses;
 class SuccessPaginationResponse extends BaseResponse
 {
     /**
-     * Формирование содержимого успешного ответа с пагинацией
+     * Формирование содержимого успешного ответа с пагинацией.
      *
      * @return array|null
      */

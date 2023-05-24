@@ -9,6 +9,12 @@ class MovieAcademyRepository implements MovieRepositoryInterface
 {
     private string $baseUrl = 'http://guide.phpdemo.ru/api/films/';
 
+    /**
+     * Находит фильм по его IMDB ID.
+     *
+     * @param string $imdbId IMDB ID фильма.
+     * @return array|null Данные фильма в виде массива или null, если фильм не найден.
+     */
     public function findMovieById(string $imdbId): ?array
     {
         $response = Http::get($this->baseUrl . $imdbId);

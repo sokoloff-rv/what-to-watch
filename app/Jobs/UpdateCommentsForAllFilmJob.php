@@ -16,6 +16,11 @@ class UpdateCommentsForAllFilmJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * Обработка задачи по обновлению комментариев для всех фильмов.
+     *
+     * @return void
+     */
     public function handle()
     {
         $delayTime = 0;

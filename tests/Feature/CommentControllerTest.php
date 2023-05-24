@@ -13,6 +13,11 @@ class CommentControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Возвращает типичную структуру комментария в формате JSON.
+     *
+     * @return array
+     */
     private function getTypicalCommentStructure(): array
     {
         return [
@@ -29,6 +34,9 @@ class CommentControllerTest extends TestCase
         ];
     }
 
+    /**
+     * Тестирование метода index.
+     */
     public function testIndex(): void
     {
         $film = Film::factory()->create();
@@ -66,7 +74,10 @@ class CommentControllerTest extends TestCase
         $this->assertEquals($dbComments, $testComments);
     }
 
-    public function testExternalCommentAuthorName()
+    /**
+     * Тестирование автора внешнего комментария.
+     */
+    public function testExternalCommentAuthorName(): void
     {
         $film = Film::factory()->create();
 
@@ -83,7 +94,10 @@ class CommentControllerTest extends TestCase
         $this->assertEquals(Comment::ANONYMOUS_NAME, $comments[0]['author_name']);
     }
 
-    public function testStoreUnauthorized()
+    /**
+     * Тестирование метода store при отсутствии авторизации.
+     */
+    public function testStoreUnauthorized(): void
     {
         $film = Film::factory()->create();
 
@@ -100,7 +114,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreAuthorized()
+    /**
+     * Тестирование метода store при авторизации.
+     */
+    public function testStoreAuthorized(): void
     {
         $user = User::factory()->create();
         $film = Film::factory()->create();
@@ -124,7 +141,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreValidationError()
+    /**
+     * Тестирование метода store с некорректными данными.
+     */
+    public function testStoreValidationError(): void
     {
         $user = User::factory()->create();
         $film = Film::factory()->create();
@@ -146,7 +166,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreReplyToComment()
+    /**
+     * Тестирование метода store для ответа на комментарий.
+     */
+    public function testStoreReplyToComment(): void
     {
         $user = User::factory()->create();
         $film = Film::factory()->create();
@@ -173,7 +196,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateUnauthorized()
+    /**
+     * Тестирование метода update при отсутствии авторизации.
+     */
+    public function testUpdateUnauthorized(): void
     {
         $comment = Comment::factory()->create();
 
@@ -190,7 +216,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateForbidden()
+    /**
+     * Тестирование метода update с запретом доступа.
+     */
+    public function testUpdateForbidden(): void
     {
         $user = User::factory()->create();
         $comment = Comment::factory()->create();
@@ -208,7 +237,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateSuccess()
+    /**
+     * Тестирование метода update с валидными данными.
+     */
+    public function testUpdateSuccess(): void
     {
         $comment = Comment::factory()->create();
 
@@ -231,7 +263,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateByModeratorSuccess()
+    /**
+     * Тестирование метода update для модератора.
+     */
+    public function testUpdateByModeratorSuccess(): void
     {
         $user = User::factory()->moderator()->create();
         $comment = Comment::factory()->create();
@@ -255,7 +290,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateValidationError()
+    /**
+     * Тестирование метода update с невалидными данными.
+     */
+    public function testUpdateValidationError(): void
     {
         $comment = Comment::factory()->create();
 
@@ -276,7 +314,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testDestroyUnauthorized()
+    /**
+     * Тестирование метода destroy без авторизации.
+     */
+    public function testDestroyUnauthorized(): void
     {
         $comment = Comment::factory()->create();
 
@@ -288,7 +329,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testDestroyForbidden()
+    /**
+     * Тестирование метода destroy с отсутствующими правами.
+     */
+    public function testDestroyForbidden(): void
     {
         $user = User::factory()->create();
         $comment = Comment::factory()->create();
@@ -301,7 +345,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testDestroySuccess()
+    /**
+     * Тестирование метода destroy с валидными данными.
+     */
+    public function testDestroySuccess(): void
     {
         $comment = Comment::factory()->create();
 
@@ -313,7 +360,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testDestroyByModeratorSuccess()
+    /**
+     * Тестирование метода destroy для модератора.
+     */
+    public function testDestroyByModeratorSuccess(): void
     {
         $user = User::factory()->moderator()->create();
         $comment = Comment::factory()->create();
@@ -326,7 +376,10 @@ class CommentControllerTest extends TestCase
         ]);
     }
 
-    public function testDestroyWithChildrenSuccess()
+    /**
+     * Тестирование метода destroy с дочерними комментариями.
+     */
+    public function testDestroyWithChildrenSuccess(): void
     {
         $childrenCount = 3;
 

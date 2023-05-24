@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CommentController extends Controller
 {
     /**
-     * Получение отзывов к фильму
+     * Получение отзывов к фильму.
      *
      * @return BaseResponse
      */
@@ -32,7 +32,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Добавление отзыва к фильму
+     * Добавление отзыва к фильму.
      *
      * @return BaseResponse
      */
@@ -56,7 +56,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Редактирование отзыва к фильму
+     * Редактирование отзыва к фильму.
      *
      * @return BaseResponse
      */
@@ -79,7 +79,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Удаление отзыва к фильму
+     * Удаление отзыва к фильму.
      *
      * @return BaseResponse
      */

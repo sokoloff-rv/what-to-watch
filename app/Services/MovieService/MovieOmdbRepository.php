@@ -11,12 +11,23 @@ class MovieOmdbRepository implements MovieRepositoryInterface
     private string $apiKey;
     private string $baseUrl = 'http://www.omdbapi.com/';
 
+    /**
+     * Конструктор класса MovieOmdbRepository.
+     *
+     * @param Client $client Клиент HTTP для отправки запросов.
+     */
     public function __construct(Client $client)
     {
         $this->client = $client;
         $this->apiKey = config('services.omdb.api_key');
     }
 
+    /**
+     * Находит фильм по его IMDB ID.
+     *
+     * @param string $imdbId IMDB ID фильма.
+     * @return array|null Данные фильма в виде массива или null, если фильм не найден.
+     */
     public function findMovieById(string $imdbId): ?array
     {
         $response = $this->client->request('GET', $this->baseUrl, [

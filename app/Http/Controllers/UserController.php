@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
-     * Получение данных о пользователе
+     * Получение данных о пользователе.
      *
      * @return BaseResponse
      */
@@ -30,7 +30,7 @@ class UserController extends Controller
     }
 
     /**
-     * Обновление данных о пользователе
+     * Обновление данных о пользователе.
      *
      * @return BaseResponse
      */

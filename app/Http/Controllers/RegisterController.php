@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Hash;
 class RegisterController extends Controller
 {
     /**
-     * Выполняет регистрацию пользователя в сервисе
+     * Выполняет регистрацию пользователя в сервисе.
      *
-     * @param RegisterRequest $request
+     * @param RegisterRequest $request.
      * @return BaseResponse
      */
     public function register(RegisterRequest $request): BaseResponse

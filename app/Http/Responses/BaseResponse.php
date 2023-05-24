@@ -9,6 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseResponse implements Responsable
 {
+    /**
+     * Конструктор класса BaseResponse.
+     *
+     * @param mixed $data Данные ответа.
+     * @param int $statusCode Код состояния HTTP.
+     */
     public function __construct(
         protected mixed $data = [],
         public int $statusCode = Response::HTTP_OK
@@ -16,9 +22,9 @@ abstract class BaseResponse implements Responsable
     }
 
     /**
-     * Создание объекта Response в зависимости от типа возвращаемых данных
+     * Создание объекта Response в зависимости от типа возвращаемых данных.
      *
-     * @param Request $request
+     * @param Request $request.
      * @return Response
      */
     public function toResponse($request)
@@ -27,7 +33,7 @@ abstract class BaseResponse implements Responsable
     }
 
     /**
-     * Преобразование возвращаемых данных к массиву
+     * Преобразование возвращаемых данных к массиву.
      *
      * @return array
      */
@@ -41,7 +47,7 @@ abstract class BaseResponse implements Responsable
     }
 
     /**
-     * Формирование содержимого ответа
+     * Формирование содержимого ответа.
      *
      * @return array|null
      */

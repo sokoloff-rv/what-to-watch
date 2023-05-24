@@ -14,7 +14,10 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testShowUser()
+    /**
+     * Тестирование получения данных пользователя.
+     */
+    public function testShowUser(): void
     {
         $user = User::factory()->create();
 
@@ -39,7 +42,10 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateUserData()
+    /**
+     * Тестирование обновления данных пользователя.
+     */
+    public function testUpdateUserData(): void
     {
         $user = User::factory()->create();
         $newName = 'Новое имя';
@@ -61,7 +67,10 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdatePasswordChanges()
+    /**
+     * Тестирование изменения пароля пользователя.
+     */
+    public function testUpdatePasswordChanges(): void
     {
         $user = User::factory()->create();
         $newPassword = 'newPassword123';
@@ -78,7 +87,10 @@ class UserControllerTest extends TestCase
         $this->assertTrue(Hash::check($newPassword, $user->password));
     }
 
-    public function testUpdateAvatarChanges()
+    /**
+     * Тестирование изменения аватара пользователя.
+     */
+    public function testUpdateAvatarChanges(): void
     {
         Storage::fake('local');
 
@@ -99,7 +111,10 @@ class UserControllerTest extends TestCase
         Storage::disk('local')->assertExists('avatars/' . $avatar->hashName());
     }
 
-    public function testUpdateValidationError()
+    /**
+     * Тестирование ошибок валидации при обновлении данных пользователя.
+     */
+    public function testUpdateValidationError(): void
     {
         $user = User::factory()->create();
         $anotherUser = User::factory()->create();

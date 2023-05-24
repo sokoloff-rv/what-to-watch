@@ -21,11 +21,23 @@ class CreateFilmJob implements ShouldQueue
 
     public $data;
 
+    /**
+     * Конструктор класса CreateFilmJob.
+     *
+     * @param array $data Данные для создания фильма.
+     */
     public function __construct(array $data)
     {
         $this->data = $data;
     }
 
+    /**
+     * Обработка задачи по созданию фильма.
+     *
+     * @param MovieService $movieService Сервис для работы с фильмами.
+     * @param FilmService $filmService Сервис для работы с фильмами.
+     * @return void
+     */
     public function handle(MovieService $movieService, FilmService $filmService)
     {
         $imdbId = $this->data['imdb_id'];

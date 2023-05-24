@@ -9,6 +9,13 @@ class FailResponse extends BaseResponse
 {
     private string $errorMessage;
 
+    /**
+     * Конструктор класса FailResponse.
+     *
+     * @param string|null $errorMessage Сообщение об ошибке.
+     * @param int|null $statusCode Код состояния HTTP.
+     * @param Throwable|null $exception Исключение.
+     */
     public function __construct(
         string $errorMessage = null,
         int $statusCode = null,
@@ -26,7 +33,7 @@ class FailResponse extends BaseResponse
     }
 
     /**
-     * Формирование содержимого ответа с текстом ошибки
+     * Формирование содержимого ответа с текстом ошибки.
      *
      * @return array|null
      */

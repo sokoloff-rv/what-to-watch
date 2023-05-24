@@ -12,6 +12,9 @@ class FavoriteControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Тестирование метода index при отсутствии авторизации.
+     */
     public function testIndexUnauthorized(): void
     {
         $response = $this->getJson('/api/favorite');
@@ -22,6 +25,9 @@ class FavoriteControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Тестирование метода index при авторизации.
+     */
     public function testIndexAuthorized(): void
     {
         $user = User::factory()->create();
@@ -58,6 +64,9 @@ class FavoriteControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Тестирование метода store при отсутствии авторизации.
+     */
     public function testStoreUnauthorized(): void
     {
         $film = Film::factory()->create();
@@ -70,6 +79,9 @@ class FavoriteControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Тестирование метода store при авторизации.
+     */
     public function testStoreAuthorized(): void
     {
         $user = User::factory()->create();
@@ -84,6 +96,9 @@ class FavoriteControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Тестирование метода destroy при отсутствии авторизации.
+     */
     public function testDestroyUnauthorized(): void
     {
         $film = Film::factory()->create();
@@ -96,6 +111,9 @@ class FavoriteControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Тестирование метода destroy при авторизации.
+     */
     public function testDestroyAuthorized(): void
     {
         $user = User::factory()->create();

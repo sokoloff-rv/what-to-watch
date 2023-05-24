@@ -17,6 +17,11 @@ class FilmControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Возвращает типичную структуру данных фильма.
+     *
+     * @return array
+     */
     private function getTypicalFilmStructure(): array
     {
         return [
@@ -41,7 +46,10 @@ class FilmControllerTest extends TestCase
         ];
     }
 
-    public function testIndexAllFilms()
+    /**
+     * Тестирование метода index для получения всех фильмов.
+     */
+    public function testIndexAllFilms(): void
     {
         Film::factory()->count(10)->create(['status' => Film::STATUS_READY]);
 
@@ -62,7 +70,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testIndexFilteredByGenre()
+    /**
+     * Тестирование метода index для фильтрации фильмов по жанру.
+     */
+    public function testIndexFilteredByGenre(): void
     {
         $genre = Genre::factory()->create();
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY])->each(function ($film) use ($genre) {
@@ -75,7 +86,10 @@ class FilmControllerTest extends TestCase
         $response->assertJsonCount(5, 'data');
     }
 
-    public function testIndexFilteredByStatusForUser()
+    /**
+     * Тестирование метода index для фильтрации фильмов по статусу для пользователя.
+     */
+    public function testIndexFilteredByStatusForUser(): void
     {
         $user = User::factory()->create();
 
@@ -95,7 +109,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testIndexFilteredByStatusForModerator()
+    /**
+     * Тестирование метода index для фильтрации фильмов по статусу для модератора.
+     */
+    public function testIndexFilteredByStatusForModerator(): void
     {
         $moderator = User::factory()->moderator()->create();
 
@@ -111,7 +128,10 @@ class FilmControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
-    public function testIndexFilmsOrderedByReleased()
+    /**
+     * Тестирование метода index для фильтрации фильмов по статусу для модератора.
+     */
+    public function testIndexFilmsOrderedByReleased(): void
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
@@ -125,7 +145,10 @@ class FilmControllerTest extends TestCase
         }
     }
 
-    public function testIndexFilmsOrderedByRating()
+    /**
+     * Тестирование метода index для получения фильмов, отсортированных по рейтингу.
+     */
+    public function testIndexFilmsOrderedByRating(): void
     {
         Film::factory()->count(5)->create(['status' => Film::STATUS_READY]);
 
@@ -139,7 +162,10 @@ class FilmControllerTest extends TestCase
         }
     }
 
-    public function testStoreUnauthorized()
+    /**
+     * Тестирование метода store без авторизации.
+     */
+    public function testStoreUnauthorized(): void
     {
         $data = [
             'imdb_id' => 'tt0111161',
@@ -153,7 +179,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreAuthorized()
+    /**
+     * Тестирование метода store с недостаточными правами.
+     */
+    public function testStoreAuthorized(): void
     {
         $user = User::factory()->create([
             'role' => User::ROLE_USER,
@@ -171,7 +200,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreModerator()
+    /**
+     * Тестирование метода store для модератора.
+     */
+    public function testStoreModerator(): void
     {
         $user = User::factory()->create([
             'role' => User::ROLE_MODERATOR,
@@ -210,7 +242,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreQueue()
+    /**
+     * Тестирование метода store для проверки добавления задачи в очередь.
+     */
+    public function testStoreQueue(): void
     {
         $user = User::factory()->create([
             'role' => User::ROLE_MODERATOR,
@@ -232,7 +267,10 @@ class FilmControllerTest extends TestCase
         });
     }
 
-    public function testStoreFilmAlreadyExists()
+    /**
+    * Тест на создание фильма, который уже существует.
+    */
+    public function testStoreFilmAlreadyExists(): void
     {
         $user = User::factory()->create([
             'role' => User::ROLE_MODERATOR,
@@ -259,7 +297,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreValidationError()
+    /**
+    * Тест на создание фильма с некорректными данными.
+    */
+    public function testStoreValidationError(): void
     {
         $user = User::factory()->create([
             'role' => User::ROLE_MODERATOR,
@@ -280,7 +321,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testShowFilm()
+    /**
+    * Тест на получение информации о фильме.
+    */
+    public function testShowFilm(): void
     {
         $film = Film::factory()->create(['status' => Film::STATUS_READY]);
 
@@ -292,7 +336,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testShowFavoriteForAuthorized()
+    /**
+    * Тест на получение информации о фильме для авторизованного пользователя с отмеченным избранным статусом.
+    */
+    public function testShowFavoriteForAuthorized(): void
     {
         $user = User::factory()->create();
         $film = Film::factory()->create(['status' => Film::STATUS_READY]);
@@ -308,7 +355,10 @@ class FilmControllerTest extends TestCase
         $response->assertJsonPath('data.is_favorite', true);
     }
 
-    public function testShowFavoriteForGuest()
+    /**
+    * Тест на получение информации о фильме для гостя (неавторизованного пользователя).
+    */
+    public function testShowFavoriteForGuest(): void
     {
         $film = Film::factory()->create(['status' => Film::STATUS_READY]);
 
@@ -321,7 +371,10 @@ class FilmControllerTest extends TestCase
         $response->assertJsonMissing(['data' => ['is_favorite']]);
     }
 
-    public function testUpdateUnauthorized()
+    /**
+    * Тест на обновление фильма без авторизации.
+    */
+    public function testUpdateUnauthorized(): void
     {
         $film = Film::factory()->create(['status' => Film::STATUS_PENDING]);
 
@@ -341,7 +394,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateAuthorized()
+    /**
+    * Тест на обновление фильма с авторизованным пользователем без необходимых прав.
+    */
+    public function testUpdateAuthorized(): void
     {
         $user = User::factory()->create();
         $film = Film::factory()->create(['status' => Film::STATUS_PENDING]);
@@ -363,7 +419,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateModerator()
+    /**
+    * Тест на обновление фильма с модератором, который имеет необходимые права.
+    */
+    public function testUpdateModerator(): void
     {
         $user = User::factory()->moderator()->create();
         $film = Film::factory()->create(['status' => Film::STATUS_PENDING]);
@@ -397,7 +456,10 @@ class FilmControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateValidationError()
+    /**
+    * Тест на обновление фильма с некорректными данными.
+    */
+    public function testUpdateValidationError(): void
     {
         $film = Film::factory()->create();
         $user = User::factory()->moderator()->create();
@@ -442,5 +504,4 @@ class FilmControllerTest extends TestCase
             'status',
         ]);
     }
-
 }

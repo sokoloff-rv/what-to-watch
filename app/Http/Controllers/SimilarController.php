@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 class SimilarController extends Controller
 {
     /**
-     * Получение списка фильмов, похожих на данный
+     * Получение списка фильмов, похожих на данный.
      *
-     * @param Film $film
+     * @param Film $film.
      * @return BaseResponse
      */
     public function index(Film $film): BaseResponse
