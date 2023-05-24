@@ -32,7 +32,7 @@ class SimilarController extends Controller
 
             $allSimilarFilms = $allSimilarFilms->sortByDesc(function ($similarFilm) use ($filmGenres) {
                 return $similarFilm->genres->whereIn('id', $filmGenres)->count();
-            });
+            })->values();
 
             $similarFilms = $allSimilarFilms->take($similarFilmsCount);
 
