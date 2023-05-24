@@ -10,7 +10,6 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#Method App\\Services\\AvatarService::saveAvatar\(\) should return bool but return statement is missing.#'
 
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php
