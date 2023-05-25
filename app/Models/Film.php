@@ -24,6 +24,11 @@ class Film extends Model
     public const ORDER_TO_ASC = 'asc';
     public const ORDER_TO_DESC = 'desc';
 
+    /**
+     * Атрибуты, которые можно массово присваивать.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'name',
         'poster_image',
@@ -42,47 +47,92 @@ class Film extends Model
         'status',
     ];
 
+    /**
+     * Отношения, которые всегда загружаются с моделью.
+     *
+     * @var array
+     */
     protected $with = [
         'actors',
         'genres',
     ];
 
+    /**
+     * Атрибуты, которые должны быть приведены к определенному типу.
+     *
+     * @var array<string,string>
+     */
     protected $casts = [
         'released' => 'integer',
         'rating' => 'float',
     ];
 
+    /**
+     * Дополнительные вычисляемые атрибуты.
+     *
+     * @var array
+     */
     protected $appends = [
         'starring',
         'genre',
         'is_favorite',
     ];
 
+    /**
+     * Скрытые атрибуты.
+     *
+     * @var array<int,string>
+     */
     protected $hidden = [
         'actors',
         'genres',
     ];
 
+    /**
+     * Отношение "многие ко многим" к модели Genre.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function genres()
     {
         return $this->belongsToMany(Genre::class, 'film_genre', 'film_id', 'genre_id');
     }
 
+    /**
+     * Отношение "многие ко многим" к модели Actor.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function actors()
     {
         return $this->belongsToMany(Actor::class, 'actor_film');
     }
 
+    /**
+     * Отношение "многие ко многим" к модели User (пользователи, добавившие фильм в избранное).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function favoritedByUsers()
     {
         return $this->belongsToMany(User::class, 'user_favorites');
     }
 
+    /**
+     * Отношение "один ко многим" к модели Comment (комментарии фильма).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * Рассчитывает рейтинг фильма на основе комментариев.
+     *
+     * @return void
+     */
     public function calculateRating()
     {
         $averageRating = $this->comments()->avg('rating');
@@ -91,22 +141,43 @@ class Film extends Model
         $this->saveRating($averageRating);
     }
 
+    /**
+     * Сохраняет рейтинг фильма.
+     *
+     * @param  float  $rating
+     * @return void
+     */
     public function saveRating(float $rating)
     {
         $this->rating = $rating;
         $this->save();
     }
 
+    /**
+     * Получает список актеров фильма.
+     *
+     * @return array
+     */
     public function getStarringAttribute(): array
     {
         return $this->actors->pluck('name')->toArray();
     }
 
+    /**
+     * Получает список жанров фильма.
+     *
+     * @return array
+     */
     public function getGenreAttribute(): array
     {
         return $this->genres->pluck('name')->toArray();
     }
 
+    /**
+     * Проверяет, является ли фильм избранным для текущего пользователя.
+     *
+     * @return bool
+     */
     public function getIsFavoriteAttribute(): bool
     {
         /** @var User|null $user */

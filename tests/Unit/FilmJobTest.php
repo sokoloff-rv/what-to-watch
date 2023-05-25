@@ -17,7 +17,10 @@ class FilmJobTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreateFilmJob()
+    /**
+     * Тестирование выполнения задачи CreateFilmJob.
+     */
+    public function testCreateFilmJob(): void
     {
         $imdbId = 'tt0111161';
 
@@ -41,7 +44,7 @@ class FilmJobTest extends TestCase
         $genreService = new GenreService();
         $filmService = new FilmService($actorService, $genreService);
 
-        Film::create($data);
+        Film::factory()->create($data);
         $job = new CreateFilmJob($data);
         $job->handle($movieService, $filmService);
 

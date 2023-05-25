@@ -5,7 +5,7 @@ namespace App\Http\Responses;
 class SuccessResponse extends BaseResponse
 {
     /**
-     * Формирование содержимого успешного ответа
+     * Формирование содержимого успешного ответа.
      *
      * @return array|null
      */

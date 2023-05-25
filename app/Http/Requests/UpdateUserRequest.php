@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Определяет, авторизован ли пользователь для выполнения запроса.
      *
      * @return bool Разрешение на выполнение запроса.
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,11 +21,13 @@ class LoginRequest extends FormRequest
      *
      * @return array Правила валидации.
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'email' => 'required|email|unique:users,email,' . $this->user()->id,
+            'password' => 'nullable|string|min:8',
+            'name' => 'required|string|max:255',
+            'avatar' => 'nullable|file|image|max:10240',
         ];
     }
 }

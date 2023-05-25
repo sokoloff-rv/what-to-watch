@@ -7,6 +7,13 @@ use App\Models\Genre;
 
 class GenreService
 {
+    /**
+     * Синхронизирует жанры фильма.
+     *
+     * @param Film $film Фильм, для которого необходимо синхронизировать жанры.
+     * @param array $genresNames Массив названий жанров.
+     * @return void
+     */
     public function syncGenres(Film $film, array $genresNames): void
     {
         $film->genres()->detach();

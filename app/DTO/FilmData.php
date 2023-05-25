@@ -21,6 +21,18 @@ class FilmData
     public ?float $rating = null;
     public ?int $scores_count = null;
 
+    /**
+     * Конструктор класса FilmData.
+     *
+     * @param string $name Название фильма.
+     * @param string $description Описание фильма.
+     * @param string $director Режиссер фильма.
+     * @param int $released Год выпуска фильма.
+     * @param int $run_time Длительность фильма (в минутах).
+     * @param string $imdb_id Идентификатор фильма в IMDB.
+     * @param array $starring Актёры, участвующие в фильме.
+     * @param array $genre Жанры фильма.
+     */
     public function __construct(
         string $name,
         string $description,
@@ -41,6 +53,11 @@ class FilmData
         $this->genre = $genre;
     }
 
+    /**
+     * Преобразует объект FilmData в массив.
+     *
+     * @return array Массив с данными фильма.
+     */
     public function toArray(): array
     {
         return [

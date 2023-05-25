@@ -12,7 +12,7 @@ use App\Http\Responses\FailResponse;
 class PromoController extends Controller
 {
     /**
-     * Получение текущего промо-фильма
+     * Получение текущего промо-фильма.
      *
      * @return BaseResponse
      */
@@ -27,7 +27,7 @@ class PromoController extends Controller
     }
 
     /**
-     * Установка нового промо-фильма
+     * Установка нового промо-фильма.
      *
      * @return BaseResponse
      */

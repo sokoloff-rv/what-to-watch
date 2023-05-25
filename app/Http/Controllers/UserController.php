@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Http\Responses\FailResponse;
+use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     /**
-     * Получение данных о пользователе
+     * Получение данных о пользователе.
      *
      * @return BaseResponse
      */
@@ -28,15 +30,35 @@ class UserController extends Controller
     }
 
     /**
-     * Обновление данных о пользователе
+     * Обновление данных о пользователе.
      *
      * @return BaseResponse
      */
-    public function update(Request $request): BaseResponse
+    public function update(UpdateUserRequest $request): BaseResponse
     {
         try {
-            //
-            return new SuccessResponse();
+            /** @var User|null $user */
+            $user = Auth::user();
+            $data = [
+                'email' => $request->input('email'),
+                'name' => $request->input('name'),
+            ];
+
+            if ($request->has('password')) {
+                $data['password'] = Hash::make($request->input('password'));
+            }
+
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $path = $file->store('public/avatars', 'local');
+                $data['avatar'] = $path;
+            }
+
+            $user->update($data);
+
+            return new SuccessResponse([
+                'user' => $user,
+            ]);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
         }

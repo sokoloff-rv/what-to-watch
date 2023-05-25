@@ -18,6 +18,11 @@ class User extends Model implements Authenticatable
     public const ROLE_USER = 'user';
     public const ROLE_MODERATOR = 'moderator';
 
+    /**
+     * Атрибуты, которые можно массово присваивать.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'name',
         'email',
@@ -26,20 +31,40 @@ class User extends Model implements Authenticatable
         'role',
     ];
 
+    /**
+     * Скрытые атрибуты.
+     *
+     * @var array<int,string>
+     */
     protected $hidden = [
         'password',
     ];
 
+    /**
+     * Отношение "многие ко многим" к модели Film (избранные фильмы пользователя).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function favoriteFilms()
     {
         return $this->belongsToMany(Film::class, 'user_favorites');
     }
 
+    /**
+     * Отношение "один ко многим" к модели Comment (комментарии пользователя).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * Проверяет, является ли пользователь модератором.
+     *
+     * @return bool
+     */
     public function isModerator(): bool
     {
         return $this->role === self::ROLE_MODERATOR;

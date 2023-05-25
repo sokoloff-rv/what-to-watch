@@ -12,6 +12,9 @@ class GenreControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Тестирование метода index, который возвращает список жанров.
+     */
     public function testIndex(): void
     {
         Genre::factory()->count(3)->create();
@@ -29,7 +32,10 @@ class GenreControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateUnauthorized()
+    /**
+     * Тестирование метода update при отсутствии авторизации.
+     */
+    public function testUpdateUnauthorized(): void
     {
         $genre = Genre::factory()->create();
         $newName = 'Новый жанр';
@@ -44,7 +50,10 @@ class GenreControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateAuthorized()
+    /**
+     * Тестирование метода update при авторизации без достаточных прав.
+     */
+    public function testUpdateAuthorized(): void
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->create();
@@ -61,7 +70,10 @@ class GenreControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateModerator()
+    /**
+     * Тестирование метода update при авторизации с правами модератора.
+     */
+    public function testUpdateModerator(): void
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->moderator()->create();
@@ -86,7 +98,10 @@ class GenreControllerTest extends TestCase
         ]);
     }
 
-    public function testUpdateValidationError()
+    /**
+     * Тестирование валидации при обновлении жанра.
+     */
+    public function testUpdateValidationError(): void
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->moderator()->create();

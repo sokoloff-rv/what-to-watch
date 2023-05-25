@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AuthController extends Controller
 {
     /**
-     * Выполняет авторизацию пользователя в сервисе
+     * Выполняет авторизацию пользователя в сервисе.
      *
      * @return BaseResponse
      */
@@ -37,7 +37,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Выполняет выход пользователя из сервиса
+     * Выполняет выход пользователя из сервиса.
      *
      * @return BaseResponse
      */

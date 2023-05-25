@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FilmController extends Controller
 {
     /**
-     * Получение списка фильмов
+     * Получение списка фильмов.
      *
      * @return BaseResponse
      */
@@ -56,7 +56,7 @@ class FilmController extends Controller
     }
 
     /**
-     * Добавление фильма в базу
+     * Добавление фильма в базу.
      *
      * @return BaseResponse
      */
@@ -80,7 +80,7 @@ class FilmController extends Controller
     }
 
     /**
-     * Получение информации о фильме
+     * Получение информации о фильме.
      *
      * @return BaseResponse
      */
@@ -94,7 +94,7 @@ class FilmController extends Controller
     }
 
     /**
-     * Редактирование фильма
+     * Редактирование фильма.
      *
      * @return BaseResponse
      */
