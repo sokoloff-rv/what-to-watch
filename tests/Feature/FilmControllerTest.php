@@ -129,7 +129,7 @@ class FilmControllerTest extends TestCase
     }
 
     /**
-     * Тестирование метода index для фильтрации фильмов по статусу для модератора.
+     * Тестирование метода index для получения фильмов, отсортированных по дате релиза.
      */
     public function testIndexFilmsOrderedByReleased(): void
     {
