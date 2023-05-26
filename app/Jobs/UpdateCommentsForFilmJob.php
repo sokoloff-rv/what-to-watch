@@ -38,7 +38,7 @@ class UpdateCommentsForFilmJob implements ShouldQueue
         $params = ['imdb_id' => $this->film->imdb_id];
         if ($lastCommentDate) {
             $lastCommentDate = Carbon::parse($lastCommentDate);
-            $params['date'] = $lastCommentDate->format('Y-m-d');
+            $params['after'] = $lastCommentDate->format('Y-m-d\TH:i:s.u\Z');
         }
 
         $response = Http::get('http://guide.phpdemo.ru/api/comments', $params);
