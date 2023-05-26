@@ -49,9 +49,13 @@ class UserController extends Controller
             }
 
             if ($request->hasFile('avatar')) {
-                $file = $request->file('avatar');
-                $path = $file->store('public/avatars', 'local');
-                $data['avatar'] = $path;
+                $newAvatar = $request->file('avatar');
+                $oldAvatar = $user->avatar;
+                if ($oldAvatar) {
+                    Storage::delete($oldAvatar);
+                }
+                $filename = $newAvatar->store('public/avatars', 'local');
+                $data['avatar'] = $filename;
             }
 
             $user->update($data);
