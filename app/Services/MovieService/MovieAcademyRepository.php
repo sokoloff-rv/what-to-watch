@@ -4,6 +4,7 @@ namespace App\Services\MovieService;
 
 use App\DTO\FilmData;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class MovieAcademyRepository implements MovieRepositoryInterface
 {
@@ -17,6 +18,13 @@ class MovieAcademyRepository implements MovieRepositoryInterface
      */
     public function findMovieById(string $imdbId): ?array
     {
+        $cachingTime = 60;
+        $cacheKey = 'movie_'.$imdbId;
+
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+
         $response = Http::get($this->baseUrl . $imdbId);
 
         if (!$response->successful()) {
@@ -42,7 +50,9 @@ class MovieAcademyRepository implements MovieRepositoryInterface
         $filmData->video_link = $movieData['video'] ?? null;
         $filmData->preview_video_link = $movieData['preview'] ?? null;
 
-        return $filmData->toArray();
-    }
+        $data = $filmData->toArray();
+        Cache::put($cacheKey, $data, 60 * 60);
 
+        return $data;
+    }
 }

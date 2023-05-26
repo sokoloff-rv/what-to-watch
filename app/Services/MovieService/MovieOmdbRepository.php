@@ -4,6 +4,7 @@ namespace App\Services\MovieService;
 
 use App\DTO\FilmData;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
 
 class MovieOmdbRepository implements MovieRepositoryInterface
 {
@@ -30,6 +31,13 @@ class MovieOmdbRepository implements MovieRepositoryInterface
      */
     public function findMovieById(string $imdbId): ?array
     {
+        $cachingTime = 60;
+        $cacheKey = 'movie_'.$imdbId;
+
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+
         $response = $this->client->request('GET', $this->baseUrl, [
             'query' => [
                 'apikey' => $this->apiKey,
@@ -58,7 +66,9 @@ class MovieOmdbRepository implements MovieRepositoryInterface
         $filmData->rating = (float) ($movieData['imdbRating'] ?? 0);
         $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes'] ?? '0');
 
-        return $filmData->toArray();
-    }
+        $data = $filmData->toArray();
+        Cache::put($cacheKey, $data, 60 * 60);
 
+        return $data;
+    }
 }
