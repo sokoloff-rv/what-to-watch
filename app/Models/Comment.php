@@ -106,7 +106,7 @@ class Comment extends Model
      *
      * @return Carbon|null
      */
-    public static function getLastExternalCommentDate():  ? Carbon
+    public static function getLastExternalCommentDate(): ?Carbon
     {
         $lastCommentDate = self::where('is_external', true)->max('created_at');
 

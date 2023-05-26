@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Jobs\UpdateCommentsForFilmJob;
 use App\Models\Comment;
 use App\Models\Film;
 use Illuminate\Bus\Queueable;
