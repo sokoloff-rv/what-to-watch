@@ -23,18 +23,17 @@ class SimilarController extends Controller
             $similarFilmsCount = 4;
             $filmGenres = $film->genres->pluck('id');
 
-            $allSimilarFilms = Film::where('status', $status)
+            $similarFilms = Film::where('status', $status)
                 ->where('id', '!=', $film->id)
                 ->whereHas('genres', function ($query) use ($filmGenres) {
                     $query->whereIn('genres.id', $filmGenres);
                 })
+                ->withCount(['genres as genres_count' => function ($query) use ($filmGenres) {
+                    $query->whereIn('genres.id', $filmGenres);
+                }])
+                ->orderByDesc('genres_count')
+                ->limit($similarFilmsCount)
                 ->get();
-
-            $allSimilarFilms = $allSimilarFilms->sortByDesc(function ($similarFilm) use ($filmGenres) {
-                return $similarFilm->genres->whereIn('id', $filmGenres)->count();
-            })->values();
-
-            $similarFilms = $allSimilarFilms->take($similarFilmsCount);
 
             if ($similarFilms->isEmpty()) {
                 return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
