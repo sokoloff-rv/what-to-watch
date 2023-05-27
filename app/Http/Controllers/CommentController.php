@@ -49,6 +49,8 @@ class CommentController extends Controller
                 'user_id' => $user->id,
             ]);
 
+            $film->calculateRating();
+
             return new SuccessResponse($comment);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -72,6 +74,9 @@ class CommentController extends Controller
                 'rating' => $request->input('rating'),
             ]);
 
+            $film = $comment->film;
+            $film->calculateRating();
+
             return new SuccessResponse($comment);
         } catch (\Exception $e) {
             return new FailResponse(null, null, $e);
@@ -94,6 +99,9 @@ class CommentController extends Controller
                 $comment->children()->delete();
             }
             $comment->delete();
+
+            $film = $comment->film;
+            $film->calculateRating();
 
             return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
