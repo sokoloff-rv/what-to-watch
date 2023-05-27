@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         try {
             if (!Auth::guard('web')->attempt($request->validated())) {
-                abort(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+                return new FailResponse(trans('auth.failed'), Response::HTTP_UNAUTHORIZED);
             }
 
             /** @var User $user */
