@@ -2,6 +2,7 @@
 
 namespace App\Services\MovieService;
 
+use Carbon\Carbon;
 use App\DTO\FilmData;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
@@ -10,7 +11,8 @@ class MovieOmdbRepository implements MovieRepositoryInterface
 {
     private Client $client;
     private string $apiKey;
-    private string $baseUrl = 'http://www.omdbapi.com/';
+    private string $baseUrl;
+    private int $cachingTime;
 
     /**
      * Конструктор класса MovieOmdbRepository.
@@ -21,6 +23,8 @@ class MovieOmdbRepository implements MovieRepositoryInterface
     {
         $this->client = $client;
         $this->apiKey = config('services.omdb.api_key');
+        $this->baseUrl = config('services.omdb.base_url');
+        $this->cachingTime = (int)config('services.omdb.caching_time');
     }
 
     /**
@@ -31,7 +35,6 @@ class MovieOmdbRepository implements MovieRepositoryInterface
      */
     public function findMovieById(string $imdbId): ?array
     {
-        $cachingTime = 60;
         $cacheKey = 'movie_'.$imdbId;
 
         if (Cache::has($cacheKey)) {
@@ -67,7 +70,8 @@ class MovieOmdbRepository implements MovieRepositoryInterface
         $filmData->scores_count = (int) str_replace(',', '', $movieData['imdbVotes'] ?? '0');
 
         $data = $filmData->toArray();
-        Cache::put($cacheKey, $data, 60 * 60);
+        $cachingTimeCarbon = Carbon::now()->addSeconds($this->cachingTime);
+        Cache::put($cacheKey, $data, $cachingTimeCarbon);
 
         return $data;
     }
