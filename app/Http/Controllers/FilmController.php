@@ -38,9 +38,7 @@ class FilmController extends Controller
 
         $films = Film::query()
             ->when($genre, function ($query, $genre) {
-                return $query->whereHas('genres', function ($query) use ($genre) {
-                    $query->where('name', $genre);
-                });
+                return $query->whereRelation('genres', 'name', $genre);
             })
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
