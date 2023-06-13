@@ -43,17 +43,19 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->input('password'));
         }
 
+        $oldAvatar = null;
         if ($request->hasFile('avatar')) {
             $newAvatar = $request->file('avatar');
             $oldAvatar = $user->avatar;
-            if ($oldAvatar) {
-                Storage::delete($oldAvatar);
-            }
             $filename = $newAvatar->store('public/avatars', 'local');
             $data['avatar'] = $filename;
         }
 
         $user->update($data);
+
+        if ($oldAvatar) {
+            Storage::delete($oldAvatar);
+        }
 
         return new SuccessResponse([
             'user' => $user,
