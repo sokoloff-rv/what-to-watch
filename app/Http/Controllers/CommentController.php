@@ -82,9 +82,7 @@ class CommentController extends Controller
             return new FailResponse('Недостаточно прав.', Response::HTTP_FORBIDDEN);
         }
 
-        if ($comment->children()->count() > 0) {
-            $comment->children()->delete();
-        }
+        $comment->children()->delete();
         $comment->delete();
 
         $film = $comment->film;
