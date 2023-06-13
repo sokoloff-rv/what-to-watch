@@ -84,5 +84,7 @@ class MovieAcademyRepository implements MovieRepositoryInterface
         if ($response->successful()) {
             return $response->json();
         }
+
+        return null;
     }
 }
