@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CommentRequest;
 use App\Http\Responses\BaseResponse;
 use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
-use App\Models\User;
 use App\Models\Comment;
 use App\Models\Film;
-use App\Http\Requests\CommentRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
@@ -68,19 +68,15 @@ class CommentController extends Controller
             return new FailResponse('Недостаточно прав.', Response::HTTP_FORBIDDEN);
         }
 
-        try {
-            $comment->update([
-                'text' => $request->input('text'),
-                'rating' => $request->input('rating'),
-            ]);
+        $comment->update([
+            'text' => $request->input('text'),
+            'rating' => $request->input('rating'),
+        ]);
 
-            $film = $comment->film;
-            $film->calculateRating();
+        $film = $comment->film;
+        $film->calculateRating();
 
-            return new SuccessResponse($comment);
-        } catch (\Exception $e) {
-            return new FailResponse(null, null, $e);
-        }
+        return new SuccessResponse($comment);
     }
 
     /**
@@ -94,18 +90,14 @@ class CommentController extends Controller
             return new FailResponse('Недостаточно прав.', Response::HTTP_FORBIDDEN);
         }
 
-        try {
-            if ($comment->children()->count() > 0) {
-                $comment->children()->delete();
-            }
-            $comment->delete();
-
-            $film = $comment->film;
-            $film->calculateRating();
-
-            return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
-        } catch (\Exception $e) {
-            return new FailResponse(null, null, $e);
+        if ($comment->children()->count() > 0) {
+            $comment->children()->delete();
         }
+        $comment->delete();
+
+        $film = $comment->film;
+        $film->calculateRating();
+
+        return new SuccessResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
