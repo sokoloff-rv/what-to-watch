@@ -37,7 +37,7 @@ class FilmController extends Controller
         }
 
         $films = Film::query()
-            ->select('id', 'name', 'preview_image')
+            ->select('id', 'name', 'preview_image', 'released', 'rating')
             ->when($genre, function ($query, $genre) {
                 return $query->whereRelation('genres', 'name', $genre);
             })
