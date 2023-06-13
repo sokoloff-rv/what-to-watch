@@ -36,7 +36,7 @@ class FavoriteController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if ($user->favoriteFilms()->where('film_id', $film->id)->exists()) {
+        if ($user->hasFavorite($film->id)) {
             return new FailResponse('Фильм уже в избранном', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -55,7 +55,7 @@ class FavoriteController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$user->favoriteFilms()->where('film_id', $film->id)->exists()) {
+        if (!$user->hasFavorite($film->id)) {
             return new FailResponse('Фильм не найден в избранном', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
