@@ -59,7 +59,11 @@ class FilmControllerTest extends TestCase
         $response->assertJsonCount(config('pagination.films_per_page'), 'data');
         $response->assertJsonStructure([
             'data' => [
-                '*' => $this->getTypicalFilmStructure(),
+                '*' => [
+                    'id',
+                    'name',
+                    'preview_image',
+                ],
             ],
             'current_page',
             'first_page_url',
