@@ -23,12 +23,8 @@ class CommentController extends Controller
      */
     public function index(Film $film): BaseResponse
     {
-        try {
-            $comments = $film->comments()->get();
-            return new SuccessResponse($comments);
-        } catch (\Exception $e) {
-            return new FailResponse(null, null, $e);
-        }
+        $comments = $film->comments()->get();
+        return new SuccessResponse($comments);
     }
 
     /**
@@ -38,23 +34,19 @@ class CommentController extends Controller
      */
     public function store(CommentRequest $request, Film $film): BaseResponse
     {
-        try {
-            /** @var User|null $user */
-            $user = Auth::user();
+        /** @var User|null $user */
+        $user = Auth::user();
 
-            $comment = $film->comments()->create([
-                'comment_id' => $request->get('comment_id', null),
-                'text' => $request->input('text'),
-                'rating' => $request->input('rating'),
-                'user_id' => $user->id,
-            ]);
+        $comment = $film->comments()->create([
+            'comment_id' => $request->get('comment_id', null),
+            'text' => $request->input('text'),
+            'rating' => $request->input('rating'),
+            'user_id' => $user->id,
+        ]);
 
-            $film->calculateRating();
+        $film->calculateRating();
 
-            return new SuccessResponse($comment);
-        } catch (\Exception $e) {
-            return new FailResponse(null, null, $e);
-        }
+        return new SuccessResponse($comment);
     }
 
     /**

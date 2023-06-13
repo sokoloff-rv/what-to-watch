@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Responses\BaseResponse;
-use App\Http\Responses\FailResponse;
 use App\Http\Responses\SuccessResponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -20,14 +19,10 @@ class UserController extends Controller
      */
     public function show(): BaseResponse
     {
-        try {
-            $user = Auth::user();
-            return new SuccessResponse([
-                'user' => $user,
-            ]);
-        } catch (\Exception $e) {
-            return new FailResponse(null, null, $e);
-        }
+        $user = Auth::user();
+        return new SuccessResponse([
+            'user' => $user,
+        ]);
     }
 
     /**
