@@ -56,7 +56,7 @@ class FilmControllerTest extends TestCase
         $response = $this->getJson('/api/films');
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(8, 'data');
+        $response->assertJsonCount(config('pagination.films_per_page'), 'data');
         $response->assertJsonStructure([
             'data' => [
                 '*' => $this->getTypicalFilmStructure(),

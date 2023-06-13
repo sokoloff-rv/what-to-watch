@@ -25,7 +25,7 @@ class FilmController extends Controller
      */
     public function index(FilmRequest $request): BaseResponse
     {
-        $pageQuantity = 8;
+        $pageQuantity = config('pagination.films_per_page');
         $page = $request->query('page');
         $genre = $request->query('genre');
         $status = $request->query('status', Film::STATUS_READY);
