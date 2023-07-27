@@ -28,11 +28,12 @@ class RegisterControllerTest extends TestCase
             'avatar' => UploadedFile::fake()->image('avatar.jpg'),
         ];
 
-        $user = User::where('email', $data['email'])->first();
         $response = $this->postJson('/api/register', $data);
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure(['data' => ['token']]);
+
+        $user = User::where('email', $data['email'])->first();
 
         $this->assertNotNull($user);
         $this->assertTrue(Hash::check($data['password'], $user->password));
