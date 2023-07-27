@@ -126,8 +126,8 @@ class UserControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK);
 
-        $this->assertEquals(config('app.paths.avatar') . $data['avatar']->hashName(), $user->avatar);
-        Storage::disk('local')->assertExists(config('app.paths.avatar') . $data['avatar']->hashName());
+        $this->assertEquals(config('app.paths.avatar') . $avatar->hashName(), $user->avatar);
+        Storage::disk('local')->assertExists(config('app.paths.avatar') . $avatar->hashName());
     }
 
     /**
