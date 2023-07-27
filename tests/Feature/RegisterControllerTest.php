@@ -37,8 +37,8 @@ class RegisterControllerTest extends TestCase
 
         $this->assertNotNull($user);
         $this->assertTrue(Hash::check($data['password'], $user->password));
-        $this->assertEquals('avatars/' . $data['avatar']->hashName(), $user->avatar);
-        Storage::disk('local')->assertExists('avatars/' . $data['avatar']->hashName());
+        $this->assertEquals(config('app.paths.avatar') . $data['avatar']->hashName(), $user->avatar);
+        Storage::disk('local')->assertExists(config('app.paths.avatar') . $data['avatar']->hashName());
     }
 
     /**
