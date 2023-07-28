@@ -1,66 +1,290 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# What to watch
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## О проекте
 
-## About Laravel
+«What to watch» — это проект на Laravel, который представляет собой REST-API для веб-приложения онлайн-кинотеатра. В рамках этого проекта большой акцент делался на автоматизированном тестировании (помимо работы с API) и подходе TDD. Всего было написано 63 автотеста.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Демонстрационная версия доступна по адресу [https://whattowatch.sokoloff-rv.ru/](https://whattowatch.sokoloff-rv.ru/), БД заполнена сидированными данными.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Аскинема с демонстрацией успешного прохождения тестов
+[![asciicast](https://asciinema.org/a/599367.svg)](https://asciinema.org/a/599367) 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Описание ****API-методов****
 
-## Learning Laravel
+### Регистрация пользователя `POST` `/api/register`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Пользователь заполняет форму регистрации указав Имя, email, пароль и подтверждение пароля.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Дополнительно может быть загружен аватар.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Последовательность действий:**
 
-## Laravel Sponsors
+- Отправка post запроса с данными пользователя на endpoint регистрации.
+- Валидация полученных полей. Проверка наличия обязательных полей и соответствия заданным правилам.
+- Проверка, что указанный email не занят.
+- Сохранение данных в БД, или возвращение списка ошибок при их наличии.
+- Сохранение аватара в публичное хранилище и указание ссылки на файл в таблице пользователей.
+- Возвращение токена для аутентификации пользователя под зарегистрированной учетной записью.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+**Правила валидации:**
 
-### Premium Partners
+| Поле | Тип | Обязательное | Правила | Пример |
+| --- | --- | --- | --- | --- |
+| email | email | true | уникальное | mailto:email@example.com |
+| password | string | true | min: 8 | 12345678 |
+| name | string | true | max: 255 | John Doe |
+| file | file | false | image, max: 10M |  |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Аутентификация `POST` `/api/login`
 
-## Contributing
+Правила валидации:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Пользователь заполняет форму авторизации, указав email и пароль.
 
-## Code of Conduct
+- Отправка post запроса с данными пользователя на endpoint авторизации.
+- Валидация полученных полей. Проверка наличия обязательных полей и соответствия заданным правилам.
+- Возвращение токена для аутентификации пользователя.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Правила валидации:**
 
-## Security Vulnerabilities
+| Поле | Тип | Обязательное | Пример |
+| --- | --- | --- | --- |
+| email | email | true | mailto:email@example.com |
+| password | string | true | 12345678 |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Метод возвращает токен аутентификации.
 
-## License
+### Получение профиля пользователя `GET` `/api/user`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Метод возвращает информацию о пользователе: имя, email, аватар и роль пользователя.
+
+Метод доступен только аутентифицированному пользователю.
+
+### Обновление профиля пользователя `PATCH` `/api/user`
+
+С помощью данного метод пользователь может изменить свое имя, email, пароль или загрузить аватар.
+
+**Правила валидации:**
+
+| Поле | Тип | Обязательное | Правила | Пример |
+| --- | --- | --- | --- | --- |
+| email | email | true | уникальное | mailto:email@example.com |
+| password | string | false | min: 8 | 12345678 |
+| name | string | true | max: 255 | John Doe |
+| file | file | false | image, max: 10M |  |
+
+Метод доступен только аутентифицированному пользователю.
+
+### Выход (logout) `POST` `/api/logout`
+
+Отправка post запроса на endpoint выхода пользователя.
+
+Уничтожение токена пользовательской аутентификации.
+
+### Получение списка фильмов `GET` `/api/films`
+
+Страница представляет собой список по 8 фильмов с пагинацией.
+
+Информация о фильме содержит название, превью обложки (изображение для отображения в списке), превью видео (ссылка на превью) и другую дополнительную информацию для построения пагинации.
+
+Есть возможность отсортировать список по дате выхода и рейтингу фильма.
+
+По умолчанию фильмы сортируются по дате выхода, от новых к старым (desc).
+
+Этот же endpoint может использоваться для получения списка фильмов по жанру.
+
+- Отправка get запроса на endpoint получения списка фильмов
+- Возвращение первых 8 фильмов, если не передано другое условие (параметр page)
+    - Вместе со списком сериалов возвращаются параметры пагинации: количество элементов всего ссылка на первую страницу, на последнюю, на предыдущую и следующую
+
+Дополнительно вместе с запросом могут быть переданы следующие параметры:
+
+- page — номер страницы, для пагинации
+- genre — фильтрация по жанру
+- status — фильтрация по статусу, по умолчанию значение `ready`, пользователь с ролью модератор может изменить значение на (`pending`, `moderate`)
+- order_by — правило сортировки. Возможные значения: released, rating
+- order_to — направление сортировки. Возможные значения: asc, desc
+
+### Получение информации о фильме `GET` `/api/films/{id}`
+
+При получении информации о фильме с идентификатором `id` пользователь видит следующую информацию:
+
+- Большой постер
+- Превью (маленькое изображение)
+- Обложка фильма
+- Цвет фона для карточки фильма
+- Название фильма
+- Жанры
+- Год выхода на экраны
+- Описание
+- Режиссёр
+- Список актёров
+- Продолжительность фильма
+- Ссылка на видео
+- Ссылка на превью видео
+- Рейтинг фильма, в виде числа, к-во голосов
+
+Если запрос выполняет авторизованный пользователь — в дополнение к другим данным, возвращается статус наличия фильма в избранном.
+
+В случае попытки обращения к несуществующему фильму, ожидается возврат 404 ошибки.
+
+### Получение списка жанров `GET` `/api/genres`
+
+Технический endpoint. Для формирования списка жанров в форме поиска или каталоге.
+
+### Редактирование жанра `PATCH` `/api/genres/{genre}`
+
+Метод доступен только аутентифицированному пользователю с ролью модератор.
+
+### Получение списка фильмов добавленных пользователем в избранное `GET` `/api/favorite`
+
+Метод возвращает список фильмов, добавленных пользователем в избранное (список «К просмотру»).
+
+Формат и информация возвращаемая в этом списке аналогична методу для получения списка фильмов.
+
+Фильмы возвращаются в порядке добавления пользователем в список, от новых к старым.
+
+Метод доступен только аутентифицированному пользователю.
+
+### Добавление фильма в избранное `POST` `/api/films/{id}/favorite/`
+
+Метод принимает на вход `id` добавляемого фильма.
+
+В случае попытки добавления несуществующего фильма, ожидается возврат 404 ошибки.
+
+В случае попытки добавления в избранное фильма который уже присутствует в списке пользователя — ошибка 422, с соответствующим сообщением (`message`).
+
+Метод доступен только аутентифицированному пользователю.
+
+### Удаление фильма из избранного `DELETE` `/api/films/{id}/favorite/`
+
+Метод принимает на вход `id` удаляемого фильма.
+
+В случае попытки удаления несуществующего фильма, ожидается возврат 404 ошибки.
+
+В случае попытки удаления фильма, который отсутствует в списке пользователя, — ошибка 422, с соответствующим сообщением (`message`).
+
+Метод доступен только аутентифицированному пользователю.
+
+### Получение списка похожих фильмов `GET` `/api/films/{id}/similar`
+
+Отправляя на роут получения похожих фильмов с указанием `id` фильма для которого запрашиваются похожие, метод возвращает список из 4 подходящих фильмов.
+
+Похожесть определяется принадлежностью к тем же жанрам, что и исходный фильм (любым из имеющихся).
+
+Формат и информация возвращаемая в этом списке аналогична методу для получения списка фильмов.
+
+### Получение списка отзывов к фильму `GET` `/api/comments/{id}`
+
+Метод принимает на вход `id` фильма, в случае отсутствия такового — возвращается 404 ошибка.
+
+Возвращает список отзывов. Каждый отзыв содержит: текст отзыва, имя автора, дату написания отзыва. Также может содержать оценку.
+
+Отзывы, загруженные из внешнего источника, возвращаются в общем списке с именем автора «Гость» Отзывы отсортированы от наиболее новых к старым (desc).
+
+### Добавление отзыва к фильму `POST` `/api/comments/{id}`
+
+В качестве параметра в адресе указывается `id` фильма к которому добавляется комментарий.
+
+Комментарий может быть добавлен отдельно, так и в ответ на другой, в этом случае в теле запроса указывается и `comment_id`.
+
+Добавление отзыва сопровождается выставлением оценки.
+
+Метод доступен только аутентифицированному пользователю.
+
+**Правила валидации:**
+
+| Поле | Тип | Обязательное | Правила | Пример |
+| --- | --- | --- | --- | --- |
+| text | string | true | min: 50, max: 400 | Discerning travellers and Wes Anderson fans will luxuriate in the glorious Mittel-European kitsch of one of the director’s funniest and most exquisitely designed movies in years. |
+| rating | int | true | min: 1, max: 10 | 8 |
+| comment_id | int | false | exists | 1 |
+
+### Редактирование комментария `PATCH` `/api/comments/{comment}`
+
+Метод доступен только аутентифицированному пользователю.
+
+Пользователь может отредактировать *свой* комментарий.
+
+Модератор может отредактировать *любой* комментарий.
+
+**Правила валидации:**
+
+| Поле | Тип | Обязательное | Правила | Пример |
+| --- | --- | --- | --- | --- |
+| text | string | true | min: 50, max: 400 | Discerning travellers and Wes Anderson fans will luxuriate... |
+| rating | int | false | min: 1, max: 10 | 3 |
+
+### Удаление комментария `DELETE` `/api/comments/{comment}`
+
+Метод доступен только аутентифицированному пользователю.
+
+Пользователь может удалить *свой* комментарий, при условии, что комментарий не содержит ответов.
+
+Модератор может удалить *любой* комментарий.
+
+При удалении комментария, имеющего ответы, удаляются все его потомки.
+
+### Получение промо-фильма `GET` `/api/promo`
+
+Метод, возвращающий фильм, являющийся продвигаемым на данный момент (promo).
+
+Формат и информация возвращаемая в этом списке аналогична методу для получения информации о фильме.
+
+### Установка промо-фильма `POST` `/api/promo/{id}`
+
+Метод доступен только аутентифицированному пользователю с ролью модератор.
+
+При отсутствии запрошенного в роуте фильма в базе, на запрос возвращается 404 ошибка.
+
+### Добавление фильма в базу `POST` `/api/films`
+
+Модератор указывает в форме идентификатор фильма с сайта imdb вида tt0111161.
+
+Создается фоновая задача, которая запрашивает данные о фильме из внешнего источника, и обновляет информацию о фильме в базе.
+
+В момент создания заявки, фильм сохраняется только с imdb_id и статусом «в ожидании» (pending).
+
+После загрузки данных, статус меняется на «на модерации» (moderate). Модератор может получить список фильмов с этим статусом, отредактировать его, заполнить недостающие поля, указать ссылки на видео и прочее, после чего поставить статус «готов» (ready) — после чего фильм будет доступен пользователям.
+
+Для получения информации о фильме можно использовать сервис [http://www.omdbapi.com](http://www.omdbapi.com/) (или api htmlacademy)
+
+Метод доступен только аутентифицированному пользователю с ролью модератор.
+
+**Правила валидации:**
+
+| Поле | Тип | Обязательное | Правила | Пример |
+| --- | --- | --- | --- | --- |
+| imdb_id | string | true | уникальное, проверка формата ttXXX | tt0944947 |
+
+При заполнении поля imdb_id и наличии фильма с таким id в базе — возвращается ошибка валидации 422.
+
+При сохранении проверяем наличие связанных жанров и создаем при отсутствии.
+
+### Редактирование фильма `PATCH` `/api/films/{id}`
+
+Модератор может изменить информацию о фильме или заполнить недостающие данные после добавления фильма.
+
+Метод доступен только аутентифицированному пользователю с ролью модератор.
+
+**Правила валидации:**
+
+| Поле | Тип | Обязательное | Правила | Пример |
+| --- | --- | --- | --- | --- |
+| name | string | true | max: 255 | The Grand Budapest Hotel |
+| poster_image | string | false | max: 255 | img/the-grand-budapest-hotel-poster.jpg |
+| preview_image | string | false | max: 255 | img/the-grand-budapest-hotel.jpg |
+| background_image | string | false | max: 255 | img/the-grand-budapest-hotel-bg.jpg |
+| background_color | string | false | max: 9 | #ffffff |
+| video_link | string | false | max: 255 | https://some-link/ |
+| preview_video_link | string | false | max: 255 | https://some-link/ |
+| description | string | false | max: 1000 | In the 1930s, the Grand Budapest Hotel is a popular European ski resort, presided over by concierge Gustave H. (Ralph Fiennes). Zero, a junior lobby boy, becomes Gustave’s friend and protege. |
+| director | string | false | max: 255 | Wes Anderson |
+| starring | array | false |  | [«Bill Murray», «Edward Norton», «Jude Law», «Willem Dafoe», «Saoirse Ronan»] |
+| genre | array | false |  | [«Comedy»] |
+| run_time | int | false |  | 99 |
+| released | int | false |  | 2014 |
+| imdb_id | string | true | уникальное, проверка формата ttXXX | tt0944947 |
+| status | string | true | статус из списка: pending, on moderation, ready | ready |
+
+При отсутствии запрошенного в роуте фильма в базе, возвращается 404 ошибка.
