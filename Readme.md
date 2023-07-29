@@ -1,10 +1,70 @@
 # What to watch
 
+![PHP Version](https://img.shields.io/badge/php-%5E8.1-7A86B8)
+![MySQL Version](https://img.shields.io/badge/mysql-%5E8.0-F29221)
+![Laravel Version](https://img.shields.io/badge/laravel-%5E10.0-F13C30)
+![PHPUnit Version](https://img.shields.io/badge/phpunit-%5E10.0-3A97D0)
+
+
 ## О проекте
 
 «What to watch» — это проект на Laravel, который представляет собой REST-API для веб-приложения онлайн-кинотеатра. В рамках этого проекта большой акцент делался на автоматизированном тестировании (помимо работы с API) и подходе TDD. Всего было написано 63 автотеста.
 
 Демонстрационная версия доступна по адресу [https://whattowatch.sokoloff-rv.ru/](https://whattowatch.sokoloff-rv.ru/), БД заполнена сидированными данными.
+
+## Начало работы
+
+Чтобы развернуть проект локально или на хостинге, выполните последовательно несколько действий:
+
+1. Скопируйте файлы проекта.
+
+2. Установите зависимости, выполнив команду:
+
+```bash
+composer install
+```
+
+3. Затем создайте файл .env:
+
+```bash
+cp .env.example .env
+```
+
+И пропишите в нем настройки, соответствующие вашему окружению.
+
+4. После этого сгенерируйте ключ приложения:
+
+```bash
+php artisan key:generate
+```
+
+5. Запустите миграции:
+
+```bash
+php artisan migrate
+```
+
+6. Заполните БД сидированными данными (по желанию):
+
+```bash
+php artisan db:seed
+```
+
+7. Для запуска тестов используйте команду:
+
+```bash
+php artisan test
+```
+
+Для корректного выполнения тестов необходимо предварительно настроить подключение к тестовой базе данных в файле `phpunit.xml`. Пример конфигурации:
+
+```xml
+<env name="DB_HOST" value="localhost"/>
+<env name="DB_PORT" value="3306"/>
+<env name="DB_DATABASE" value="testdatabase"/>
+<env name="DB_USERNAME" value="root"/>
+<env name="DB_PASSWORD" value="password"/>
+```
 
 ## Аскинема с демонстрацией успешного прохождения тестов
 [![asciicast](https://asciinema.org/a/599367.svg)](https://asciinema.org/a/599367) 
@@ -288,3 +348,7 @@
 | status | string | true | статус из списка: pending, on moderation, ready | ready |
 
 При отсутствии запрошенного в роуте фильма в базе, возвращается 404 ошибка.
+
+## Техническое задание
+
+[Посмотреть техническое задание проекта](https://sokoloff-rv.notion.site/What-to-watch-f41149c2897e425b8262b7bd3475094d?pvs=4)
