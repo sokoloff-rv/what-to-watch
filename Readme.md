@@ -6,6 +6,58 @@
 
 Демонстрационная версия доступна по адресу [https://whattowatch.sokoloff-rv.ru/](https://whattowatch.sokoloff-rv.ru/), БД заполнена сидированными данными.
 
+## Начало работы
+
+Чтобы развернуть проект локально или на хостинге, выполните последовательно несколько действий:
+
+1. После копирования файлов проекта установите зависимости, выполнив команду:
+
+```bash
+composer install
+```
+
+2. Затем создайте файл .env:
+
+```bash
+cp .env.example .env
+```
+
+И пропишите в нем настройки, соответствующие вашему окружению.
+
+3. После этого сгенерируйте ключ приложения:
+
+```bash
+php artisan key:generate
+```
+
+4. Запустите миграции:
+
+```bash
+php artisan migrate
+```
+
+5. Заполните базу данных сидированными данными (по желанию):
+
+```bash
+php artisan db:seed
+```
+
+6. Для запуска тестов используйте команду:
+
+```bash
+php artisan test
+```
+
+Для корректного выполнения тестов необходимо предварительно настроить подключение к тестовой базе данных в файле `phpunit.xml`. Пример конфигурации:
+
+```xml
+<env name="DB_HOST" value="localhost"/>
+<env name="DB_PORT" value="3306"/>
+<env name="DB_DATABASE" value="testdatabase"/>
+<env name="DB_USERNAME" value="root"/>
+<env name="DB_PASSWORD" value="password"/>
+```
+
 ## Аскинема с демонстрацией успешного прохождения тестов
 [![asciicast](https://asciinema.org/a/599367.svg)](https://asciinema.org/a/599367) 
 
