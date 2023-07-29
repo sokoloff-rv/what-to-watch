@@ -288,3 +288,7 @@
 | status | string | true | статус из списка: pending, on moderation, ready | ready |
 
 При отсутствии запрошенного в роуте фильма в базе, возвращается 404 ошибка.
+
+## Техническое задание
+
+[Посмотреть техническое задание проекта](https://sokoloff-rv.notion.site/What-to-watch-f41149c2897e425b8262b7bd3475094d?pvs=4)
