@@ -1,5 +1,11 @@
 # What to watch
 
+![PHP Version](https://img.shields.io/badge/php-%5E8.1-7A86B8)
+![MySQL Version](https://img.shields.io/badge/mysql-%5E8.0-F29221)
+![Laravel Version](https://img.shields.io/badge/laravel-%5E10.0-F13C30)
+![PHPUnit Version](https://img.shields.io/badge/phpunit-%5E10.0-3A97D0)
+
+
 ## О проекте
 
 «What to watch» — это проект на Laravel, который представляет собой REST-API для веб-приложения онлайн-кинотеатра. В рамках этого проекта большой акцент делался на автоматизированном тестировании (помимо работы с API) и подходе TDD. Всего было написано 63 автотеста.
@@ -36,7 +42,7 @@ php artisan key:generate
 php artisan migrate
 ```
 
-5. Заполните базу данных сидированными данными (по желанию):
+5. Заполните БД сидированными данными (по желанию):
 
 ```bash
 php artisan db:seed
