@@ -1,7 +1,7 @@
 # What to watch
 
 ![PHP Version](https://img.shields.io/badge/php-%5E8.1-7A86B8)
-![MySQL Version](https://img.shields.io/badge/mysql-%5E8.0-F29221)
+![MySQL Version](https://img.shields.io/badge/mysql-%5E5.6-F29221)
 ![Laravel Version](https://img.shields.io/badge/laravel-%5E10.0-F13C30)
 ![PHPUnit Version](https://img.shields.io/badge/phpunit-%5E10.0-3A97D0)
 
