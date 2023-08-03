@@ -1,7 +1,7 @@
 # What to watch
 
 ![PHP Version](https://img.shields.io/badge/php-%5E8.1-7A86B8)
-![MySQL Version](https://img.shields.io/badge/mysql-%5E8.0-F29221)
+![MySQL Version](https://img.shields.io/badge/mysql-%5E5.6-F29221)
 ![Laravel Version](https://img.shields.io/badge/laravel-%5E10.0-F13C30)
 ![PHPUnit Version](https://img.shields.io/badge/phpunit-%5E10.0-3A97D0)
 
@@ -16,15 +16,25 @@
 
 Чтобы развернуть проект локально или на хостинге, выполните последовательно несколько действий:
 
-1. Скопируйте файлы проекта.
+1. Клонируйте репозиторий:
 
-2. Установите зависимости, выполнив команду:
+```bash
+git clone https://github.com/sokoloff-rv/94214-what-to-watch-2.git whattowatch
+```
+
+2. Перейдите в директорию проекта:
+
+```bash
+cd whattowatch
+```
+
+3. Установите зависимости, выполнив команду:
 
 ```bash
 composer install
 ```
 
-3. Затем создайте файл .env:
+4. Затем создайте файл .env:
 
 ```bash
 cp .env.example .env
@@ -32,25 +42,25 @@ cp .env.example .env
 
 И пропишите в нем настройки, соответствующие вашему окружению.
 
-4. После этого сгенерируйте ключ приложения:
+5. После этого сгенерируйте ключ приложения:
 
 ```bash
 php artisan key:generate
 ```
 
-5. Запустите миграции:
+6. Запустите миграции:
 
 ```bash
 php artisan migrate
 ```
 
-6. Заполните БД сидированными данными (по желанию):
+7. Заполните БД сидированными данными (по желанию):
 
 ```bash
 php artisan db:seed
 ```
 
-7. Для запуска тестов используйте команду:
+8. Для запуска тестов используйте команду:
 
 ```bash
 php artisan test
