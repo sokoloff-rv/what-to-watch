@@ -19,7 +19,7 @@
 1. Клонируйте репозиторий:
 
 ```bash
-git clone https://github.com/sokoloff-rv/94214-what-to-watch-2.git whattowatch
+git clone https://github.com/sokoloff-rv/what-to-watch.git whattowatch
 ```
 
 2. Перейдите в директорию проекта:
