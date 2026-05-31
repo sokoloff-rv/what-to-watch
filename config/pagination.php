@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'films_per_page' => 8,
+    'films_per_page' => 16,
 ];

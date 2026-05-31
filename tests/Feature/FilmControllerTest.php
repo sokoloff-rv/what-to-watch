@@ -51,7 +51,9 @@ class FilmControllerTest extends TestCase
      */
     public function testIndexAllFilms(): void
     {
-        Film::factory()->count(10)->create(['status' => Film::STATUS_READY]);
+        Film::factory()
+            ->count(config('pagination.films_per_page'))
+            ->create(['status' => Film::STATUS_READY]);
 
         $response = $this->getJson('/api/films');
 
