@@ -1096,13 +1096,10 @@ main {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  flex-direction: row-reverse;
   margin-bottom: 15px; }
 
 .rating__input {
   display: none; }
-  .rating__input:checked ~ .rating__label::after {
-    color: rgba(56, 44, 42, 0.7); }
 
 .rating__label {
   font-size: 0;
@@ -1120,6 +1117,9 @@ main {
     color: rgba(56, 44, 42, 0.36);
     -webkit-transition: color 0.2s;
     transition: color 0.2s; }
+  .rating__label--active::after,
+  .rating__label:hover::after {
+    color: rgba(56, 44, 42, 0.7); }
 
 .review {
   border-bottom: 2px solid #E8C3C4;

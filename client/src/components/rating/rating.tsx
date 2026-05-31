@@ -22,7 +22,12 @@ function Rating({ onChange, currentRating }: RatingProps) {
                 onChange={() => onChange(rating)}
                 checked={currentRating === rating}
               />
-              <label className="rating__label" htmlFor={`star-${rating}`}>
+              <label
+                className={`rating__label${
+                  rating <= currentRating ? ' rating__label--active' : ''
+                }`}
+                htmlFor={`star-${rating}`}
+              >
                 Rating {rating}
               </label>
             </Fragment>

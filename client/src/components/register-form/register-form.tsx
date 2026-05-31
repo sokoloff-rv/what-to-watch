@@ -84,7 +84,7 @@ function RegisterForm() {
             ref={passwordRef}
           />
         </div>
-        <div className="`sign-in__field register-form__avatar-wrapper">
+        <div className="sign-in__field register-form__avatar-wrapper">
           <input
             className="visually-hidden"
             type="file"
