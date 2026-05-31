@@ -66,7 +66,7 @@ function PromoCard({ promoFilm }: PromoCardProps) {
 
             <div className="film-card__buttons">
               <Link
-                className="btn btn--play film-card__button"
+                className="btn btn--more film-card__button"
                 to={`${AppRoute.Film}/${promoFilm.id}`}
               >
                 <span>More</span>
