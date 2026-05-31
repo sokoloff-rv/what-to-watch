@@ -12,6 +12,8 @@
 
 Демонстрационная версия доступна по адресу [https://whattowatch.sokoloff-rv.ru/](https://whattowatch.sokoloff-rv.ru/), БД заполнена сидированными данными.
 
+У проекта также есть отдельная веб-версия на React: [https://app.whattowatch.sokoloff-rv.ru/](https://app.whattowatch.sokoloff-rv.ru/). Клиент расположен в директории `client/`, собирается как статическое SPA-приложение и работает поверх публичного API `https://whattowatch.sokoloff-rv.ru/api`.
+
 ## Начало работы
 
 Чтобы развернуть проект локально или на хостинге, выполните последовательно несколько действий:
@@ -75,6 +77,43 @@ php artisan test
 <env name="DB_USERNAME" value="root"/>
 <env name="DB_PASSWORD" value="password"/>
 ```
+
+## Веб-версия
+
+React-клиент находится в директории `client/` и разворачивается отдельно от Laravel-приложения. Такой подход позволяет не смешивать статическую сборку фронтенда с backend API: Laravel продолжает обслуживать `whattowatch.sokoloff-rv.ru/api`, а клиент может жить на отдельном хосте, например `app.whattowatch.sokoloff-rv.ru`.
+
+Для локального запуска клиента:
+
+```bash
+cd client
+npm install
+npm start
+```
+
+По умолчанию клиент использует API из переменной окружения `REACT_APP_API_URL`. Для локальной настройки можно создать файл `client/.env.local`:
+
+```bash
+REACT_APP_API_URL=https://whattowatch.sokoloff-rv.ru/api
+```
+
+Перед публикацией веб-версии выполните проверки и сборку:
+
+```bash
+cd client
+npm run lint
+CI=true npm test -- --watchAll=false
+npm run build
+```
+
+Готовые файлы появятся в `client/build`. На production-хостинге корнем сайта веб-версии должен быть именно этот каталог.
+
+### Особенности интеграции клиента с API
+
+- Клиент использует Bearer-токен в заголовке `Authorization`.
+- Успешные ответы Laravel API разворачиваются из поля `data`.
+- Список жанров берется из endpoint `GET /api/genres`, чтобы фильтрация не расходилась с данными backend.
+- Промо-фильм запрашивается через `GET /api/promo`; если API возвращает только `film_id`, клиент дополнительно запрашивает фильм через `GET /api/films/{id}`.
+- Для сидированных placeholder-изображений и битых ссылок клиент подставляет локальные fallback-изображения из `client/public/img`.
 
 ## Аскинема с демонстрацией успешного прохождения тестов
 [![asciicast](https://asciinema.org/a/599367.svg)](https://asciinema.org/a/599367) 
