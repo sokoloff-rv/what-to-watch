@@ -7,6 +7,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/';
 import { setActiveFilm } from '../../store/film-data/film-data';
 import { getIsAuth } from '../../store/user-data/selectors';
 import { AppRoute } from '../../const';
+import FallbackImage from '../fallback-image/fallback-image';
+import {
+  DEFAULT_BACKGROUND_IMAGE,
+  DEFAULT_POSTER_IMAGE,
+} from '../../services/fallback-assets';
 
 type PromoCardProps = {
   promoFilm: Film;
@@ -29,7 +34,11 @@ function PromoCard({ promoFilm }: PromoCardProps) {
   return (
     <section className="film-card" style={{ backgroundColor }}>
       <div className="film-card__bg">
-        <img src={backgroundImage} alt={name} />
+        <FallbackImage
+          src={backgroundImage}
+          fallbackSrc={DEFAULT_BACKGROUND_IMAGE}
+          alt={name}
+        />
       </div>
 
       <h1 className="visually-hidden">WTW</h1>
@@ -42,7 +51,13 @@ function PromoCard({ promoFilm }: PromoCardProps) {
       <div className="film-card__wrap">
         <div className="film-card__info">
           <div className="film-card__poster">
-            <img src={posterImage} alt={name} width="218" height="327" />
+            <FallbackImage
+              src={posterImage}
+              fallbackSrc={DEFAULT_POSTER_IMAGE}
+              alt={name}
+              width="218"
+              height="327"
+            />
           </div>
 
           <div className="film-card__desc">

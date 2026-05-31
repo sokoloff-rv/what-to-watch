@@ -1,25 +1,30 @@
 import { useReducer, Reducer } from 'react';
 import Select from 'react-select';
-import { GENRES } from '../../const';
+import { DEFAULT_GENRE } from '../../const';
+import { useAppSelector } from '../../hooks';
+import { getGenres } from '../../store/genre-data/selectors';
 import { Film } from '../../types/film';
-import { NewFilm } from '../../types/new-film';
 import { FormAction, FormActionType } from '../../types/add-film';
 import { addFilmFormReducer } from './add-film-form.reducer';
 
-type AddFilmFormProps<T> = {
-  film: T;
-  onSubmit: (filmData: T) => void;
+type AddFilmFormProps = {
+  film: Film;
+  onSubmit: (filmData: Film) => void;
 };
 
-function AddFilmForm<T extends Film | NewFilm>({
+function AddFilmForm({
   film,
   onSubmit,
-}: AddFilmFormProps<T>) {
-  const [filmData, dispatchFilmData] = useReducer<Reducer<T, FormAction>>(
+}: AddFilmFormProps) {
+  const backendGenres = useAppSelector(getGenres)
+    .filter((genreItem) => genreItem !== DEFAULT_GENRE);
+  const [filmData, dispatchFilmData] = useReducer<Reducer<Film, FormAction>>(
     addFilmFormReducer,
     film
   );
   const {
+    imdbId,
+    status,
     name,
     description,
     genre,
@@ -33,6 +38,10 @@ function AddFilmForm<T extends Film | NewFilm>({
     videoLink,
     previewVideoLink
   } = filmData;
+  const selectedGenre = genre.split(', ')[0];
+  const genreOptions = Array.from(
+    new Set([...backendGenres, ...filmData.genres, selectedGenre].filter(Boolean))
+  );
 
   return (
     <form
@@ -43,6 +52,51 @@ function AddFilmForm<T extends Film | NewFilm>({
         onSubmit(filmData);
       }}
     >
+      <div className="sign-in__fields">
+        <div className="sign-in__field">
+          <label className="sign-in__label" htmlFor="imdb-id">
+            IMDb ID
+          </label>
+          <input
+            className="sign-in__input"
+            type="text"
+            placeholder="tt0111161"
+            name="imdb-id"
+            id="imdb-id"
+            required
+            pattern="tt[0-9]{7,}"
+            defaultValue={imdbId}
+            onChange={(evt) =>
+              dispatchFilmData({
+                type: FormActionType.setImdbId,
+                payload: evt.target.value,
+              })}
+          />
+        </div>
+      </div>
+      <div className="sign-in__fields">
+        <div className="sign-in__field">
+          <label className="sign-in__label" htmlFor="status">
+            Status
+          </label>
+          <select
+            className="sign-in__input"
+            name="status"
+            id="status"
+            required
+            defaultValue={status}
+            onChange={(evt) =>
+              dispatchFilmData({
+                type: FormActionType.setStatus,
+                payload: evt.target.value,
+              })}
+          >
+            <option value="pending">Pending</option>
+            <option value="moderate">Moderate</option>
+            <option value="ready">Ready</option>
+          </select>
+        </div>
+      </div>
       <div className="sign-in__fields">
         <div className="sign-in__field">
           <label className="sign-in__label" htmlFor="film-name">
@@ -119,8 +173,8 @@ function AddFilmForm<T extends Film | NewFilm>({
             classNamePrefix="react-select"
             name="genre"
             id="genre"
-            defaultValue={{ value: genre, label: genre }}
-            options={GENRES.map((genreItem) => ({
+            defaultValue={{ value: selectedGenre, label: selectedGenre }}
+            options={genreOptions.map((genreItem) => ({
               value: genreItem,
               label: genreItem,
             }))}

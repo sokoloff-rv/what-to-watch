@@ -1,4 +1,6 @@
 export enum FormActionType {
+  setImdbId,
+  setStatus,
   setName,
   setPosterImage,
   setBackgroundImage,

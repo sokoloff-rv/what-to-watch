@@ -11,6 +11,7 @@ export type FilmsState = {
 
 export type GenreState = {
   activeGenre: string;
+  genres: string[];
   filmsByGenre: Film[];
   isLoading: boolean;
 };

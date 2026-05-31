@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
 import { Film } from '../../types/film';
+import FallbackImage from '../fallback-image/fallback-image';
+import { DEFAULT_POSTER_IMAGE } from '../../services/fallback-assets';
 
 type FilmCardProps = {
   film: Film;
@@ -39,7 +41,11 @@ function FilmCard({ film, withVideo }: FilmCardProps) {
         <>
           <Link to={`${AppRoute.Film}/${id}`}>
             <div className="small-film-card__image">
-              <img src={posterImage} alt={name} />
+              <FallbackImage
+                src={posterImage}
+                fallbackSrc={DEFAULT_POSTER_IMAGE}
+                alt={name}
+              />
             </div>
           </Link>
           <h3 className="small-film-card__title">

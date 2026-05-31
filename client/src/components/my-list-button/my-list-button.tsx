@@ -1,4 +1,5 @@
 import { setFavorite } from '../../store/api-actions';
+import { getActiveFilm } from '../../store/film-data/selectors';
 import { getIsFavorite } from '../../store/films-data/selectors';
 import { useAppDispatch, useAppSelector } from '../../hooks/';
 
@@ -8,7 +9,10 @@ type MyListButtonProps = {
 
 function MyListButton({ id }: MyListButtonProps) {
   const dispatch = useAppDispatch();
-  const isFavorite = useAppSelector((state) => getIsFavorite(state, id));
+  const activeFilm = useAppSelector(getActiveFilm);
+  const listFavorite = useAppSelector((state) => getIsFavorite(state, id));
+  const isFavorite =
+    listFavorite ?? (activeFilm?.id === id ? activeFilm.isFavorite : false);
 
   const handleClick = () => {
     dispatch(setFavorite({ id, status: isFavorite ? 0 : 1 }));

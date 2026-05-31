@@ -19,7 +19,11 @@ export const filmsData = createSlice({
     },
     setFilm: (state, action) => {
       const index = state.films.findIndex((film) => film.id === action.payload.id);
-      state.films[index] = action.payload;
+      if (index === -1) {
+        state.films.push(action.payload);
+      } else {
+        state.films[index] = action.payload;
+      }
     }
   },
 });

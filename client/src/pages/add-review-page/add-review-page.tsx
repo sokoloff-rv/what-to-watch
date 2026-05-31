@@ -11,6 +11,11 @@ import { useAppSelector, useAppDispatch } from '../../hooks/';
 import { postReview, fetchFilm } from '../../store/api-actions';
 import { NewReview } from '../../types/new-review';
 import { getActiveFilm, getIsLoading } from '../../store/film-data/selectors';
+import FallbackImage from '../../components/fallback-image/fallback-image';
+import {
+  DEFAULT_BACKGROUND_IMAGE,
+  DEFAULT_POSTER_IMAGE,
+} from '../../services/fallback-assets';
 
 function AddReviewPage() {
   const dispatch = useAppDispatch();
@@ -54,7 +59,11 @@ function AddReviewPage() {
     <section className="film-card film-card--full" style={{ backgroundColor }}>
       <div className="film-card__header">
         <div className="film-card__bg">
-          <img src={backgroundImage} alt={name} />
+          <FallbackImage
+            src={backgroundImage}
+            fallbackSrc={DEFAULT_BACKGROUND_IMAGE}
+            alt={name}
+          />
         </div>
 
         <h1 className="visually-hidden">WTW</h1>
@@ -87,7 +96,13 @@ function AddReviewPage() {
         </header>
 
         <div className="film-card__poster film-card__poster--small">
-          <img src={posterImage} alt={name} width="218" height="327" />
+          <FallbackImage
+            src={posterImage}
+            fallbackSrc={DEFAULT_POSTER_IMAGE}
+            alt={name}
+            width="218"
+            height="327"
+          />
         </div>
       </div>
 

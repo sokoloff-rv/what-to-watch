@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import Logo from '../../components/logo/logo';
 import UserBlock from '../../components/user-block/user-block';
 import FilmsList from '../../components/films-list/films-list';
@@ -11,11 +10,7 @@ import NotFoundPage from '../not-found-page/not-found-page';
 import MyListButton from '../../components/my-list-button/my-list-button';
 import { AppRoute } from '../../const';
 import { useAppSelector, useAppDispatch } from '../../hooks/';
-import {
-  fetchFilm,
-  fetchSimilarFilms,
-  deleteFilm,
-} from '../../store/api-actions';
+import { fetchFilm, fetchSimilarFilms } from '../../store/api-actions';
 import {
   getActiveFilm,
   getIsLoading as getFilmIsLoading,
@@ -24,7 +19,12 @@ import {
   getSimilarFilms,
   getIsLoading as getSimilarFilmsIsLoading,
 } from '../../store/similar-films-data/selectors';
-import { getIsAuth, getIsAuthor } from '../../store/user-data/selectors';
+import { getIsAuth, getIsModerator } from '../../store/user-data/selectors';
+import FallbackImage from '../../components/fallback-image/fallback-image';
+import {
+  DEFAULT_BACKGROUND_IMAGE,
+  DEFAULT_POSTER_IMAGE,
+} from '../../services/fallback-assets';
 
 function FilmPage() {
   const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ function FilmPage() {
   const similarFilms = useAppSelector(getSimilarFilms);
   const isSimilarFilmsLoading = useAppSelector(getSimilarFilmsIsLoading);
   const isAuth = useAppSelector(getIsAuth);
-  const isAuthor = useAppSelector((state) => getIsAuthor(state, film?.user));
+  const isModerator = useAppSelector(getIsModerator);
 
   useEffect(() => {
     if (!id) {
@@ -45,19 +45,6 @@ function FilmPage() {
     dispatch(fetchFilm(id));
     dispatch(fetchSimilarFilms(id));
   }, [dispatch, id]);
-
-  const handleDeleteClick = async () => {
-    if (!id) {
-      return;
-    }
-
-    const response = await dispatch(deleteFilm(id));
-    if (response.meta.requestStatus === 'rejected') {
-      toast.error('Can\'t delete film');
-    } else {
-      navigate(AppRoute.Main);
-    }
-  };
 
   if (isFilmLoading || isSimilarFilmsLoading) {
     return <Spinner />;
@@ -84,7 +71,11 @@ function FilmPage() {
       >
         <div className="film-card__hero">
           <div className="film-card__bg">
-            <img src={backgroundImage} alt={name} />
+            <FallbackImage
+              src={backgroundImage}
+              fallbackSrc={DEFAULT_BACKGROUND_IMAGE}
+              alt={name}
+            />
           </div>
 
           <h1 className="visually-hidden">WTW</h1>
@@ -122,22 +113,13 @@ function FilmPage() {
                     Add review
                   </Link>
                 )}
-                {isAuthor && (
-                  <>
-                    <Link
-                      to={`${AppRoute.Film}/${id}/${AppRoute.EditFilm}`}
-                      className="btn film-card__button"
-                    >
-                      Edit Film
-                    </Link>
-                    <button
-                      className="btn film-card__button"
-                      type="button"
-                      onClick={handleDeleteClick}
-                    >
-                      <span>Delete Film</span>
-                    </button>
-                  </>
+                {isModerator && (
+                  <Link
+                    to={`${AppRoute.Film}/${id}/${AppRoute.EditFilm}`}
+                    className="btn film-card__button"
+                  >
+                    Edit Film
+                  </Link>
                 )}
               </div>
             </div>
@@ -147,7 +129,13 @@ function FilmPage() {
         <div className="film-card__wrap film-card__translate-top">
           <div className="film-card__info">
             <div className="film-card__poster film-card__poster--big">
-              <img src={posterImage} alt={name} width="218" height="327" />
+              <FallbackImage
+                src={posterImage}
+                fallbackSrc={DEFAULT_POSTER_IMAGE}
+                alt={name}
+                width="218"
+                height="327"
+              />
             </div>
 
             <div className="film-card__desc">

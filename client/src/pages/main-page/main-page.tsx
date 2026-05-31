@@ -15,7 +15,11 @@ import {
   getIsLoading as getPromoIsLoading,
 } from '../../store/promo-data/selectors';
 import { getActiveGenre } from '../../store/genre-data/selectors';
-import { fetchFilmsByGenre, fetchPromo } from '../../store/api-actions';
+import {
+  fetchFilmsByGenre,
+  fetchGenres,
+  fetchPromo,
+} from '../../store/api-actions';
 
 const FILMS_PER_STEP = 8;
 
@@ -29,6 +33,7 @@ function MainPage() {
   const [filmsDisplayed, setFilmsDisplayed] = useState(0);
 
   useEffect(() => {
+    dispatch(fetchGenres());
     dispatch(fetchPromo());
   }, [dispatch]);
 

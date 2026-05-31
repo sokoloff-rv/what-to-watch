@@ -2,8 +2,8 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { getToken } from './token';
 import { store } from '../store';
 import { setToDefault } from '../store/user-data/user-data';
+import { BACKEND_URL } from './url';
 
-const BACKEND_URL = 'https://9.react.pages.academy/wtw';
 const REQUEST_TIMEOUT = 5000;
 
 export const createAPI = () => {
@@ -16,14 +16,25 @@ export const createAPI = () => {
     const token = getToken();
 
     if (token) {
-      config.headers['x-token'] = token;
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   });
 
   api.interceptors.response.use(
-    (response: AxiosResponse) => response,
+    (response: AxiosResponse) => {
+      if (
+        response.data &&
+        typeof response.data === 'object' &&
+        Object.prototype.hasOwnProperty.call(response.data, 'data')
+      ) {
+        response.data = response.data.data;
+      }
+
+      return response;
+    },
 
     (error: AxiosError) => {
       const { response } = error;

@@ -17,9 +17,7 @@ export const userData = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
-    setToDefault: (state) => {
-      state = initialState;
-    },
+    setToDefault: () => initialState,
   },
 });
 

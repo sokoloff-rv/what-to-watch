@@ -8,6 +8,7 @@ import {
 } from './films-data/films-data';
 import {
   setFilmsByGenre,
+  setGenres,
   setLoading as setFilmsByGenreIsLoading,
 } from './genre-data/genre-data';
 import {
@@ -33,7 +34,6 @@ import {
 import { setUser, setAuthorizationStatus } from './user-data/user-data';
 import { AppDispatch, State } from '../types/state';
 import { Film } from '../types/film';
-import { Review } from '../types/review';
 import { NewReview } from '../types/new-review';
 import { AuthData } from '../types/auth-data';
 import { Token } from '../types/token';
@@ -46,6 +46,21 @@ import {
 } from '../const';
 import { saveToken, dropToken } from '../services/token';
 import { NewUser } from '../types/new-user';
+import {
+  LaravelFilm,
+  LaravelGenre,
+  LaravelPromo,
+  LaravelReview,
+  LaravelUser,
+  mapLaravelFilm,
+  mapLaravelFilms,
+  mapLaravelGenres,
+  mapLaravelReviews,
+  mapLaravelUser,
+  toLaravelFilmPayload,
+  toLaravelRegisterPayload,
+  toLaravelReviewPayload,
+} from '../services/laravel-adapters';
 
 type AsyncThunkConfig = {
   dispatch: AppDispatch;
@@ -53,13 +68,22 @@ type AsyncThunkConfig = {
   extra: AxiosInstance;
 };
 
+const fetchMappedFilm = async (api: AxiosInstance, id: string) => {
+  const { data } = await api.get<LaravelFilm>(`${APIRoute.Films}/${id}`);
+  return mapLaravelFilm(data);
+};
+
+const hasUserPayload = (
+  data: { user?: LaravelUser } | LaravelUser
+): data is { user: LaravelUser } => 'user' in data && Boolean(data.user);
+
 export const fetchFilms = createAsyncThunk<void, undefined, AsyncThunkConfig>(
   `${NameSpace.Films}/fetchFilms`,
   async (_arg, { dispatch, extra: api }) => {
     dispatch(setFilmsIsLoading(true));
     try {
-      const { data } = await api.get<Film[]>(APIRoute.Films);
-      dispatch(setFilms(data));
+      const { data } = await api.get<LaravelFilm[]>(APIRoute.Films);
+      dispatch(setFilms(mapLaravelFilms(data)));
     } catch (error) {
       dispatch(setFilms([]));
       toast.error('Can\'t fetch films');
@@ -78,12 +102,12 @@ export const fetchFilmsByGenre = createAsyncThunk<
   async (genre, { dispatch, extra: api }) => {
     dispatch(setFilmsByGenreIsLoading(true));
     try {
-      let route = `${APIRoute.Genre}/${genre}`;
-      if (genre === DEFAULT_GENRE) {
-        route = APIRoute.Films;
-      }
-      const { data } = await api.get<Film[]>(route);
-      dispatch(setFilmsByGenre(data));
+      const params = genre === DEFAULT_GENRE ? undefined : { genre };
+      const { data } = params
+        ? await api.get<LaravelFilm[]>(APIRoute.Films, { params })
+        : await api.get<LaravelFilm[]>(APIRoute.Films);
+
+      dispatch(setFilmsByGenre(mapLaravelFilms(data)));
     } catch (error) {
       dispatch(setFilmsByGenre([]));
       toast.error('Can\'t fetch films by genre');
@@ -93,13 +117,25 @@ export const fetchFilmsByGenre = createAsyncThunk<
   }
 );
 
+export const fetchGenres = createAsyncThunk<void, undefined, AsyncThunkConfig>(
+  `${NameSpace.Genre}/fetchGenres`,
+  async (_arg, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<LaravelGenre[]>(APIRoute.Genres);
+      dispatch(setGenres(mapLaravelGenres(data)));
+    } catch (error) {
+      dispatch(setGenres([]));
+    }
+  }
+);
+
 export const fetchFilm = createAsyncThunk<void, string, AsyncThunkConfig>(
   `${NameSpace.Film}/fetchFilm`,
   async (id, { dispatch, extra: api }) => {
     dispatch(setFilmIsLoading(true));
     try {
-      const { data } = await api.get<Film>(`${APIRoute.Films}/${id}`);
-      dispatch(setActiveFilm(data));
+      const film = await fetchMappedFilm(api, id);
+      dispatch(setActiveFilm(film));
     } catch (error) {
       dispatch(setActiveFilm(null));
       toast.error('Can\'t fetch film');
@@ -113,11 +149,16 @@ export const editFilm = createAsyncThunk<void, Film, AsyncThunkConfig>(
   `${NameSpace.Film}/editFilm`,
   async (filmData, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.put<Film>(
+      const { data } = await api.patch<LaravelFilm>(
         `${APIRoute.Films}/${filmData.id}`,
-        filmData
+        toLaravelFilmPayload(filmData)
       );
-      dispatch(setActiveFilm(data));
+      const film = mapLaravelFilm(data);
+
+      dispatch(setActiveFilm(film));
+      if (film) {
+        dispatch(setFilm(film));
+      }
     } catch {
       throw new Error('Can\'t edit film');
     }
@@ -126,10 +167,11 @@ export const editFilm = createAsyncThunk<void, Film, AsyncThunkConfig>(
 
 export const addFilm = createAsyncThunk<void, NewFilm, AsyncThunkConfig>(
   `${NameSpace.Film}/addFilm`,
-  async (filmData, { dispatch, extra: api }) => {
+  async (filmData, { extra: api }) => {
     try {
-      const { data } = await api.post<Film>(APIRoute.Add, filmData);
-      dispatch(setActiveFilm(data));
+      await api.post(APIRoute.Films, {
+        'imdb_id': filmData.imdbId,
+      });
     } catch {
       throw new Error('Can\'t add film');
     }
@@ -157,10 +199,10 @@ export const fetchSimilarFilms = createAsyncThunk<
   async (id, { dispatch, extra: api }) => {
     dispatch(setSimilarFilmsIsLoading(true));
     try {
-      const { data } = await api.get<Film[]>(
+      const { data } = await api.get<LaravelFilm[] | null>(
         `${APIRoute.Films}/${id}${APIRoute.Similar}`
       );
-      dispatch(setSimilarFilms(data));
+      dispatch(setSimilarFilms(mapLaravelFilms(data)));
     } catch (error) {
       dispatch(setSimilarFilms([]));
       toast.error('Can\'t fetch similar films');
@@ -175,8 +217,10 @@ export const fetchReviews = createAsyncThunk<void, string, AsyncThunkConfig>(
   async (id, { dispatch, extra: api }) => {
     dispatch(setReviewsIsLoading(true));
     try {
-      const { data } = await api.get<Review[]>(`${APIRoute.Comments}/${id}`);
-      dispatch(setReviews(data));
+      const { data } = await api.get<LaravelReview[]>(
+        `${APIRoute.Films}/${id}${APIRoute.Comments}`
+      );
+      dispatch(setReviews(mapLaravelReviews(data)));
     } catch (error) {
       dispatch(setReviews([]));
       toast.error('Can\'t fetch reviews');
@@ -195,7 +239,10 @@ export const postReview = createAsyncThunk<
   async ({ id, review }, { dispatch, extra: api }) => {
     dispatch(setReviewsIsLoading(true));
     try {
-      await api.post<Review>(`${APIRoute.Comments}/${id}`, review);
+      await api.post(
+        `${APIRoute.Films}/${id}${APIRoute.Comments}`,
+        toLaravelReviewPayload(review)
+      );
     } finally {
       dispatch(setReviewsIsLoading(false));
     }
@@ -206,9 +253,13 @@ export const checkAuth = createAsyncThunk<void, undefined, AsyncThunkConfig>(
   `${NameSpace.User}/checkAuth`,
   async (_arg, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.get(APIRoute.Login);
+      const { data } = await api.get<{ user?: LaravelUser } | LaravelUser>(
+        APIRoute.User
+      );
+      const user = hasUserPayload(data) ? data.user : (data as LaravelUser);
+
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
-      dispatch(setUser(data));
+      dispatch(setUser(mapLaravelUser(user)));
     } catch {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       dispatch(setUser(null));
@@ -235,7 +286,7 @@ export const logout = createAsyncThunk<void, undefined, AsyncThunkConfig>(
   `${NameSpace.User}/logout`,
   async (_arg, { dispatch, extra: api }) => {
     try {
-      await api.delete(APIRoute.Logout);
+      await api.post(APIRoute.Logout);
       dropToken();
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       dispatch(setUser(null));
@@ -254,8 +305,8 @@ export const fetchFavoriteFilms = createAsyncThunk<
   async (_arg, { dispatch, extra: api }) => {
     dispatch(setFavoriteFilmsIsLoading(true));
     try {
-      const { data } = await api.get<Film[]>(`${APIRoute.Favorite}`);
-      dispatch(setFavoriteFilms(data));
+      const { data } = await api.get<LaravelFilm[]>(APIRoute.Favorite);
+      dispatch(setFavoriteFilms(mapLaravelFilms(data)));
     } catch (error) {
       toast.error('Can\'t fetch favorite films');
     } finally {
@@ -269,8 +320,32 @@ export const fetchPromo = createAsyncThunk<void, undefined, AsyncThunkConfig>(
   async (_arg, { dispatch, extra: api }) => {
     dispatch(setPromoFilmIsLoading(true));
     try {
-      const { data } = await api.get<Film>(`${APIRoute.Promo}`);
-      dispatch(setPromoFilm(data));
+      const { data } = await api.get<LaravelFilm | LaravelPromo | null>(
+        APIRoute.Promo
+      );
+      const maybeFilm = data as LaravelFilm | null;
+      const directFilm =
+        maybeFilm?.name || maybeFilm?.poster_image || maybeFilm?.preview_image
+          ? mapLaravelFilm(maybeFilm)
+          : null;
+
+      if (directFilm) {
+        dispatch(setPromoFilm(directFilm));
+        return;
+      }
+
+      const promo = data as LaravelPromo | null;
+      if (promo?.film) {
+        dispatch(setPromoFilm(mapLaravelFilm(promo.film)));
+        return;
+      }
+
+      if (promo?.film_id) {
+        dispatch(setPromoFilm(await fetchMappedFilm(api, String(promo.film_id))));
+        return;
+      }
+
+      dispatch(setPromoFilm(null));
     } catch (error) {
       dispatch(setPromoFilm(null));
       toast.error('Can\'t fetch promo film');
@@ -288,10 +363,20 @@ export const setFavorite = createAsyncThunk<
   `${NameSpace.FavoriteFilms}/setFavorite`,
   async ({ id, status }, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.post<Film>(
-        `${APIRoute.Favorite}/${id}/${status}`
-      );
-      dispatch(setFilm(data));
+      const route = `${APIRoute.Films}/${id}${APIRoute.Favorite}`;
+
+      if (status) {
+        await api.post(route);
+      } else {
+        await api.delete(route);
+      }
+
+      const film = await fetchMappedFilm(api, id);
+      if (film) {
+        dispatch(setFilm(film));
+        dispatch(setActiveFilm(film));
+      }
+      dispatch(fetchFavoriteFilms());
     } catch (error) {
       toast.error('Can\'t add to or remove from MyList');
     }
@@ -301,14 +386,8 @@ export const setFavorite = createAsyncThunk<
 export const registerUser = createAsyncThunk<void, NewUser, AsyncThunkConfig>(
   `${NameSpace.User}/register`,
   async (userData, { extra: api }) => {
-    const { avatar } = userData;
-    delete userData.avatar;
-
     try {
-      const { data } = await api.post<{ id: string }>(APIRoute.Register, userData);
-      if (avatar) {
-        await api.post(`/${data.id}${APIRoute.SetAvatar}`, avatar);
-      }
+      await api.post(APIRoute.Register, toLaravelRegisterPayload(userData));
     } catch {
       throw new Error('Can\'t sign up');
     }

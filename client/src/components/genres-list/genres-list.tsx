@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../hooks/';
 import { setActiveGenre } from '../../store/genre-data/genre-data';
 import { getGenres, getActiveGenre } from '../../store/genre-data/selectors';
 import { DEFAULT_GENRE } from '../../const';
+import { resolveGenreFromSearch } from '../../services/genres';
 import { capitalize } from '../../util';
 
 function GenresList() {
@@ -15,18 +16,13 @@ function GenresList() {
   const searchGenre = searchParams.get('genre');
 
   useEffect(() => {
-    const loweredSearchGenre = searchGenre?.toLowerCase();
+    const resolvedGenre = resolveGenreFromSearch(genres, searchGenre);
 
-    if (loweredSearchGenre === activeGenre.toLowerCase()) {
+    if (resolvedGenre === activeGenre) {
       return;
     }
 
-    if (loweredSearchGenre && genres.includes(loweredSearchGenre)) {
-      dispatch(setActiveGenre(loweredSearchGenre));
-      return;
-    }
-
-    dispatch(setActiveGenre(DEFAULT_GENRE));
+    dispatch(setActiveGenre(resolvedGenre));
   }, [searchGenre, dispatch, genres, activeGenre]);
 
   return (
@@ -38,7 +34,10 @@ function GenresList() {
             'catalog__genres-item--active': genre === activeGenre,
           })}
         >
-          <Link to={`?genre=${genre}`} className="catalog__genres-link">
+          <Link
+            to={genre === DEFAULT_GENRE ? '/' : `?genre=${encodeURIComponent(genre)}`}
+            className="catalog__genres-link"
+          >
             {capitalize(genre)}
           </Link>
         </li>

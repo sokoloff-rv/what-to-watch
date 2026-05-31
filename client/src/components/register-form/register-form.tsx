@@ -79,7 +79,7 @@ function RegisterForm() {
             name="password"
             placeholder="Password"
             required
-            minLength={6}
+            minLength={8}
             maxLength={12}
             ref={passwordRef}
           />

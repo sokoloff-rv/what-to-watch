@@ -11,7 +11,7 @@ import {
   getActiveFilm,
   getIsLoading as getFilmIsLoading,
 } from '../../store/film-data/selectors';
-import { fetchFilm, editFilm } from '../../store/api-actions';
+import { fetchFilm, editFilm, fetchGenres } from '../../store/api-actions';
 import { useAppSelector, useAppDispatch } from '../../hooks/';
 import { Film } from '../../types/film';
 import { AppRoute } from '../../const';
@@ -29,6 +29,7 @@ function EditFilmPage() {
     }
 
     dispatch(fetchFilm(id));
+    dispatch(fetchGenres());
   }, [dispatch, id]);
 
   const handleSubmit = useCallback(async (offerData: Film) => {

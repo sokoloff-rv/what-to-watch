@@ -1,47 +1,30 @@
-import { useCallback } from 'react';
+import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Logo from '../../components/logo/logo';
 import UserBlock from '../../components/user-block/user-block';
 import Footer from '../../components/footer/footer';
-import AddFilmForm from '../../components/add-film-form/add-film-form';
-import { NewFilm } from '../../types/new-film';
-import { GENRES, AppRoute } from '../../const';
+import { AppRoute } from '../../const';
 import { addFilm } from '../../store/api-actions';
-import { getActiveFilm } from '../../store/film-data/selectors';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-
-const emptyFilm: NewFilm = {
-  name: '',
-  posterImage: '',
-  backgroundImage: '',
-  backgroundColor: '',
-  videoLink: '',
-  previewVideoLink: '',
-  description: '',
-  director: '',
-  starring: [],
-  runTime: 0,
-  genre: GENRES[0],
-  released: 0,
-};
+import { useAppDispatch } from '../../hooks';
 
 function AddFilmPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const activeFilm = useAppSelector(getActiveFilm);
+  const [imdbId, setImdbId] = useState('');
 
-  const handleSubmit = useCallback(
-    async (offerData: NewFilm) => {
-      const response = await dispatch(addFilm(offerData));
-      if (response.meta.requestStatus === 'rejected') {
-        toast.error('Can\'t add offer');
-      } else if (activeFilm) {
-        navigate(`${AppRoute.Film}/${activeFilm.id}`);
-      }
-    },
-    [activeFilm, dispatch, navigate]
-  );
+  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    const response = await dispatch(addFilm({ imdbId }));
+    if (response.meta.requestStatus === 'rejected') {
+      toast.error('Can\'t add film');
+      return;
+    }
+
+    toast.success('Film import has been queued');
+    navigate(AppRoute.Main);
+  };
 
   return (
     <div className="user-page">
@@ -51,7 +34,31 @@ function AddFilmPage() {
         <UserBlock />
       </header>
       <div className="sign-in user-page__content">
-        <AddFilmForm film={emptyFilm} onSubmit={handleSubmit} />
+        <form className="sign-in__form" action="#" onSubmit={handleSubmit}>
+          <div className="sign-in__fields">
+            <div className="sign-in__field">
+              <label className="sign-in__label" htmlFor="imdb-id">
+                IMDb ID
+              </label>
+              <input
+                className="sign-in__input"
+                type="text"
+                placeholder="tt0111161"
+                name="imdb-id"
+                id="imdb-id"
+                required
+                pattern="tt[0-9]{7,}"
+                value={imdbId}
+                onChange={(evt) => setImdbId(evt.target.value.trim())}
+              />
+            </div>
+          </div>
+          <div className="sign-in__submit">
+            <button className="sign-in__btn" type="submit">
+              Add film
+            </button>
+          </div>
+        </form>
       </div>
       <Footer />
     </div>

@@ -22,22 +22,24 @@ export enum Tab {
   Reviews = 'Reviews',
 }
 
-export const GENRES = ['comedy', 'crime', 'documentary', 'drama', 'horror', 'family', 'romance', 'scifi', 'thriller'];
-
 export const DEFAULT_GENRE = 'All genres';
 
 export enum APIRoute {
   Films = '/films',
+  User = '/user',
   Similar = '/similar',
   Promo = '/promo',
   Favorite = '/favorite',
   Comments = '/comments',
+  Genres = '/genres',
   Login = '/login',
   Logout = '/logout',
   Register = '/register',
-  Add = '/add',
-  Genre = '/films/genre',
-  SetAvatar = '/avatar'
+}
+
+export enum UserRole {
+  User = 'user',
+  Moderator = 'moderator',
 }
 
 export enum NameSpace {

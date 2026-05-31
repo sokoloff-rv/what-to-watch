@@ -2,8 +2,11 @@ import { User } from './user';
 
 export type Film = {
   id: string;
+  imdbId: string;
+  status: string;
   name: string;
   posterImage: string;
+  previewImage: string;
   backgroundImage: string;
   backgroundColor: string;
   videoLink: string;
@@ -14,7 +17,9 @@ export type Film = {
   starring: string[];
   runTime: number;
   genre: string;
+  genres: string[];
   released: number;
   isFavorite: boolean;
-  user: User;
+  scoresCount: number;
+  user?: User;
 };

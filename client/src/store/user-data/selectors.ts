@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { State, UserState } from '../../types/state';
 import { User } from '../../types/user';
-import { NameSpace, AuthorizationStatus } from '../../const';
+import { NameSpace, AuthorizationStatus, UserRole } from '../../const';
 
 export const getAuthorizationStatus = createSelector(
   (state: State) => state[NameSpace.User],
@@ -28,4 +28,9 @@ export const getIsUnknown = createSelector(
 export const getIsAuthor = createSelector(
   [getUser, (_, filmUser: User | undefined) => filmUser],
   (user, filmUser) => user && filmUser && user.email === filmUser.email
+);
+
+export const getIsModerator = createSelector(
+  getUser,
+  (user) => user?.role === UserRole.Moderator
 );
