@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Logo from '../../components/logo/logo';
 import UserBlock from '../../components/user-block/user-block';
 import FilmsList from '../../components/films-list/films-list';
@@ -28,7 +28,6 @@ import {
 
 function FilmPage() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { id } = useParams();
   const film = useAppSelector(getActiveFilm);
   const isFilmLoading = useAppSelector(getFilmIsLoading);
@@ -93,35 +92,27 @@ function FilmPage() {
                 <span className="film-card__year">{released}</span>
               </p>
 
-              <div className="film-card__buttons">
-                <button
-                  className="btn btn--play film-card__button"
-                  type="button"
-                  onClick={() => navigate(`${AppRoute.Player}/${film.id}`)}
-                >
-                  <svg viewBox="0 0 19 19" width="19" height="19">
-                    <use xlinkHref="#play-s"></use>
-                  </svg>
-                  <span>Play</span>
-                </button>
-                {isAuth && <MyListButton id={id} />}
-                {isAuth && (
-                  <Link
-                    to={`${AppRoute.Film}/${id}/${AppRoute.AddReview}`}
-                    className="btn film-card__button"
-                  >
-                    Add review
-                  </Link>
-                )}
-                {isModerator && (
-                  <Link
-                    to={`${AppRoute.Film}/${id}/${AppRoute.EditFilm}`}
-                    className="btn film-card__button"
-                  >
-                    Edit Film
-                  </Link>
-                )}
-              </div>
+              {(isAuth || isModerator) && (
+                <div className="film-card__buttons">
+                  {isAuth && <MyListButton id={id} />}
+                  {isAuth && (
+                    <Link
+                      to={`${AppRoute.Film}/${id}/${AppRoute.AddReview}`}
+                      className="btn film-card__button"
+                    >
+                      Add review
+                    </Link>
+                  )}
+                  {isModerator && (
+                    <Link
+                      to={`${AppRoute.Film}/${id}/${AppRoute.EditFilm}`}
+                      className="btn film-card__button"
+                    >
+                      Edit Film
+                    </Link>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

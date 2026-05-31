@@ -1537,3 +1537,31 @@ textarea.sign-in__input {
   }
 }
 
+.film-card--full {
+  background: #f0e6cf !important;
+}
+
+.film-card--full .film-card__text,
+.film-card--full .film-card__details-name,
+.film-card--full .film-card__details-value,
+.film-card--full .review,
+.film-card--full .review__quote,
+.film-card--full .review__text {
+  color: #252525;
+}
+
+.film-card--full .film-card__director,
+.film-card--full .film-card__starring,
+.film-card--full .film-rating__meta,
+.film-card--full .review__details {
+  color: rgba(37, 37, 37, 0.72);
+}
+
+.film-card--full .film-rating__score {
+  background: rgba(255, 255, 255, 0.62);
+  color: #252525;
+}
+
+.film-card--full .film-rating__count {
+  color: rgba(37, 37, 37, 0.72);
+}

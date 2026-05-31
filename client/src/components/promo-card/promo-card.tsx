@@ -1,10 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from '../../components/logo/logo';
 import UserBlock from '../../components/user-block/user-block';
 import MyListButton from '../my-list-button/my-list-button';
 import { Film } from '../../types/film';
-import { useAppDispatch, useAppSelector } from '../../hooks/';
-import { setActiveFilm } from '../../store/film-data/film-data';
+import { useAppSelector } from '../../hooks/';
 import { getIsAuth } from '../../store/user-data/selectors';
 import { AppRoute } from '../../const';
 import FallbackImage from '../fallback-image/fallback-image';
@@ -18,8 +17,6 @@ type PromoCardProps = {
 };
 
 function PromoCard({ promoFilm }: PromoCardProps) {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const isAuth = useAppSelector(getIsAuth);
   const {
     backgroundColor,
@@ -68,19 +65,12 @@ function PromoCard({ promoFilm }: PromoCardProps) {
             </p>
 
             <div className="film-card__buttons">
-              <button
+              <Link
                 className="btn btn--play film-card__button"
-                type="button"
-                onClick={() => {
-                  dispatch(setActiveFilm(promoFilm));
-                  navigate(`${AppRoute.Player}/${promoFilm.id}`);
-                }}
+                to={`${AppRoute.Film}/${promoFilm.id}`}
               >
-                <svg viewBox="0 0 19 19" width="19" height="19">
-                  <use xlinkHref="#play-s"></use>
-                </svg>
-                <span>Play</span>
-              </button>
+                <span>More</span>
+              </Link>
               {isAuth && <MyListButton id={id} />}
             </div>
           </div>
