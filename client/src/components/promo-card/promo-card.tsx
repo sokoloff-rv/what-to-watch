@@ -25,6 +25,7 @@ function PromoCard({ promoFilm }: PromoCardProps) {
     posterImage,
     genre,
     released,
+    isFavorite,
     id,
   } = promoFilm;
 
@@ -71,7 +72,7 @@ function PromoCard({ promoFilm }: PromoCardProps) {
               >
                 <span>More</span>
               </Link>
-              {isAuth && <MyListButton id={id} />}
+              {isAuth && <MyListButton id={id} isFavorite={isFavorite} />}
             </div>
           </div>
         </div>

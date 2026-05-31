@@ -260,9 +260,11 @@ export const checkAuth = createAsyncThunk<void, undefined, AsyncThunkConfig>(
 
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
       dispatch(setUser(mapLaravelUser(user)));
+      dispatch(fetchFavoriteFilms());
     } catch {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       dispatch(setUser(null));
+      dispatch(setFavoriteFilms([]));
     }
   }
 );
@@ -290,6 +292,7 @@ export const logout = createAsyncThunk<void, undefined, AsyncThunkConfig>(
       dropToken();
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       dispatch(setUser(null));
+      dispatch(setFavoriteFilms([]));
     } catch {
       toast.error('Can\'t logout');
     }
@@ -361,9 +364,12 @@ export const setFavorite = createAsyncThunk<
   AsyncThunkConfig
 >(
   `${NameSpace.FavoriteFilms}/setFavorite`,
-  async ({ id, status }, { dispatch, extra: api }) => {
+  async ({ id, status }, { dispatch, getState, extra: api }) => {
     try {
       const route = `${APIRoute.Films}/${id}${APIRoute.Favorite}`;
+      const state = getState();
+      const activeGenre = state[NameSpace.Genre].activeGenre;
+      const promoFilm = state[NameSpace.Promo].promoFilm;
 
       if (status) {
         await api.post(route);
@@ -376,6 +382,10 @@ export const setFavorite = createAsyncThunk<
         dispatch(setFilm(film));
         dispatch(setActiveFilm(film));
       }
+      if (film && promoFilm?.id === id) {
+        dispatch(setPromoFilm(film));
+      }
+      dispatch(fetchFilmsByGenre(activeGenre));
       dispatch(fetchFavoriteFilms());
     } catch (error) {
       toast.error('Can\'t add to or remove from MyList');

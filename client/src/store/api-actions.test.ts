@@ -7,7 +7,7 @@ import {
   postReview,
   setFavorite,
 } from './api-actions';
-import { APIRoute, DEFAULT_GENRE } from '../const';
+import { APIRoute, DEFAULT_GENRE, NameSpace } from '../const';
 
 type TestThunk = (
   dispatch: jest.Mock,
@@ -25,10 +25,24 @@ const makeApi = () =>
 const getMock = (api: AxiosInstance) => api.get as jest.Mock;
 const postMock = (api: AxiosInstance) => api.post as jest.Mock;
 
-const executeThunk = (thunk: TestThunk, api: AxiosInstance) => {
+const makeState = (): Record<string, unknown> =>
+  ({
+    [NameSpace.Genre]: {
+      activeGenre: DEFAULT_GENRE,
+    },
+    [NameSpace.Promo]: {
+      promoFilm: null,
+    },
+  });
+
+const executeThunk = (
+  thunk: TestThunk,
+  api: AxiosInstance,
+  state = makeState()
+) => {
   const dispatch = jest.fn();
 
-  return thunk(dispatch, jest.fn(), api).then(() => dispatch);
+  return thunk(dispatch, jest.fn(() => state), api).then(() => dispatch);
 };
 
 const findAction = (dispatch: jest.Mock, type: string) =>
@@ -167,12 +181,27 @@ describe('API actions', () => {
       },
     });
 
-    await executeThunk(
+    const dispatch = await executeThunk(
       setFavorite({ id: '7', status: 1 }) as unknown as TestThunk,
-      api
+      api,
+      {
+        ...makeState(),
+        [NameSpace.Promo]: {
+          promoFilm: {
+            id: '7',
+          },
+        },
+      }
     );
+    const setPromoAction = findAction(dispatch, 'PROMO/setPromoFilm');
 
     expect(api.post).toHaveBeenCalledWith(`${APIRoute.Films}/7/favorite`);
     expect(api.get).toHaveBeenCalledWith(`${APIRoute.Films}/7`);
+    expect(setPromoAction.payload).toEqual(
+      expect.objectContaining({
+        id: '7',
+        isFavorite: true,
+      })
+    );
   });
 });

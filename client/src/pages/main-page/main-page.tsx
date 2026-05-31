@@ -15,6 +15,7 @@ import {
   getIsLoading as getPromoIsLoading,
 } from '../../store/promo-data/selectors';
 import { getActiveGenre } from '../../store/genre-data/selectors';
+import { getAuthorizationStatus } from '../../store/user-data/selectors';
 import {
   fetchFilmsByGenre,
   fetchGenres,
@@ -30,16 +31,17 @@ function MainPage() {
   const isPromoLoading = useAppSelector(getPromoIsLoading);
   const promoFilm = useAppSelector(getPromoFilm);
   const activeGenre = useAppSelector(getActiveGenre);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const [filmsDisplayed, setFilmsDisplayed] = useState(0);
 
   useEffect(() => {
     dispatch(fetchGenres());
     dispatch(fetchPromo());
-  }, [dispatch]);
+  }, [dispatch, authorizationStatus]);
 
   useEffect(() => {
     dispatch(fetchFilmsByGenre(activeGenre));
-  }, [dispatch, activeGenre]);
+  }, [dispatch, activeGenre, authorizationStatus]);
 
   useEffect(() => {
     setFilmsDisplayed(Math.min(filmsByGenre.length, FILMS_PER_STEP));
